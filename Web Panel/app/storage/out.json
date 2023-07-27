@@ -1,0 +1,13 @@
+Adding local address: 10.124.0.2
+Adding local address: fe80::2cbc:36ff:fec8:98c1
+Ethernet link detected
+Adding local address: 164.92.126.72
+Adding local address: 10.48.0.5
+Adding local address: fe80::a8b4:10ff:fe9e:8212
+Ethernet link detected
+[{"name":"unknown TCP","PID":0,"UID":0,"RX":0.000000,"TX":0.000000 }]
+[{"name":"unknown TCP","PID":0,"UID":0,"RX":0.000107,"TX":0.000051 }]
+[{"name":"unknown TCP","PID":0,"UID":0,"RX":0.000107,"TX":0.000051 }]
+[{"name":"unknown TCP","PID":0,"UID":0,"RX":0.000107,"TX":0.000051 }]
+[{"name":"unknown TCP","PID":0,"UID":0,"RX":0.000107,"TX":0.000051 }]
+[{"name":"unknown TCP","PID":0,"UID":0,"RX":0.000107,"TX":0.000051 }]
