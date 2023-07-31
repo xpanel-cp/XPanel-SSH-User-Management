@@ -5,6 +5,7 @@ xpd=$(cat /var/www/xpanelport | grep "^DomainPanel")
 xport=$(echo "$xpo" | sed "s/Xpanelport //g")
 portssl=$((xport+1))
 xpdomain=$(echo "$xpd" | sed "s/DomainPanel //g")
+read -rp "Please input IP Server: " ip
 read -rp "Please enter the pointed domain / sub-domain name: " domain
 
 systemctl stop apache2
@@ -119,8 +120,8 @@ done
     if [[ $WARPv4Status =~ on|plus ]] || [[ $WARPv6Status =~ on|plus ]]; then
         wg-quick down wgcf >/dev/null 2>&1
     fi
-    ipv4=$(curl -s https://ipinfo.io/ip)
-    ipv6=$(curl -s6m8 ip.gs)
+    ipv4=$ip
+    ipv6=''
     
     echo ""
     yellow "When using port 80 application mode, first point your domain name to your server's public IP address. Otherwise the certificate application will be failed!"
@@ -299,11 +300,9 @@ else
 sudo sed -i -e '$a\'$'\n''DomainPanel '$domain /var/www/xpanelport
 sudo sed -i -e '$a\'$'\n''SSLPanel True' /var/www/xpanelport
 fi
-
-chmod 777 /var/www/html/cp/Libs/sh/kill.sh
 wait
-multiin=$(echo "https://${domain}:$portssl/fixer&jub=multi")
-cat > /var/www/html/cp/Libs/sh/kill.sh << ENDOFFILE
+multiin=$(echo "https://${domain}:$portssl/fixer/multiuser")
+cat > /var/www/html/kill.sh << ENDOFFILE
 #!/bin/bash
 #By Alireza
 i=0
@@ -315,16 +314,15 @@ echo cmd &
 done
 ENDOFFILE
 wait
-sudo sed -i 's/(bbh/$(curl -v -H "A: B"/' /var/www/html/cp/Libs/sh/kill.sh
+sudo sed -i 's/(bbh/$(curl -v -H "A: B"/' /var/www/html/kill.sh
 wait
-sudo sed -i 's/cmd/$cmd/' /var/www/html/cp/Libs/sh/kill.sh
+sudo sed -i 's/cmd/$cmd/' /var/www/html/kill.sh
 wait
-sudo sed -i 's/1i/$i/' /var/www/html/cp/Libs/sh/kill.sh
+sudo sed -i 's/1i/$i/' /var/www/html/kill.sh
 wait
-sudo sed -i 's/((/$((/' /var/www/html/cp/Libs/sh/kill.sh
+sudo sed -i 's/((/$((/' /var/www/html/kill.sh
 
-(crontab -l | grep . ; echo -e "* * * * * /var/www/html/cp/Libs/sh/kill.sh") | crontab -
-(crontab -l ; echo "* * * * * wget -q -O /dev/null 'https://${domain}:$portssl/fixer&jub=exp' > /dev/null 2>&1") | crontab -
-(crontab -l ; echo "* * * * * wget -q -O /dev/null 'https://${domain}:$portssl/fixer&jub=synstraffic' > /dev/null 2>&1") | crontab -
+(crontab -l | grep . ; echo -e "* * * * * /var/www/html/kill.sh") | crontab -
+(crontab -l ; echo "* * * * * wget -q -O /dev/null 'https://${domain}:$portssl//fixer/exp' > /dev/null 2>&1") | crontab -
 clear
 printf "\nHTTPS Address : https://${domain}:$portssl/login \n"
