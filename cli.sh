@@ -38,7 +38,6 @@ function show_menu() {
     echo "Detail XPanel"
     echo "------------------"
     echo "Username: $adminuser"
-    echo "Password: $adminpass"
     echo "SSH PORT: $sshport"
     echo "SSH PORT TLS: $ssh_tls_port"
     echo ""
@@ -49,7 +48,9 @@ function show_menu() {
     echo "3. Chnage Port SSH TLS"
     echo "4. Update XPanel"
     echo "5. Remove XPanel"
-    echo "6. Exit"
+    echo "6. Remove All Admin XPanel"
+    echo "7. Change Banner Text"
+    echo "8. Exit"
 }
 
 # Function to select an option
@@ -71,13 +72,14 @@ function select_option() {
             wait
             mysql -e "GRANT ALL ON *.* TO '${username}'@'localhost';" &
             sed -i "s/DB_USERNAME=$adminuser/DB_USERNAME=$username/" /var/www/html/app/.env
-            sed -i "s/DB_PASSWORD=$adminpass/DB_PASSWORD=$password/" /var/www/html/app/.env
+            sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$password/g" /var/www/html/app/.env
             mysql -e "USE XPanel_plus; UPDATE admins SET username = '${username}' where id='1';"
             mysql -e "USE XPanel_plus; UPDATE admins SET password = '${password}' where id='1';"
             ;;
         2)
             echo "Please enter a SSH port:"
             read port
+            sed -i "s/Port $sshport/Port $port/" /etc/ssh/sshd_config
             sed -i "s/PORT_SSH=$sshport/PORT_SSH=$port/" /var/www/html/app/.env
             mysql -e "USE XPanel_plus; UPDATE settings SET ssh_port = '${port}' where id='1';"
             reboot
@@ -85,14 +87,18 @@ function select_option() {
         3)
             echo "Please enter a SSH TLS port:"
             read tlsport
-            bash /var/www/html/app/Libs/sh/stunnel.sh $tlsport $sshport &
+            echo "cert = /etc/stunnel/stunnel.pem
+[openssh]
+accept = $tlsport
+connect = 0.0.0.0:$sshport
+            " > /etc/stunnel/stunnel.conf
             systemctl enable stunnel4
             systemctl restart stunnel4
             mysql -e "USE XPanel_plus; UPDATE settings SET tls_port = '${tlsport}' where id='1';"
             reboot
             ;;
         4)
-            bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/install.sh --ipv4)
+            bash <(curl -Ls https://raw.githubusercontent.com/Alirezad07/X-Panel-SSH-User-Management/main/install.sh --ipv4)
             ;;
         5)
         echo "You accept the risk of removing the panel (y/n)"
@@ -106,7 +112,19 @@ function select_option() {
         sudo apt-get purge apache2 php8.1 zip unzip net-tools curl mariadb-server php8.1-cli php8.1-fpm php8.1-mysql php8.1-curl php8.1-gd php8.1-mbstring php8.1-xml -y
         fi
         ;;
+        
         6)
+       mysql -e "USE XPanel_plus; TRUNCATE TABLE admins;"
+       echo "Removed All Admin"
+        ;;
+        7)
+        echo "Please enter a Text Banner:"
+        read banner
+cat << EOF > /root/banner.txt
+$banner
+EOF
+            ;;
+        8)
             echo "Exiting the menu."
             exit 0
             ;;
