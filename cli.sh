@@ -50,7 +50,9 @@ function show_menu() {
     echo "5. Remove XPanel"
     echo "6. Remove All Admin XPanel"
     echo "7. Change Banner Text"
-    echo "8. Exit"
+    echo "8. Blocked Port 80 and 443 IRAN"
+    echo "9. UnBlock Port 80 and 443 IRAN"
+    echo "10. Exit"
 }
 
 # Function to select an option
@@ -98,7 +100,7 @@ connect = 0.0.0.0:$sshport
             reboot
             ;;
         4)
-            bash <(curl -Ls https://raw.githubusercontent.com/Alirezad07/X-Panel-SSH-User-Management/main/install.sh --ipv4)
+            bash <(curl -Ls https://github.com/xpanel-cp/XPanel-SSH-User-Management/raw/master/install.sh --ipv4)
             ;;
         5)
         echo "You accept the risk of removing the panel (y/n)"
@@ -124,7 +126,13 @@ cat << EOF > /root/banner.txt
 $banner
 EOF
             ;;
-        8)
+            8)
+            bash <(curl -Ls https://github.com/xpanel-cp/XPanel-SSH-User-Management/raw/master/block_iran.sh --ipv4)
+            ;;
+            9)
+             sudo iptables -F
+            ;;
+        10)
             echo "Exiting the menu."
             exit 0
             ;;
