@@ -71,7 +71,7 @@ Ubuntu 18+ (پیشنهادی :Ubuntu 20)<br>
 bash /root/xpanel.sh OR bash xpanel.sh 
 ```
 برای نصب کافیست دستور زیر را وارد کنید<br>
-	بعد از بروزرسانی حتما لینک مقابل را با ip و پورت پنل یکبار در مروگر باز کنید  <b>ip:port/reinstall</b><br>
+
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/install.sh --ipv4)
 ```
