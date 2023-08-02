@@ -222,8 +222,28 @@ sudo sed -i "s/AllowOverride None/AllowOverride All/g" /etc/apache2/apache2.conf
 wait
 sudo service apache2 restart
 wait
-echo -e "\nPlease input Panel admin Port."
-printf "Default port 8081: "
+
+# Random port number generator to prevent xpanel detection by potential attackers
+# Check if $RANDOM is available in the shell
+if [ -z "$RANDOM" ]; then
+  # If $RANDOM is not available, use a different random number generation method
+  random_number=$(od -A n -t d -N 2 /dev/urandom | tr -d ' ')
+else
+  # Generate a random number between 0 and 63000 using $RANDOM
+  random_number=$((RANDOM % 63001))
+fi
+
+# Add 2000 to the random number to get a range between 2000 and 65000
+randomPort=$((random_number + 2000))
+
+# Use port 8081 if the result is zero (in case $RANDOM was not available and port 8081 was chosen)
+if [ "$result" -eq 0 ]; then
+  randomPort=8081
+fi
+
+
+echo -e "\nPlease input Panel admin Port, or leave blank to use randomly generated port"
+printf "Random port $serverPort: "
 read porttmp
 if [[ -n "${porttmp}" ]]; then
 #Get the server port number from my settings file
@@ -231,10 +251,11 @@ serverPort=${porttmp}
 serverPortssl=$((serverPort+1))
 echo $serverPort
 else
-serverPort=8081
+serverPort=$randomPort
 serverPortssl=$((serverPort+1))
 echo $serverPort
 fi
+
 if [ "$dmssl" == "True" ]; then
 sshttp=$((serverPort+1))
 else
