@@ -224,6 +224,7 @@ sudo service apache2 restart
 wait
 
 # Random port number generator to prevent xpanel detection by potential attackers
+randomPort=""
 # Check if $RANDOM is available in the shell
 if [ -z "$RANDOM" ]; then
   # If $RANDOM is not available, use a different random number generation method
