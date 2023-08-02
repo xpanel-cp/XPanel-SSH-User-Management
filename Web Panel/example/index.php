@@ -27,6 +27,6 @@ function curl_get_contents($url) {
 
     return $data;
 }
-$site = "https://mizbanfa.net";
+$site = "https://google.com";
 echo curl_get_contents("$site");
         
