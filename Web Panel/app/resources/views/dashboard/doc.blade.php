@@ -269,6 +269,22 @@
                             </div>
                         </div>
 
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="heading11">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse11" aria-expanded="false" aria-controls="collapse11">
+                                    Online User
+                                </button>
+                            </h2>
+                            <div id="collapse11" class="accordion-collapse collapse" aria-labelledby="heading11" data-bs-parent="#accordionExample">
+                                <div class="accordion-body" dir="ltr">
+                                    <a href="{{$path}}cp/settings/api" target="_blank">List API</a><br>
+                                    {APIKEY}=Token<br>
+                                    <span class="pc-collapse">Method GET</span><br>
+                                    <code>{{$path}}api/{APIKEY}/online</code><br>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             </div>

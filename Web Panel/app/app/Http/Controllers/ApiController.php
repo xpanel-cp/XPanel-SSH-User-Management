@@ -127,15 +127,21 @@ class ApiController extends Controller
         ]);
         $this->checktoken($request->token);
         $check_user = Users::where('username', $request->username)->count();
+        $status_user = Users::where('username',$request->username)->get();
         if ($check_user > 0) {
-            Process::run("sudo killall -u {$request->username}");
-            Process::run("sudo pkill -u {$request->username}");
-            Process::run("sudo timeout 10 pkill -u {$request->username}");
-            Process::run("sudo timeout 10 killall -u {$request->username}");
-            Process::run("sudo userdel -r {$request->username}");
-            Users::where('username', $request->username)->delete();
-            Traffic::where('username', $request->username)->delete();
-            return response()->json(['message' => 'User Deleted']);
+            if ($status_user[0]->status == 'active') {
+                Process::run("sudo killall -u {$request->username}");
+                Process::run("sudo pkill -u {$request->username}");
+                Process::run("sudo timeout 10 pkill -u {$request->username}");
+                Process::run("sudo timeout 10 killall -u {$request->username}");
+                Process::run("sudo userdel -r {$request->username}");
+                Users::where('username', $request->username)->delete();
+                Traffic::where('username', $request->username)->delete();
+                return response()->json(['message' => 'User Deleted']);
+            } else {
+                Users::where('username', $request->username)->delete();
+                Traffic::where('username', $request->username)->delete();
+            }
         }
         else
         {
@@ -322,6 +328,54 @@ class ApiController extends Controller
             return response()->json(['message' => 'Not Exist User']);
         }
     }
+    public function online_user(Request $request,$token)
+    {
+        if (!is_string($token)) {
+            abort(400, 'Not Valid Token');
+        }
+        $this->checktoken($token);
+        $duplicate = [];
+        $data = [];
 
+        $list = Process::run("sudo lsof -i :" . env('PORT_SSH') . " -n | grep -v root | grep ESTABLISHED");
+        $output = $list->output();
+        $onlineuserlist = preg_split("/\r\n|\n|\r/", $output);
+
+        foreach ($onlineuserlist as $user) {
+            $user = preg_replace("/\\s+/", " ", $user);
+            if (strpos($user, ":AAAA") !== false) {
+                $userarray = explode(":", $user);
+            } else {
+                $userarray = explode(" ", $user);
+            }
+            if (!isset($userarray[8])) {
+                $userarray[8] = null;
+            }
+            if (isset($userarray[8])) {
+                $ip = explode('->', $userarray[8]);
+                $ip = explode(':', $ip[1]);
+                $userip = $ip[0];
+            }
+
+            if (!isset($userarray[2])) {
+                $userarray[2] = null;
+            }
+            $connection = "sub connection";
+            if (!in_array($userarray[2], $duplicate)) {
+                $connection = "one connection";
+                array_push($duplicate, $userarray[2]);
+            }
+            if (!empty($userarray[1]) && !empty($userarray[2]) && $userarray[2] !== "sshd" && $userarray[2] !== "root") {
+                $data[] = [
+                    "username" => $userarray[2],
+                    "connection" => $connection,
+                    "ip" => $userip,
+                    "pid" => $userarray[1]
+                ];
+            }
+        }
+        $data = json_decode(json_encode($data));
+        return response()->json($data);
+    }
 
 }

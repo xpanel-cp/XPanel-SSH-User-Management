@@ -48,7 +48,7 @@ class UserController extends Controller
             'multiuser'=>'required|numeric',
             'connection_start'=>'nullable|numeric',
             'traffic'=>'required|numeric',
-            'expdate'=>'nullable|date_format:Y-m-d|after:today',
+            'expdate'=>'nullable|date_format:Y-m-d',
             'type_traffic'=>'required|string',
             'desc'=>'nullable|string'
         ]);
@@ -271,14 +271,21 @@ class UserController extends Controller
         if($user->permission=='admin')
         {
             $check_user = Users::where('username',$username)->count();
+            $status_user = Users::where('username',$username)->get();
             if ($check_user > 0) {
-
-                Process::run("sudo killall -u {$username}");
-                Process::run("sudo pkill -u {$username}");
-                Process::run("sudo timeout 10 pkill -u {$username}");
-                Process::run("sudo timeout 10 killall -u {$username}");
-                $userdelProcess =Process::run("sudo userdel -r {$username}");
-                if ($userdelProcess->successful()) {
+                if($status_user[0]->status=='active') {
+                    Process::run("sudo killall -u {$username}");
+                    Process::run("sudo pkill -u {$username}");
+                    Process::run("sudo timeout 10 pkill -u {$username}");
+                    Process::run("sudo timeout 10 killall -u {$username}");
+                    $userdelProcess = Process::run("sudo userdel -r {$username}");
+                    if ($userdelProcess->successful()) {
+                        Users::where('username', $username)->delete();
+                        Traffic::where('username', $username)->delete();
+                    }
+                }
+                else
+                {
                     Users::where('username', $username)->delete();
                     Traffic::where('username', $username)->delete();
                 }
@@ -286,13 +293,21 @@ class UserController extends Controller
         }
         else {
             $check_user = Users::where('username', $username)->where('customer_user', $user->username)->count();
+            $status_user = Users::where('username',$username)->get();
             if ($check_user > 0) {
-                Process::run("sudo killall -u {$username}");
-                Process::run("sudo pkill -u {$username}");
-                Process::run("sudo timeout 10 pkill -u {$username}");
-                Process::run("sudo timeout 10 killall -u {$username}");
-                $userdelProcess =Process::run("sudo userdel -r {$username}");
-                if ($userdelProcess->successful()) {
+                if ($status_user[0]->status == 'active') {
+                    Process::run("sudo killall -u {$username}");
+                    Process::run("sudo pkill -u {$username}");
+                    Process::run("sudo timeout 10 pkill -u {$username}");
+                    Process::run("sudo timeout 10 killall -u {$username}");
+                    $userdelProcess = Process::run("sudo userdel -r {$username}");
+                    if ($userdelProcess->successful()) {
+                        Users::where('username', $username)->delete();
+                        Traffic::where('username', $username)->delete();
+                    }
+                }
+                else
+                {
                     Users::where('username', $username)->delete();
                     Traffic::where('username', $username)->delete();
                 }
@@ -307,13 +322,20 @@ class UserController extends Controller
         if ($user->permission == 'admin') {
             foreach ($request->usernamed as $username) {
                 $check_user = Users::where('username',$username)->count();
+                $status_user = Users::where('username',$username)->get();
                 if ($check_user > 0) {
-                    Process::run("sudo killall -u {$username}");
-                    Process::run("sudo pkill -u {$username}");
-                    Process::run("sudo timeout 10 pkill -u {$username}");
-                    Process::run("sudo timeout 10 killall -u {$username}");
-                    $userdelProcess =Process::run("sudo userdel -r {$username}");
-                    if ($userdelProcess->successful()) {
+                    if ($status_user[0]->status == 'active') {
+                        Process::run("sudo killall -u {$username}");
+                        Process::run("sudo pkill -u {$username}");
+                        Process::run("sudo timeout 10 pkill -u {$username}");
+                        Process::run("sudo timeout 10 killall -u {$username}");
+                        $userdelProcess = Process::run("sudo userdel -r {$username}");
+                        if ($userdelProcess->successful()) {
+                            Users::where('username', $username)->delete();
+                            Traffic::where('username', $username)->delete();
+                        }
+                    }
+                    else {
                         Users::where('username', $username)->delete();
                         Traffic::where('username', $username)->delete();
                     }
@@ -321,14 +343,21 @@ class UserController extends Controller
             }
         } else {
             foreach ($request->usernamed as $username) {
+                $status_user = Users::where('username', $username)->get();
                 $check_user = Users::where('username', $username)->where('customer_user', $user->username)->count();
                 if ($check_user > 0) {
-                    Process::run("sudo killall -u {$username}");
-                    Process::run("sudo pkill -u {$username}");
-                    Process::run("sudo timeout 10 pkill -u {$username}");
-                    Process::run("sudo timeout 10 killall -u {$username}");
-                    $userdelProcess =Process::run("sudo userdel -r {$username}");
-                    if ($userdelProcess->successful()) {
+                    if ($status_user[0]->status == 'active') {
+                        Process::run("sudo killall -u {$username}");
+                        Process::run("sudo pkill -u {$username}");
+                        Process::run("sudo timeout 10 pkill -u {$username}");
+                        Process::run("sudo timeout 10 killall -u {$username}");
+                        $userdelProcess = Process::run("sudo userdel -r {$username}");
+                        if ($userdelProcess->successful()) {
+                            Users::where('username', $username)->delete();
+                            Traffic::where('username', $username)->delete();
+                        }
+                    }
+                    else {
                         Users::where('username', $username)->delete();
                         Traffic::where('username', $username)->delete();
                     }
@@ -430,7 +459,7 @@ class UserController extends Controller
             'mobile'=>'nullable|string',
             'multiuser'=>'required|numeric',
             'traffic'=>'required|numeric',
-            'expdate'=>'nullable|date_format:Y-m-d|after:today',
+            'expdate'=>'nullable|date_format:Y-m-d',
             'type_traffic'=>'required|string',
             'activate'=>'required|string',
             'desc'=>'nullable|string'

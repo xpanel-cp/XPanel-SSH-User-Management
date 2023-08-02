@@ -81,6 +81,7 @@ Route::prefix('api')->group(function()
     Route::post('/deactive',[ApiController::class,'deactive_user'])->name('api.user.deactive');
     Route::post('/retraffic',[ApiController::class,'retraffic_user'])->name('api.user.retraffic');
     Route::post('/renewal',[ApiController::class,'renewal_user'])->name('api.user.renewal');
+    Route::get('/{token}/online',[ApiController::class,'online_user'])->name('api.user.online');
 });
 Route::prefix('fixer')->group(function() {
     Route::get('/exp', [FixerController::class, 'cronexp'])->name('exp');
