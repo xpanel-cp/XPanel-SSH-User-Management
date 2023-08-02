@@ -237,14 +237,14 @@ fi
 # Add 2000 to the random number to get a range between 2000 and 65000
 randomPort=$((random_number + 2000))
 
-# Use port 8081 if the result is zero (in case $RANDOM was not available and port 8081 was chosen)
-if [ "$result" -eq 0 ]; then
+# Use port 8081 if the random_number is zero (in case $RANDOM was not available and port 8081 was chosen)
+if [ "$random_number" -eq 0 ]; then
   randomPort=8081
 fi
 
 
 echo -e "\nPlease input Panel admin Port, or leave blank to use randomly generated port"
-printf "\033[33mRandom port $randomPort:\033[0m "
+printf "Random port \033[33m$randomPort:\033[0m "
 read porttmp
 if [[ -n "${porttmp}" ]]; then
 #Get the server port number from my settings file
