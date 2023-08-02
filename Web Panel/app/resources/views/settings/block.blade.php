@@ -29,27 +29,11 @@
                             <div class="card-body">
                                 <div class="form-group row">
                                     <div class="col-lg-12">
-                                        <div class="form-group">
-                                            Status:
-                                            @if (0 < $status)
-                                                <span class="badge bg-light-success rounded-pill f-12" style="width:100px">Active</span>
-                                            @else
-                                                <span class="badge bg-light-danger rounded-pill f-12" style="width:100px">Deactive</span>
-                                            @endif
-                                        </div><br>
-                                        <form class="validate-me" action="{{route('settings.block')}}" method="post" enctype="multipart/form-data">
-                                            @csrf
-                                            Active
-                                            <input type="radio" class="form-check-input input-primary"
-                                                   name="status" value="active" checked="">
-                                            Deactive
-                                            <input type="radio" class="form-check-input input-primary"
-                                                   name="status" value="deactive" >
-                                            <br>
-                                            <br>
-                                            <button type="submit" class="btn btn-primary" value="submit" >Save</button>
-                                        </form>
-
+                                        To block Iranian IP addresses (ports 80 and 443), execute the following command in the terminal:
+                                        <br>
+                                        <b>
+                                            bash /root/xpanel.sh <span style="color:red">OR</span> bash xpanel.sh
+                                        </b>
                                     </div>
                                 </div>
 
