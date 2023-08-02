@@ -244,7 +244,7 @@ fi
 
 
 echo -e "\nPlease input Panel admin Port, or leave blank to use randomly generated port"
-printf "Random port $serverPort: "
+printf "\033[33mRandom port $randomPort:\033[0m "
 read porttmp
 if [[ -n "${porttmp}" ]]; then
 #Get the server port number from my settings file
