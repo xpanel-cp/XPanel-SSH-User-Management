@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # install addons
 apt install xtables-addons-common libnet-cidr-lite-perl libtext-csv-xs-perl libgeoip2-perl -y
