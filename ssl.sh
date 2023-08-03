@@ -305,12 +305,8 @@ multiin=$(echo "https://${domain}:$portssl/fixer/multiuser")
 cat > /var/www/html/kill.sh << ENDOFFILE
 #!/bin/bash
 #By Alireza
-i=0
-while [ 1i -lt 20 ]; do 
 cmd=(bbh '$multiin')
-echo cmd &
-  sleep 6
-  i=(( i + 1 ))
+echo cmd
 done
 ENDOFFILE
 wait
