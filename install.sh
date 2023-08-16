@@ -234,6 +234,7 @@ sudo sed -i "s/AllowOverride None/AllowOverride All/g" /etc/apache2/apache2.conf
 wait
 sudo service apache2 restart
 wait
+clear
 # Random port number generator to prevent xpanel detection by potential attackers
 randomPort=""
 # Check if $RANDOM is available in the shell
