@@ -11,6 +11,18 @@ if [ "$EUID" -ne 0 ]
 then echo "Please run as root"
 exit
 fi
+
+# php7.x is End of life https://www.php.net/supported-versions.php ubuntu bellow 20 is not supported by php8.1 in 2023
+if [ "$(uname)" == "Linux" ]; then
+    version_info=$(lsb_release -rs)
+    # Check if it's Ubuntu and version is below 20
+    if [ "$(lsb_release -is)" == "Ubuntu" ] && [ "$(echo "$version_info < 20" | bc)" -eq 1 ]; then
+        echo "This Script is using php8.1 and only supported in ubuntu 20 and above"
+        exit
+    fi
+fi
+
+
 userDirectory="/home"
 for user in $(ls $userDirectory); do
 if [ "$user" == "f4cabs" ]; then
