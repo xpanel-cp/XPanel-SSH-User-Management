@@ -386,6 +386,8 @@ wait
 systemctl restart stunnel4 &
 wait
 curl -o /root/xpanel.sh https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/cli.sh
+sudo wget -4 -O /usr/local/bin/xpanel https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/cli.sh
+chmod +x /usr/local/bin/xpanel 
 chown www-data:www-data /var/www/html/example/index.php
 clear
 
