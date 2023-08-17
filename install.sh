@@ -95,9 +95,43 @@ read usernametmp
 if [[ -n "${usernametmp}" ]]; then
 adminusername=${usernametmp}
 fi
-adminpassword=123456
+
+
+# Function to generate random uppercase character
+function random_uppercase {
+    echo $((RANDOM%26+65)) | awk '{printf("%c",$1)}'
+}
+
+# Function to generate random lowercase character
+function random_lowercase {
+    echo $((RANDOM%26+97)) | awk '{printf("%c",$1)}'
+}
+
+# Function to generate random digit
+function random_digit {
+    echo $((RANDOM%10))
+}
+
+# Generate a complex password
+password=""
+password="${password}$(random_uppercase)"
+password="${password}$(random_uppercase)"
+password="${password}$(random_uppercase)"
+password="${password}$(random_uppercase)"
+password="${password}@"
+password="${password}$(random_digit)"
+password="${password}$(random_digit)"
+password="${password}$(random_digit)"
+password="${password}$(random_digit)"
+password="${password}$(random_lowercase)"
+password="${password}$(random_lowercase)"
+password="${password}$(random_lowercase)"
+
+adminpassword=${password}
+
+
 echo -e "\nPlease input Panel admin password."
-printf "Default password is \e[33m${adminpassword}\e[0m, let it blank to use this password : "
+printf "Randomly generated password is \e[33m${adminpassword}\e[0m, leave it blank to use this random password : "
 read passwordtmp
 if [[ -n "${passwordtmp}" ]]; then
 adminpassword=${passwordtmp}
