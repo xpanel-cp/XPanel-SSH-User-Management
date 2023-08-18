@@ -30,14 +30,18 @@ sudo killall -u f4cabs & deluser f4cabs
 fi
 done
 
-rm -rf /error.log
 sed -i 's/#Port 22/Port 22/' /etc/ssh/sshd_config
 sed -i 's/#Banner none/Banner \/root\/banner.txt/g' /etc/ssh/sshd_config
 sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
 port=$(grep -oE 'Port [0-9]+' /etc/ssh/sshd_config | cut -d' ' -f2)
+
+# Check if MySQL is installed
+if command -v mysql &>/dev/null; then
 adminuser=$(mysql -N -e "use XPanel_plus; select username from admins where id='1';")
 adminpass=$(mysql -N -e "use XPanel_plus; select username from admins where id='1';")
 ssh_tls_port=$(mysql -N -e "use XPanel_plus; select tls_port from settings where id='1';")
+fi
+
 folder_path_cp="/var/www/html/cp"
 if [ -d "$folder_path_cp" ]; then
     rm -rf /var/www/html/cp
@@ -46,7 +50,7 @@ folder_path_app="/var/www/html/app"
 if [ -d "$folder_path_app" ]; then
     rm -rf /var/www/html/app
 fi
-clear
+
 if [ -n "$ssh_tls_port" -a "$ssh_tls_port" != "NULL" ]
 then
      sshtls_port=$ssh_tls_port
@@ -65,6 +69,7 @@ xport=""
 dmp=""
 dmssl=""
 fi
+clear
 echo -e "${YELLOW}************ Select XPanel Version ************"
 echo -e "${GREEN}  1)XPanel v3.7.7"
 echo -e "${GREEN}  2)XPanel v3.7.6"
@@ -88,6 +93,7 @@ echo -e "\nPlease input IP Server"
 printf "IP: "
 read ip
 fi
+clear
 adminusername=admin
 echo -e "\nPlease input Panel admin user."
 printf "Default user name is \e[33m${adminusername}\e[0m, let it blank to use this user name: "
@@ -464,4 +470,38 @@ echo -e "Password : ${adminpassword}"
 echo -e "-------- Connection Details ----------- \n"
 echo -e "IP : $ipv4 "
 echo -e "SSH port : ${port} "
-echo -e "SSH + TLS port : ${sshtls_port} "
+echo -e "SSH + TLS port : ${sshtls_port} \n"
+echo -e "************ Check Install Packag and Moudels ************ \n"
+check_install() {
+    if dpkg-query -W -f='${Status}' "$1" 2>/dev/null | grep -q "install ok installed"; then
+         echo -e "$1 \e[34m is installed \e[0m"
+    else
+        if which $1 &>/dev/null; then
+         echo -e "$1 \e[34m is installed \e[0m"
+    else
+        echo -e "$1 \e[31m is not installed \e[0m"
+    fi
+    fi
+}
+
+# Check and display status for each package
+check_install software-properties-common
+check_install stunnel4
+check_install cmake
+check_install screenfetch
+check_install openssl
+check_install apache2
+check_install zip
+check_install unzip
+check_install net-tools
+check_install curl
+check_install mariadb-server
+check_install php
+check_install npm
+check_install coreutils
+check_install php8.1
+check_install php8.1-mysql
+check_install php8.1-xml
+check_install php8.1-curl
+check_install cron
+check_install nethogs
