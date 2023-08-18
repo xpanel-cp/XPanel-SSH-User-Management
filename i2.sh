@@ -34,9 +34,14 @@ sed -i 's/#Port 22/Port 22/' /etc/ssh/sshd_config
 sed -i 's/#Banner none/Banner \/root\/banner.txt/g' /etc/ssh/sshd_config
 sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
 port=$(grep -oE 'Port [0-9]+' /etc/ssh/sshd_config | cut -d' ' -f2)
+
+# Check if MySQL is installed
+if command -v mysql &>/dev/null; then
 adminuser=$(mysql -N -e "use XPanel_plus; select username from admins where id='1';")
 adminpass=$(mysql -N -e "use XPanel_plus; select username from admins where id='1';")
 ssh_tls_port=$(mysql -N -e "use XPanel_plus; select tls_port from settings where id='1';")
+fi
+
 folder_path_cp="/var/www/html/cp"
 if [ -d "$folder_path_cp" ]; then
     rm -rf /var/www/html/cp
