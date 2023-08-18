@@ -93,6 +93,7 @@ echo -e "\nPlease input IP Server"
 printf "IP: "
 read ip
 fi
+clear
 adminusername=admin
 echo -e "\nPlease input Panel admin user."
 printf "Default user name is \e[33m${adminusername}\e[0m, let it blank to use this user name: "
@@ -473,9 +474,13 @@ echo -e "SSH + TLS port : ${sshtls_port} \n"
 echo -e "************ Check Install Packag and Moudels ************ \n"
 check_install() {
     if dpkg-query -W -f='${Status}' "$1" 2>/dev/null | grep -q "install ok installed"; then
-        echo "$1 is installed."
+         echo -e "$1 \e[34m is installed \e[0m"
     else
-        echo "$1 is not installed."
+        if which $1 &>/dev/null; then
+         echo -e "$1 \e[34m is installed \e[0m"
+    else
+        echo -e "$1 \e[31m is not installed \e[0m"
+    fi
     fi
 }
 
@@ -492,11 +497,6 @@ check_install net-tools
 check_install curl
 check_install mariadb-server
 check_install php
-check_install php-cli
-check_install php-mbstring
-check_install php-dom
-check_install php-pdo
-check_install php-mysql
 check_install npm
 check_install coreutils
 check_install php8.1
