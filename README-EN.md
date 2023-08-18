@@ -52,7 +52,7 @@ Supported operating systems<br>
 
 Changing username, password and port as well as removing XPanel from the server (version 3.6 and higher)<br>
 ```
-bash /root/xpanel.sh OR bash xpanel.sh 
+bash /root/xpanel.sh OR bash xpanel.sh OR xpanel
 ```
 
 To install the X-Panel simply input the following command in the terminal:<br>
