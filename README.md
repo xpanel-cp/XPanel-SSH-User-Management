@@ -44,7 +44,7 @@
 :green_circle: فیک آدرس (جلوگیری از فیلترینگ) <br>
 :green_circle: محدودیت IP(جلوگیری از ورود کاربران به برخی سایت ها)<br>
 :green_circle: اتصال API<br>
-:orange_circle: مولتی سرور (به زودی)<br>
+:green_circle: [مولتی سرور](https://github.com/xpanel-cp/Xcs-Multi-Management-XPanel) <br>
 
 ## Telegram Channel:
 https://t.me/Xpanelssh
