@@ -69,6 +69,7 @@ xport=""
 dmp=""
 dmssl=""
 fi
+clear
 echo -e "${YELLOW}************ Select XPanel Version ************"
 echo -e "${GREEN}  1)XPanel v3.7.7"
 echo -e "${GREEN}  2)XPanel v3.7.6"
@@ -468,4 +469,39 @@ echo -e "Password : ${adminpassword}"
 echo -e "-------- Connection Details ----------- \n"
 echo -e "IP : $ipv4 "
 echo -e "SSH port : ${port} "
-echo -e "SSH + TLS port : ${sshtls_port} "
+echo -e "SSH + TLS port : ${sshtls_port} \n"
+echo -e "************ Check Install Packag and Moudels ************ \n"
+check_install() {
+    if dpkg-query -W -f='${Status}' "$1" 2>/dev/null | grep -q "install ok installed"; then
+        echo "$1 is installed."
+    else
+        echo "$1 is not installed."
+    fi
+}
+
+# Check and display status for each package
+check_install software-properties-common
+check_install stunnel4
+check_install cmake
+check_install screenfetch
+check_install openssl
+check_install apache2
+check_install zip
+check_install unzip
+check_install net-tools
+check_install curl
+check_install mariadb-server
+check_install php
+check_install php-cli
+check_install php-mbstring
+check_install php-dom
+check_install php-pdo
+check_install php-mysql
+check_install npm
+check_install coreutils
+check_install php8.1
+check_install php8.1-mysql
+check_install php8.1-xml
+check_install php8.1-curl
+check_install cron
+check_install nethogs
