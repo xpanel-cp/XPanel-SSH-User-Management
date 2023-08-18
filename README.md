@@ -68,7 +68,7 @@ Ubuntu 18+ (پیشنهادی :Ubuntu 20)<br>
 
 تغییر نام کاربری، کلمه عبور و پورت همچنین حذف XPanel از روی سرور (نسخه 3.6 به بالاتر)
 ```
-bash /root/xpanel.sh OR bash xpanel.sh 
+bash /root/xpanel.sh OR bash xpanel.sh  OR xpanel
 ```
 برای نصب کافیست دستور زیر را وارد کنید<br>
 
