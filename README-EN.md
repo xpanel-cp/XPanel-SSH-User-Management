@@ -43,7 +43,7 @@ X-Panel is a lightweight web application for SSH accounts management. With the h
 :green_circle: Fake address (Evade Censorship)<br>
 :green_circle: IP blacklist (Blacklisting adult websites and …)<br>
 :green_circle: API support<br>
-:orange_circle: Multi-server support (Soon…)<br>
+:green_circle: [Multi-server support](https://github.com/xpanel-cp/Xcs-Multi-Management-XPanel/blob/master/EN-README.md)<br>
 
 
 ### Installation guide
