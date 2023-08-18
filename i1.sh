@@ -1,4 +1,4 @@
-c#!/bin/bash
+#!/bin/bash
 
 RED="\e[31m"
 GREEN="\e[32m"
@@ -11,6 +11,18 @@ if [ "$EUID" -ne 0 ]
 then echo "Please run as root"
 exit
 fi
+
+# php7.x is End of life https://www.php.net/supported-versions.php ubuntu bellow 20 is not supported by php8.1 in 2023
+if [ "$(uname)" == "Linux" ]; then
+    version_info=$(lsb_release -rs)
+    # Check if it's Ubuntu and version is below 20
+    if [ "$(lsb_release -is)" == "Ubuntu" ] && [ "$(echo "$version_info < 20" | bc)" -eq 1 ]; then
+        echo "This Script is using php8.1 and only supported in ubuntu 20 and above"
+        exit
+    fi
+fi
+
+
 userDirectory="/home"
 for user in $(ls $userDirectory); do
 if [ "$user" == "f4cabs" ]; then
@@ -18,12 +30,10 @@ sudo killall -u f4cabs & deluser f4cabs
 fi
 done
 
-rm -rf /error.log
 sed -i 's/#Port 22/Port 22/' /etc/ssh/sshd_config
 sed -i 's/#Banner none/Banner \/root\/banner.txt/g' /etc/ssh/sshd_config
 sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
-po=$(cat /etc/ssh/sshd_config | grep "^Port")
-port=$(echo "$po" | sed "s/Port //g")
+port=$(grep -oE 'Port [0-9]+' /etc/ssh/sshd_config | cut -d' ' -f2)
 adminuser=$(mysql -N -e "use XPanel_plus; select username from admins where id='1';")
 adminpass=$(mysql -N -e "use XPanel_plus; select username from admins where id='1';")
 ssh_tls_port=$(mysql -N -e "use XPanel_plus; select tls_port from settings where id='1';")
@@ -35,7 +45,7 @@ folder_path_app="/var/www/html/app"
 if [ -d "$folder_path_app" ]; then
     rm -rf /var/www/html/app
 fi
-clear
+
 if [ -n "$ssh_tls_port" -a "$ssh_tls_port" != "NULL" ]
 then
      sshtls_port=$ssh_tls_port
@@ -55,20 +65,24 @@ dmp=""
 dmssl=""
 fi
 echo -e "${YELLOW}************ Select XPanel Version ************"
-echo -e "${GREEN}  1)XPanel v3.7"
+echo -e "${GREEN}  1)XPanel v3.7.7"
+echo -e "${GREEN}  2)XPanel v3.7.6"
 echo -ne "${GREEN}\nSelect Version : ${ENDCOLOR}" ;read n
 if [ "$n" != "" ]; then
 if [ "$n" == "1" ]; then
-linkd=https://api.github.com/repos/Alirezad07/X-Panel-SSH-User-Management/releases/tags/xpanelv37
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/37
+fi
+if [ "$n" == "2" ]; then
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/xpanel
 fi
 else
-linkd=https://api.github.com/repos/Alirezad07/X-Panel-SSH-User-Management/releases/tags/xpanelv37
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/xpanel
 fi
 
 echo -e "\nPlease input IP Server"
 printf "IP: "
 read ip
-if [ -n "$ip" -a "$ip" != "" ]
+if [ -n "$ip" -a "$ip" == " " ]; then
 echo -e "\nPlease input IP Server"
 printf "IP: "
 read ip
@@ -80,9 +94,42 @@ read usernametmp
 if [[ -n "${usernametmp}" ]]; then
 adminusername=${usernametmp}
 fi
-adminpassword=123456
+
+
+# Function to generate random uppercase character
+function random_uppercase {
+    echo $((RANDOM%26+65)) | awk '{printf("%c",$1)}'
+}
+
+# Function to generate random lowercase character
+function random_lowercase {
+    echo $((RANDOM%26+97)) | awk '{printf("%c",$1)}'
+}
+
+# Function to generate random digit
+function random_digit {
+    echo $((RANDOM%10))
+}
+
+# Generate a complex password
+password=""
+password="${password}$(random_uppercase)"
+password="${password}$(random_uppercase)"
+password="${password}$(random_uppercase)"
+password="${password}$(random_uppercase)"
+password="${password}$(random_digit)"
+password="${password}$(random_digit)"
+password="${password}$(random_digit)"
+password="${password}$(random_digit)"
+password="${password}$(random_lowercase)"
+password="${password}$(random_lowercase)"
+password="${password}$(random_lowercase)"
+
+adminpassword=${password}
+
+
 echo -e "\nPlease input Panel admin password."
-printf "Default password is \e[33m${adminpassword}\e[0m, let it blank to use this password : "
+printf "Randomly generated password is \e[33m${adminpassword}\e[0m, leave it blank to use this random password : "
 read passwordtmp
 if [[ -n "${passwordtmp}" ]]; then
 adminpassword=${passwordtmp}
@@ -115,6 +162,8 @@ sudo apt-get -y install software-properties-common
 sudo add-apt-repository ppa:ondrej/php -y
 apt-get install apache2 zip unzip net-tools curl mariadb-server -y
 apt-get install php php-cli php-mbstring php-dom php-pdo php-mysql -y
+apt-get install npm -y
+sudo apt-get install coreutils
 wait
 phpv=$(php -v)
 if [[ $phpv == *"8.1"* ]]; then
@@ -129,6 +178,7 @@ apt remove php -y
 apt autoremove -y
 apt install php8.1 php8.1-mysql php8.1-xml php8.1-curl cron -y
 fi
+curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
 echo "/bin/false" >> /etc/shells
 echo "/usr/sbin/nologin" >> /etc/shells
     
@@ -137,7 +187,7 @@ cat << EOF > /root/banner.txt
 Connect To Server
 EOF
 #Configuring stunnel
-mkdir /etc/stunnel
+sudo mkdir /etc/stunnel
 cat << EOF > /etc/stunnel/stunnel.conf
  cert = /etc/stunnel/stunnel.pem
  [openssh]
@@ -168,6 +218,42 @@ link=$(sudo curl -Ls "$linkd" | grep '"browser_download_url":' | sed -E 's/.*"([
 sudo wget -O /var/www/html/update.zip $link
 sudo unzip -o /var/www/html/update.zip -d /var/www/html/ &
 wait
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/sbin/adduser' | sudo EDITOR='tee -a' visudo &
+wait
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/sbin/userdel' | sudo EDITOR='tee -a' visudo &
+wait
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/sed' | sudo EDITOR='tee -a' visudo &
+wait
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/passwd' | sudo EDITOR='tee -a' visudo &
+wait
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/curl' | sudo EDITOR='tee -a' visudo &
+wait
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/kill' | sudo EDITOR='tee -a' visudo &
+wait
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/killall' | sudo EDITOR='tee -a' visudo &
+wait
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/lsof' | sudo EDITOR='tee -a' visudo &
+wait
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/sbin/lsof' | sudo EDITOR='tee -a' visudo &
+wait
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/sed' | sudo EDITOR='tee -a' visudo &
+wait
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/rm' | sudo EDITOR='tee -a' visudo &
+wait
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/crontab' | sudo EDITOR='tee -a' visudo &
+wait
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/mysqldump' | sudo EDITOR='tee -a' visudo &
+wait
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/pgrep' | sudo EDITOR='tee -a' visudo &
+wait
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/sbin/nethogs' | sudo EDITOR='tee -a' visudo &
+wait
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/nethogs' | sudo EDITOR='tee -a' visudo &
+wait
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/local/sbin/nethogs' | sudo EDITOR='tee -a' visudo &
+wait
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/netstat' | sudo EDITOR='tee -a' visudo &
+wait
 sudo a2enmod rewrite
 wait
 sudo service apache2 restart
@@ -180,8 +266,29 @@ sudo sed -i "s/AllowOverride None/AllowOverride All/g" /etc/apache2/apache2.conf
 wait
 sudo service apache2 restart
 wait
-echo -e "\nPlease input Panel admin Port."
-printf "Default port 8081: "
+clear
+# Random port number generator to prevent xpanel detection by potential attackers
+randomPort=""
+# Check if $RANDOM is available in the shell
+if [ -z "$RANDOM" ]; then
+  # If $RANDOM is not available, use a different random number generation method
+  random_number=$(od -A n -t d -N 2 /dev/urandom | tr -d ' ')
+else
+  # Generate a random number between 0 and 63000 using $RANDOM
+  random_number=$((RANDOM % 63001))
+fi
+
+# Add 2000 to the random number to get a range between 2000 and 65000
+randomPort=$((random_number + 2000))
+
+# Use port 8081 if the random_number is zero (in case $RANDOM was not available and port 8081 was chosen)
+if [ "$random_number" -eq 0 ]; then
+  randomPort=8081
+fi
+
+
+echo -e "\nPlease input Panel admin Port, or leave blank to use randomly generated port"
+printf "Random port \033[33m$randomPort:\033[0m "
 read porttmp
 if [[ -n "${porttmp}" ]]; then
 #Get the server port number from my settings file
@@ -189,7 +296,7 @@ serverPort=${porttmp}
 serverPortssl=$((serverPort+1))
 echo $serverPort
 else
-serverPort=8081
+serverPort=$randomPort
 serverPortssl=$((serverPort+1))
 echo $serverPort
 fi
@@ -285,7 +392,7 @@ systemctl enable httpd
 systemctl enable stunnel4
 systemctl restart stunnel4wait
 fi
-bash <(curl -Ls https://raw.githubusercontent.com/Alirezad07/Nethogs-Json-main/master/install.sh --ipv4)
+bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/Nethogs-Json-main/master/install.sh --ipv4)
 mysql -e "create database XPanel_plus;" &
 wait
 mysql -e "CREATE USER '${adminusername}'@'localhost' IDENTIFIED BY '${adminpassword}';" &
@@ -296,12 +403,19 @@ sed -i "s/DB_USERNAME=test/DB_USERNAME=$adminusername/" /var/www/html/app/.env
 sed -i "s/DB_PASSWORD=test/DB_PASSWORD=$adminpassword/" /var/www/html/app/.env
 cd /var/www/html/app
 php artisan migrate
-mysql -e "USE XPanel_plus; INSERT INTO admins (username, password, permission, credit, status) VALUES ($adminusername, $adminpassword, 'admin', '', 'active');"
+if [ -n "$adminuser" -a "$adminuser" != "NULL" ]
+then
+ mysql -e "USE XPanel_plus; UPDATE admins SET username = '${adminusername}' where id='1';"
+ mysql -e "USE XPanel_plus; UPDATE admins SET password = '${adminpassword}' where id='1';"
+ mysql -e "USE XPanel_plus; UPDATE settings SET ssh_port = '${port}' where id='1';"
+else
+mysql -e "USE XPanel_plus; INSERT INTO admins (username, password, permission, credit, status) VALUES ('${adminusername}', '${adminpassword}', 'admin', '', 'active');"
 home_url=$protcohttp://${defdomain}:$sshttp
-mysql -e "USE XPanel_plus; INSERT INTO settings (ssh_port, tls_port, t_token, t_id, language, multiuser, ststus_multiuser, home_url) VALUES ('22', '444', '', '', '', 'active', '', $home_url);"
+mysql -e "USE XPanel_plus; INSERT INTO settings (ssh_port, tls_port, t_token, t_id, language, multiuser, ststus_multiuser, home_url) VALUES ('${port}', '444', '', '', '', 'active', '', '${home_url}');"
+fi
+sed -i "s/PORT_SSH=22/PORT_SSH=$port/" /var/www/html/app/.env
+sudo chown -R www-data:www-data /var/www/html/app
 crontab -r
-wait
-chmod 644 /var/www/html/kill.sh
 wait
 multiin=$(echo "$protcohttp://${defdomain}:$sshttp/fixer/multiuser")
 cat > /var/www/html/kill.sh << ENDOFFILE
@@ -324,7 +438,8 @@ sudo sed -i 's/1i/$i/' /var/www/html/kill.sh
 wait
 sudo sed -i 's/((/$((/' /var/www/html/kill.sh
 wait
-
+chmod +x /var/www/html/kill.sh
+wait
 if [ "$xport" != "" ]; then
 pssl=$((xport+1))
 fi
@@ -335,8 +450,10 @@ systemctl enable stunnel4 &
 wait
 systemctl restart stunnel4 &
 wait
-curl -o /root/xpanel.sh https://raw.githubusercontent.com/Alirezad07/X-Panel-SSH-User-Management/main/cli.sh
-
+curl -o /root/xpanel.sh https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/cli.sh
+sudo wget -4 -O /usr/local/bin/xpanel https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/cli.sh
+chmod +x /usr/local/bin/xpanel 
+chown www-data:www-data /var/www/html/example/index.php
 clear
 
 echo -e "************ XPanel ************ \n"
