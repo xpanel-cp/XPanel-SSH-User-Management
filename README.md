@@ -3,8 +3,8 @@
 <img width="160" height="160"  alt="XPanel" src="https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/xlogo.png">
 </picture>
   </p> 
-<h1 align="center"/>X Panel</h1>
-<h6 align="center">X Panel SSH User Management<h6>
+<h1 align="center"/>XPanel</h1>
+<h6 align="center">XPanel SSH User Management<h6>
 <p align="center">
 <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/xpanel-cp/XPanel-SSH-User-Management">
 </p>
@@ -44,7 +44,7 @@
 :green_circle: فیک آدرس (جلوگیری از فیلترینگ) <br>
 :green_circle: محدودیت IP(جلوگیری از ورود کاربران به برخی سایت ها)<br>
 :green_circle: اتصال API<br>
-:orange_circle: مولتی سرور (به زودی)<br>
+:green_circle: [مولتی سرور](https://github.com/xpanel-cp/Xcs-Multi-Management-XPanel) <br>
 
 ## Telegram Channel:
 https://t.me/Xpanelssh
@@ -68,7 +68,7 @@ Ubuntu 18+ (پیشنهادی :Ubuntu 20)<br>
 
 تغییر نام کاربری، کلمه عبور و پورت همچنین حذف XPanel از روی سرور (نسخه 3.6 به بالاتر)
 ```
-bash /root/xpanel.sh OR bash xpanel.sh 
+bash /root/xpanel.sh OR bash xpanel.sh  OR xpanel
 ```
 برای نصب کافیست دستور زیر را وارد کنید<br>
 
