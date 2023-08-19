@@ -1,6 +1,9 @@
 <div class="card-body border-bottom pb-0">
     <ul class="nav nav-tabs analytics-tab" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
+            <a href="general" class="nav-link" type="button" role="tab" aria-selected="false" tabindex="-1">General</a>
+        </li>
+        <li class="nav-item" role="presentation">
             <a href="user" class="nav-link" type="button" role="tab" aria-selected="false" tabindex="-1">Multi User</a>
         </li>
         <li class="nav-item" role="presentation">

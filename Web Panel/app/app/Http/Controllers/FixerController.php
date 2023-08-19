@@ -20,8 +20,8 @@ class FixerController extends Controller
         $list_user = preg_split("/\r\n|\n|\r/", $output);
         foreach ($list_user as $us)
         {
-            $check_user = DB::table('users')->where('username', $us)->count();
-            if ($check_user < 0) {
+            $check_user = Users::where('username', $us)->count();
+            if ($check_user < 1) {
                 Process::run("sudo killall -u {$us}");
                 Process::run("sudo pkill -u {$us}");
                 Process::run("sudo timeout 10 pkill -u {$us}");
@@ -237,6 +237,7 @@ class FixerController extends Controller
                     }
                 }
                 //$newarray= json_encode($newarray);
+                $traffic_base=env('TRAFFIC_BASE');
                 foreach ($newarray as $username => $usr) {
                     $traffic = Traffic::where('username', $username)->get();
                     $user = $traffic[0];
@@ -245,10 +246,10 @@ class FixerController extends Controller
                     $usertotal = $user->total;
                     $rx = round($usr["RX"]);
                     $rx = ($rx) / 10;
-                    $rx = round(($rx / 12) * 100);
+                    $rx = round(($rx / $traffic_base) * 100);
                     $tx = round($usr["TX"]);
                     $tx = ($tx) / 10;
-                    $tx = round(($tx / 12) * 100);
+                    $tx = round(($tx / $traffic_base) * 100);
                     $tot = $rx + $tx;
                     $lastdownload = $userdownload + $rx;
                     $lastupload = $userupload + $tx;

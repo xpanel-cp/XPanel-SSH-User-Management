@@ -44,6 +44,7 @@ Route::prefix('cp')->group(function()
     Route::get('/checkip',[OnlineController::class,'filtering'])->name('filtering');
     Route::get('/settings',[SettingsController::class,'defualt'])->name('setting');
     Route::get('/settings/{name}',[SettingsController::class,'index'])->name('settings');
+    Route::post('/settings/general',[SettingsController::class,'update_general'])->name('settings.general');
     Route::post('/settings/user',[SettingsController::class,'update_multiuser'])->name('settings.multiuser');
     Route::post('/settings/telegram',[SettingsController::class,'update_telegram'])->name('settings.telegram');
     Route::post('/settings/backup',[SettingsController::class,'import_old'])->name('settings.backup.old');
@@ -82,6 +83,10 @@ Route::prefix('api')->group(function()
     Route::post('/retraffic',[ApiController::class,'retraffic_user'])->name('api.user.retraffic');
     Route::post('/renewal',[ApiController::class,'renewal_user'])->name('api.user.renewal');
     Route::get('/{token}/online',[ApiController::class,'online_user'])->name('api.user.online');
+    Route::get('/{token}/kill/{method}/{param}',[ApiController::class,'kill'])->name('api.user.kill');
+    Route::get('/{token}/backup',[ApiController::class,'backup'])->name('api.backup');
+    Route::get('/{token}/backup/dl/{name}',[ApiController::class,'download_backup'])->name('api.backup.download');
+    Route::get('/{token}/filtering',[ApiController::class,'filtering'])->name('api.filtering');
 });
 Route::prefix('fixer')->group(function() {
     Route::get('/exp', [FixerController::class, 'cronexp'])->name('exp');

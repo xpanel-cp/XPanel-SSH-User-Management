@@ -43,6 +43,10 @@ class SettingsController extends Controller
         }
         $setting = Settings::all();
         $apis =Api::all();
+        if($name=='general') {
+            $traffic_base=env('TRAFFIC_BASE');
+            return view('settings.general', compact('traffic_base'));}
+
         if($name=='user') {
             $status=$setting[0]->multiuser;
             return view('settings.index', compact('status'));}
@@ -78,6 +82,19 @@ class SettingsController extends Controller
 
     }
 
+    public function update_general(Request $request)
+    {
+        $this->check();
+        $request->validate([
+            'trafficbase'=>'required|numeric'
+        ]);
+        $traffic_base_old=env('TRAFFIC_BASE');
+        $traffic_base_new=$request->trafficbase;
+        $fileContents = file_get_contents('/var/www/html/app/.env');
+        $newContents = str_replace("TRAFFIC_BASE=".$traffic_base_old, "TRAFFIC_BASE=".$traffic_base_new, $fileContents);
+        file_put_contents('/var/www/html/app/.env', $newContents);
+        return redirect()->intended(route('settings', ['name' => 'general']));
+    }
     public function update_multiuser(Request $request)
     {
         $this->check();

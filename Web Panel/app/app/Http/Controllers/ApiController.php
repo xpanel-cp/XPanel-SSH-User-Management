@@ -377,5 +377,98 @@ class ApiController extends Controller
         $data = json_decode(json_encode($data));
         return response()->json($data);
     }
+    public function kill(Request $request, $token,$method,$param)
+    {
+        if (!is_string($method) and !is_string($param) and !is_string($token)) {
+            abort(400, 'Not Valid Method and Param');
+        }
+        $this->checktoken($token);
+        if($method=='user')
+        {
+            Process::run("sudo killall -u {$param}");
+            Process::run("sudo pkill -u {$param}");
+            Process::run("sudo timeout 10 pkill -u {$param}");
+            Process::run("sudo timeout 10 killall -u {$param}");
+        }
+        elseif($method=='id')
+        {
+            Process::run("sudo kill -9 {$param}");
+        }
+
+        return response()->json(['message' => 'User Killed']);
+    }
+    public function backup(Request $request, $token)
+    {
+        if (!is_string($token)) {
+            abort(400, 'Not Valid Method and Param');
+        }
+        $this->checktoken($token);
+        $date = date("Y-m-d---h-i-s");
+        Process::run("mysqldump -u '" .env('DB_USERNAME'). "' --password='" .env('DB_PASSWORD'). "' XPanel_plus > /var/www/html/app/storage/backup/XPanel-".$date.".sql");
+        $download=$_SERVER["SERVER_ADDR"].':'.env('PORT_PANEL')."/api/$token/backup/dl/XPanel-".$date.".sql";
+
+        return response()->json(['message' => 'Backup Maked','link' => $download]);
+    }
+    public function download_backup(Request $request,$token,$name)
+    {
+
+        if (!is_string($name) and !is_string($token)) {
+            abort(400, 'Not Valid Username');
+        }
+        $this->checktoken($token);
+        $fileName = $name;
+        $filePath = storage_path('backup/'.$fileName);
+
+        if (file_exists('/var/www/html/app/storage/backup/'.$fileName)) {
+            return response()->download($filePath, $fileName, [
+                'Content-Type' => 'text/plain',
+                'Content-Disposition' => 'attachment',
+            ])->deleteFileAfterSend(true);
+        }
+    }
+    public function filtering(Request $request,$token)
+    {
+        if (!is_string($token)) {
+            abort(400, 'Not Valid Token');
+        }
+        $this->checktoken($token);
+        $data = [];
+        $serverip = $_SERVER["SERVER_ADDR"];
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, "https://check-host.net/check-tcp?host=" . $serverip.":".env('PORT_SSH')."&max_nodes=50");
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $headers = ["Accept: application/json", "Cache-Control: no-cache"];
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        $response = curl_exec($ch);
+        curl_close($ch);
+        $array = json_decode($response, true);
+        $resultlink = "https://check-host.net/check-result/" . $array["request_id"];
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $resultlink);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $headers = ["Accept: application/json", "Cache-Control: no-cache"];
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        sleep(3);
+        $server_output = curl_exec($ch);
+        curl_close($ch);
+        $array2 = json_decode($server_output, true);
+        foreach ($array2 as $key => $value) {
+            $flag = str_replace(".node.check-host.net", "", $key);
+            if (is_numeric($value[0]["time"])) {
+                $status = "Online";
+            } else {
+                $status = "Filter";
+            }
+            $data[] = [
+                "location" => $flag,
+                "status" => $status
+            ];
+
+        }
+        $data = json_decode(json_encode($data));
+        return response()->json($data);
+    }
 
 }
