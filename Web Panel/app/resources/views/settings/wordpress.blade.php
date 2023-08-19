@@ -34,7 +34,7 @@
                                         <p class="form-text text-muted">After installing WordPress, when your domain address is entered in the browser without the login panel port, the WordPress website you installed will be loaded.</p>
                                         <p class="form-text text-muted">To install WordPress, first create the database through the command below, then install WordPress with the database specifications.</p>
                                         <code>bash <(curl -Ls
-                                            https://raw.githubusercontent.com/Alirezad07/X-Panel-SSH-User-Management/main/wp-install.sh
+                                            https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/wp-install.sh
                                             --ipv4)</code>
                                         <br>
                                         <p class="form-text text-muted">The Database Name step will be the name of your WordPress database</p>

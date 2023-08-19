@@ -32,7 +32,7 @@
                                         To block Iranian IP addresses (ports 80 and 443), execute the following command in the terminal:
                                         <br>
                                         <b>
-                                            bash /root/xpanel.sh <span style="color:red">OR</span> bash xpanel.sh
+                                            bash /root/xpanel.sh <span style="color:red">OR</span> bash xpanel.sh <span style="color:red">OR</span> xpanel
                                         </b>
                                     </div>
                                 </div>
