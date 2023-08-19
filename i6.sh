@@ -69,7 +69,8 @@ xport=""
 dmp=""
 dmssl=""
 fi
-clear
+
+
 echo -e "${YELLOW}************ Select XPanel Version ************"
 echo -e "${GREEN}  1)XPanel v3.7.7"
 echo -e "${GREEN}  2)XPanel v3.7.6"
