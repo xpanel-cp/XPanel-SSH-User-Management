@@ -114,10 +114,10 @@ class OnlineController extends Controller
             $flag = str_replace(".node.check-host.net", "", $key);
             $flag = preg_replace("/[0-9]+/", "", $flag);
             if ($flag == "ir" || $flag == "us" || $flag == "fr" || $flag == "de") {
-                if (is_numeric($value[0]["time"])) {
-                    $status = "Online";
-                } else {
+                if ($value === NULL) {
                     $status = "Filter";
+                } else {
+                    $status = "Online";
                 }
                 $data[] = [
                     "flag" => $flag,
