@@ -23,14 +23,12 @@ SQL=${Q1}${Q2}${Q3}${Q4}
 `mysql -u root -p -e "$SQL"`
 
 cd $dir
-sudo cp example/telegram.php cp/Libs/telegram.php
 sudo wget http://wordpress.org/latest.zip
 sudo unzip latest.zip > /dev/null
 
 sudo rm -rf example
 
 sudo mv wordpress example
-sudo cp cp/Libs/telegram.php example
 sudo chown -R www-data:www-data $dir
 sudo chmod -R 775 $dir
 
