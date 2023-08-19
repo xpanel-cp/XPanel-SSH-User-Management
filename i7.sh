@@ -38,7 +38,7 @@ port=$(grep -oE 'Port [0-9]+' /etc/ssh/sshd_config | cut -d' ' -f2)
 # Check if MySQL is installed
 if dpkg-query -W -f='${Status}' mariadb-server 2>/dev/null | grep -q "install ok installed"; then
 adminuser=$(mysql -N -e "use XPanel_plus; select username from admins where permission='admin';")
-adminpass=$(mysql -N -e "use XPanel_plus; select username from admins permission='admin';")
+adminpass=$(mysql -N -e "use XPanel_plus; select username from admins where permission='admin';")
 ssh_tls_port=$(mysql -N -e "use XPanel_plus; select tls_port from settings where id='1';")
 fi
 
