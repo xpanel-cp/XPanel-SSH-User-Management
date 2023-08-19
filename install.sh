@@ -464,6 +464,7 @@ curl -o /root/xpanel.sh https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-U
 sudo wget -4 -O /usr/local/bin/xpanel https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/cli.sh
 chmod +x /usr/local/bin/xpanel 
 chown www-data:www-data /var/www/html/example/index.php
+sed -i "s/PORT_PANEL=.*/PORT_PANEL=$sshttp/g" /var/www/html/app/.env
 clear
 
 echo -e "************ XPanel ************ \n"
