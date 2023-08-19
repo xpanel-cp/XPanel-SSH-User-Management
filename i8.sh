@@ -407,8 +407,10 @@ mysql -e "CREATE USER '${adminusername}'@'localhost' IDENTIFIED BY '${adminpassw
 wait
 mysql -e "GRANT ALL ON *.* TO '${adminusername}'@'localhost';" &
 wait
-sed -i "s/DB_USERNAME=test/DB_USERNAME=$adminusername/" /var/www/html/app/.env
-sed -i "s/DB_PASSWORD=test/DB_PASSWORD=$adminpassword/" /var/www/html/app/.env
+mysql -e "ALTER USER '${adminusername}'@'localhost' IDENTIFIED BY '${adminpassword}';" &
+wait
+sed -i "s/DB_USERNAME=.*/DB_USERNAME=$adminusername/g" /var/www/html/app/.env
+sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$adminpassword/g" /var/www/html/app/.env
 cd /var/www/html/app
 php artisan migrate
 if [ -n "$adminuser" -a "$adminuser" != "NULL" ]
@@ -421,7 +423,7 @@ mysql -e "USE XPanel_plus; INSERT INTO admins (username, password, permission, c
 home_url=$protcohttp://${defdomain}:$sshttp
 mysql -e "USE XPanel_plus; INSERT INTO settings (ssh_port, tls_port, t_token, t_id, language, multiuser, ststus_multiuser, home_url) VALUES ('${port}', '444', '', '', '', 'active', '', '${home_url}');"
 fi
-sed -i "s/PORT_SSH=22/PORT_SSH=$port/" /var/www/html/app/.env
+sed -i "s/PORT_SSH=.*/PORT_SSH=$port/g" /var/www/html/app/.env
 sudo chown -R www-data:www-data /var/www/html/app
 crontab -r
 wait
