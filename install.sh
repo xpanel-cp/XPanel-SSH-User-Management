@@ -37,8 +37,8 @@ port=$(grep -oE 'Port [0-9]+' /etc/ssh/sshd_config | cut -d' ' -f2)
 
 # Check if MySQL is installed
 if dpkg-query -W -f='${Status}' mariadb-server 2>/dev/null | grep -q "install ok installed"; then
-adminuser=$(mysql -N -e "use XPanel_plus; select username from admins where id='1';")
-adminpass=$(mysql -N -e "use XPanel_plus; select username from admins where id='1';")
+adminuser=$(mysql -N -e "use XPanel_plus; select username from admins where permission='admin';")
+adminpass=$(mysql -N -e "use XPanel_plus; select username from admins where permission='admin';")
 ssh_tls_port=$(mysql -N -e "use XPanel_plus; select tls_port from settings where id='1';")
 fi
 
@@ -69,7 +69,8 @@ xport=""
 dmp=""
 dmssl=""
 fi
-clear
+
+
 echo -e "${YELLOW}************ Select XPanel Version ************"
 echo -e "${GREEN}  1)XPanel v3.7.7"
 echo -e "${GREEN}  2)XPanel v3.7.6"
@@ -406,21 +407,23 @@ mysql -e "CREATE USER '${adminusername}'@'localhost' IDENTIFIED BY '${adminpassw
 wait
 mysql -e "GRANT ALL ON *.* TO '${adminusername}'@'localhost';" &
 wait
-sed -i "s/DB_USERNAME=test/DB_USERNAME=$adminusername/" /var/www/html/app/.env
-sed -i "s/DB_PASSWORD=test/DB_PASSWORD=$adminpassword/" /var/www/html/app/.env
+mysql -e "ALTER USER '${adminusername}'@'localhost' IDENTIFIED BY '${adminpassword}';" &
+wait
+sed -i "s/DB_USERNAME=.*/DB_USERNAME=$adminusername/g" /var/www/html/app/.env
+sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$adminpassword/g" /var/www/html/app/.env
 cd /var/www/html/app
 php artisan migrate
 if [ -n "$adminuser" -a "$adminuser" != "NULL" ]
 then
- mysql -e "USE XPanel_plus; UPDATE admins SET username = '${adminusername}' where id='1';"
- mysql -e "USE XPanel_plus; UPDATE admins SET password = '${adminpassword}' where id='1';"
+ mysql -e "USE XPanel_plus; UPDATE admins SET username = '${adminusername}' where permission='admin';"
+ mysql -e "USE XPanel_plus; UPDATE admins SET password = '${adminpassword}' where permission='admin';"
  mysql -e "USE XPanel_plus; UPDATE settings SET ssh_port = '${port}' where id='1';"
 else
 mysql -e "USE XPanel_plus; INSERT INTO admins (username, password, permission, credit, status) VALUES ('${adminusername}', '${adminpassword}', 'admin', '', 'active');"
 home_url=$protcohttp://${defdomain}:$sshttp
 mysql -e "USE XPanel_plus; INSERT INTO settings (ssh_port, tls_port, t_token, t_id, language, multiuser, ststus_multiuser, home_url) VALUES ('${port}', '444', '', '', '', 'active', '', '${home_url}');"
 fi
-sed -i "s/PORT_SSH=22/PORT_SSH=$port/" /var/www/html/app/.env
+sed -i "s/PORT_SSH=.*/PORT_SSH=$port/g" /var/www/html/app/.env
 sudo chown -R www-data:www-data /var/www/html/app
 crontab -r
 wait
