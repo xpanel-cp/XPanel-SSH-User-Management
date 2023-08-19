@@ -37,8 +37,8 @@ port=$(grep -oE 'Port [0-9]+' /etc/ssh/sshd_config | cut -d' ' -f2)
 
 # Check if MySQL is installed
 if dpkg-query -W -f='${Status}' mariadb-server 2>/dev/null | grep -q "install ok installed"; then
-adminuser=$(mysql -N -e "use XPanel_plus; select username from admins where id='1';")
-adminpass=$(mysql -N -e "use XPanel_plus; select username from admins where id='1';")
+adminuser=$(mysql -N -e "use XPanel_plus; select username from admins where permission='admin';")
+adminpass=$(mysql -N -e "use XPanel_plus; select username from admins permission='admin';")
 ssh_tls_port=$(mysql -N -e "use XPanel_plus; select tls_port from settings where id='1';")
 fi
 
@@ -412,8 +412,8 @@ cd /var/www/html/app
 php artisan migrate
 if [ -n "$adminuser" -a "$adminuser" != "NULL" ]
 then
- mysql -e "USE XPanel_plus; UPDATE admins SET username = '${adminusername}' where id='1';"
- mysql -e "USE XPanel_plus; UPDATE admins SET password = '${adminpassword}' where id='1';"
+ mysql -e "USE XPanel_plus; UPDATE admins SET username = '${adminusername}' where permission='admin';"
+ mysql -e "USE XPanel_plus; UPDATE admins SET password = '${adminpassword}' where permission='admin';"
  mysql -e "USE XPanel_plus; UPDATE settings SET ssh_port = '${port}' where id='1';"
 else
 mysql -e "USE XPanel_plus; INSERT INTO admins (username, password, permission, credit, status) VALUES ('${adminusername}', '${adminpassword}', 'admin', '', 'active');"
