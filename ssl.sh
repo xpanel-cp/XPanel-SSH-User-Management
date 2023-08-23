@@ -323,6 +323,6 @@ wait
 sudo sed -i 's/((/$((/' /var/www/html/kill.sh
 
 (crontab -l | grep . ; echo -e "* * * * * /var/www/html/kill.sh") | crontab -
-(crontab -l ; echo "* * * * * wget -q -O /dev/null 'https://${domain}:$portssl//fixer/exp' > /dev/null 2>&1") | crontab -
+(crontab -l ; echo "* * * * * wget -q -O /dev/null 'https://${domain}:$portssl/fixer/exp' > /dev/null 2>&1") | crontab -
 clear
 printf "\nHTTPS Address : https://${domain}:$portssl/login \n"
