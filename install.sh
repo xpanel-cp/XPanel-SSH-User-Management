@@ -12,6 +12,30 @@ then echo "Please run as root"
 exit
 fi
 
+
+# List of supported distributions
+#supported_distros=("Ubuntu" "Debian" "Fedora" "CentOS" "Arch")
+supported_distros=("Ubuntu")
+# Get the distribution name and version
+if [[ -f "/etc/os-release" ]]; then
+    source "/etc/os-release"
+    distro_name=$NAME
+    distro_version=$VERSION_ID
+else
+    echo "Unable to determine distribution."
+    exit 1
+fi
+# Check if the distribution is supported
+if [[ " ${supported_distros[@]} " =~ " ${distro_name} " ]]; then
+    echo "Your Linux distribution is ${distro_name} ${distro_version}. It is supported."
+    : #no-op command
+else
+    # Print error message in red
+    echo -e "\e[31mYour Linux distribution (${distro_name} ${distro_version}) is not currently supported.\e[0m"
+    exit 1
+fi
+
+
 # php7.x is End of life https://www.php.net/supported-versions.php ubuntu bellow 20 is not supported by php8.1 in 2023
 if [ "$(uname)" == "Linux" ]; then
     version_info=$(lsb_release -rs)
