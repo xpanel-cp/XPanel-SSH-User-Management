@@ -54,7 +54,8 @@ function show_menu() {
     echo "9. UnBlock Port 80 and 443 IRAN"
     echo "10. Install Dropbear"
     echo "11. Install Wordpress"
-    echo "12. Exit"
+    echo "12. Fix Call (UDPGW)"
+    echo "13. Exit"
 }
 
 # Function to select an option
@@ -140,7 +141,10 @@ EOF
             11)
             bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/wp-install.sh --ipv4)
             ;;
-        12)
+            12)
+            bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/fix-call.sh --ipv4)
+            ;;
+        13)
             echo "Exiting the menu."
             exit 0
             ;;
