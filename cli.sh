@@ -52,7 +52,8 @@ function show_menu() {
     echo "7. Change Banner Text"
     echo "8. Blocked Port 80 and 443 IRAN"
     echo "9. UnBlock Port 80 and 443 IRAN"
-    echo "10. Exit"
+    echo "10. Install Dropbear"
+    echo "11. Exit"
 }
 
 # Function to select an option
@@ -132,7 +133,10 @@ EOF
             9)
              sudo iptables -F
             ;;
-        10)
+            10)
+            bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/Dropbear-ssh/main/install.sh)
+            ;;
+        11)
             echo "Exiting the menu."
             exit 0
             ;;
