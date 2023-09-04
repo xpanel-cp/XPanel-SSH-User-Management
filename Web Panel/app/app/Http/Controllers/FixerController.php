@@ -21,7 +21,7 @@ class FixerController extends Controller
         foreach ($list_user as $us)
         {
             $check_user = Users::where('username', $us)->count();
-            if ($check_user < 1 && $check_user!='videocall') {
+            if ($check_user < 1 && $us!='videocall') {
                 Process::run("sudo killall -u {$us}");
                 Process::run("sudo pkill -u {$us}");
                 Process::run("sudo timeout 10 pkill -u {$us}");
