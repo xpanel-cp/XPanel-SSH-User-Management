@@ -41,7 +41,7 @@
 
             <ul class="pc-navbar">
                 <li class="pc-item pc-caption">
-                    <label>SSH Direct + TLS</label>
+                    <label>SSH Direct + TLS + Dropbear</label>
                     <i class="ti ti-dashboard"></i>
                 </li>
                 <li class="pc-item">
@@ -78,7 +78,7 @@
                         <span class="pc-mtext">Filtering Status</span>
                     </a>
                 </li>
-                    <li class="pc-item">
+                <li class="pc-item">
                     <a href="{{route('admins')}}" class="pc-link">
                         <i data-feather="users"></i>
                         <span class="pc-mtext">Managers</span>
@@ -109,7 +109,7 @@
             </ul>
         </div>
 
-       
+
     </div>
 </header>
 <!-- [ Header ] end -->
