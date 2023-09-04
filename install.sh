@@ -96,22 +96,26 @@ fi
 
 
 echo -e "${YELLOW}************ Select XPanel Version ************"
-echo -e "${GREEN}  1)XPanel v3.7.8"
-echo -e "${GREEN}  2)XPanel v3.7.7"
-echo -e "${GREEN}  3)XPanel v3.7.6"
+echo -e "${GREEN}  1)XPanel v3.7.9"
+echo -e "${GREEN}  2)XPanel v3.7.8"
+echo -e "${GREEN}  3)XPanel v3.7.7"
+echo -e "${GREEN}  4)XPanel v3.7.6"
 echo -ne "${GREEN}\nSelect Version : ${ENDCOLOR}" ;read n
 if [ "$n" != "" ]; then
 if [ "$n" == "1" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-8
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-9
 fi
 if [ "$n" == "2" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/37
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-8
 fi
 if [ "$n" == "3" ]; then
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/37
+fi
+if [ "$n" == "4" ]; then
 linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/xpanel
 fi
 else
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/xpanel
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-9
 fi
 
 echo -e "\nPlease input IP Server"
