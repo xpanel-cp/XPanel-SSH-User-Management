@@ -154,7 +154,7 @@ class UserController extends Controller
                     'start_date' => '',
                     'end_date' => '',
                     'date_one_connect' => $request->connection_start,
-                    'customer_user' => $user_s->id,
+                    'customer_user' => $user_s->username,
                     'status' => 'active',
                     'traffic' => $traffic,
                     'referral' => '',

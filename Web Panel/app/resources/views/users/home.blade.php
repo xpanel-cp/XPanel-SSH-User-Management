@@ -391,7 +391,7 @@ Password:{{$user->password}}&nbsp;
                                             @csrf
                                             <input type="text" name="username" class="form-control"
                                                    placeholder="Username" autocomplete="off"
-                                                   onkeyup="if (/[^|a-z0-9]+/g.test(this.value)) this.value = this.value.replace(/[^-a-z0-9]+/g,'')"
+                                                   onkeyup="if (/[^|a-z0-9]+/g.test(this.value)) this.value = this.value.replace(/[^-a-z0-9_]+/g,'')"
                                                    required>
                                             <small class="form-text text-muted">Enter Username</small>
                                         </div>
