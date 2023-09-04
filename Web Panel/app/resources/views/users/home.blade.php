@@ -196,11 +196,23 @@
                                                                     data-bs-toggle="dropdown" aria-haspopup="true"
                                                                     aria-expanded="false"><i class="ti ti-share f-18"></i>
                                                             </button>
+
                                                             <div class="dropdown-menu">
                                                                 <a href="javascript:void(0);" class="dropdown-item" style="border:none"
                                                                    data-clipboard="true"
                                                                    data-clipboard-text="Host:{{$_SERVER["SERVER_NAME"]}}&nbsp;
 Port:{{env('PORT_SSH')}}&nbsp;
+Username:{{$user->username}}&nbsp;
+Password:{{$user->password}}&nbsp;
+@if (!empty($startdate))
+                                                                       StartTime:{{$startdate}}&nbsp;
+@endif
+                                                                   @if (!empty($finishdate))
+                                                                       EndTime:{{$finishdate}}
+                                                                   @endif">Copy Config (Direct)</a>
+                                                                <a href="javascript:void(0);" class="dropdown-item" style="border:none"
+                                                                   data-clipboard="true"
+                                                                   data-clipboard-text="Host:{{$_SERVER["SERVER_NAME"]}}&nbsp;
 TLS Port:{{$tls_port}}&nbsp;
 Username:{{$user->username}}&nbsp;
 Password:{{$user->password}}&nbsp;
@@ -209,7 +221,19 @@ Password:{{$user->password}}&nbsp;
 @endif
                                                                    @if (!empty($finishdate))
                                                                        EndTime:{{$finishdate}}
-                                                                   @endif">Copy Config</a>
+                                                                   @endif">Copy Config (TLS)</a>
+                                                                <a href="javascript:void(0);" class="dropdown-item" style="border:none"
+                                                                   data-clipboard="true"
+                                                                   data-clipboard-text="Host:{{$_SERVER["SERVER_NAME"]}}&nbsp;
+Port:{{env('PORT_DROPBEAR')}}&nbsp;
+Username:{{$user->username}}&nbsp;
+Password:{{$user->password}}&nbsp;
+@if (!empty($startdate))
+                                                                       StartTime:{{$startdate}}&nbsp;
+@endif
+                                                                   @if (!empty($finishdate))
+                                                                       EndTime:{{$finishdate}}
+                                                                   @endif">Copy Config (Dropbear)</a>
                                                                 @php
                                                                     $at="@";
                                                                 @endphp
@@ -222,9 +246,14 @@ Password:{{$user->password}}&nbsp;
                                                                    data-clipboard="true"
                                                                    data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$_SERVER["SERVER_NAME"]}}:{{$tls_port}}/#{{$user->username}}">Link SSH TLS
                                                                 </a>
+                                                                <a href="javascript:void(0);" class="dropdown-item" style="border:none"
+                                                                   data-clipboard="true"
+                                                                   data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$_SERVER["SERVER_NAME"]}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}">Link SSH Dropbear
+                                                                </a>
                                                                 <a href="javascript:void(0);" class="qrs dropdown-item"
                                                                    data-tls="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$_SERVER["SERVER_NAME"]}}:{{$tls_port}}/#{{$user->username}}"
                                                                    data-id="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$_SERVER["SERVER_NAME"]}}:{{env('PORT_SSH')}}/#{{$user->username}}"
+                                                                   data-drop="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$_SERVER["SERVER_NAME"]}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}"
                                                                    data-bs-toggle="modal"
                                                                    data-bs-target="#qr-modal">
                                                                     QR
@@ -253,12 +282,15 @@ Password:{{$user->password}}&nbsp;
     <!-- qr -->
     <div class="modal fade" id="qr-modal" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content" style="display: -webkit-inline-box; text-align: center;width: 600px;">
+            <div class="modal-content" style="display: -webkit-inline-box; text-align: center;">
                 <div><br>
                     SSH DIRECT<br><span id="idHolderSSH"></span>
                 </div>
                 <div><br>
                     SSH TLS<br><span id="idHolderTLS"></span>
+                </div>
+                <div><br>
+                    SSH Dropbear<br><span id="idHolderDROP"></span>
                 </div>
             </div>
         </div>
@@ -647,10 +679,13 @@ Password:{{$user->password}}&nbsp;
         $(document).on("click", ".qrs", function () {
             var eventId = $(this).data('id');
             var eventIdtls = $(this).data('tls');
-            var qr = "<img src=\"https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=" + eventId + "&choe=UTF-8\" title=" + eventId + " />";
-            var qrtls = "<img src=\"https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=" + eventIdtls + "&choe=UTF-8\" title=" + eventIdtls + " />";
+            var eventIddrop = $(this).data('drop');
+            var qr = "<img src=\"https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=" + eventId + "&choe=UTF-8\" title=" + eventId + " />";
+            var qrtls = "<img src=\"https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=" + eventIdtls + "&choe=UTF-8\" title=" + eventIdtls + " />";
+            var qrdrop = "<img src=\"https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=" + eventIddrop + "&choe=UTF-8\" title=" + eventIddrop + " />";
             $('#idHolderSSH').html(qr);
             $('#idHolderTLS').html(qrtls);
+            $('#idHolderDROP').html(qrdrop);
         });
     </script>
     <script type="text/javascript">

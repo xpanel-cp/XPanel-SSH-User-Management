@@ -159,10 +159,16 @@ class ApiController extends Controller
         if (!is_string($username)) {
             abort(400, 'Not Valid Token');
         }
-
+        $settings = Settings::all();
+        $tls_port=$settings[0]->tls_port;
         $check_user = Users::where('username', $username)->count();
         if ($check_user > 0) {
             $user=Users::where('username', $username)->with('traffics')->get();
+            $user[] = [
+                "port_direct" => env('PORT_SSH'),
+                "port_tls" => $tls_port,
+                "port_dropbear" => env('PORT_DROPBEAR')
+            ];
             return response()->json($user);
         }
         else

@@ -21,7 +21,7 @@ class FixerController extends Controller
         foreach ($list_user as $us)
         {
             $check_user = Users::where('username', $us)->count();
-            if ($check_user < 1) {
+            if ($check_user < 1 and $check_user!='videocall') {
                 Process::run("sudo killall -u {$us}");
                 Process::run("sudo pkill -u {$us}");
                 Process::run("sudo timeout 10 pkill -u {$us}");
@@ -95,6 +95,15 @@ class FixerController extends Controller
             }
             $onlinelist[] = $userarray[2];
         }
+
+        $jsonFilePath = '/var/www/html/app/storage/dropbear.json';
+        $jsonData = file_get_contents($jsonFilePath);
+        $dataArray = json_decode($jsonData, true);
+        foreach ($dataArray as $item) {
+            $user = $item['user'];
+            $onlinelist[] = $user;
+        }
+
         //print_r($onlinelist);
         $onlinelist = array_replace($onlinelist, array_fill_keys(array_keys($onlinelist, null), ''));
         $onlinecount = array_count_values($onlinelist);
@@ -123,6 +132,12 @@ class FixerController extends Controller
                 }
                 if ($limitation !== "0" && $onlinecount[$username] > $limitation){
                     if ($multiuser == 'active') {
+                        foreach ($dataArray as $item) {
+                            if (isset($item['user']) && $item['user'] === $username) {
+                                $pid = $item['PID'];
+                                Process::run("sudo kill -9 {$pid}");
+                            }
+                        }
                         Process::run("sudo killall -u {$username}");
                         Process::run("sudo pkill -u {$username}");
                         Process::run("sudo timeout 10 pkill -u {$username}");
@@ -136,6 +151,7 @@ class FixerController extends Controller
         }
         $this->synstraffics();
         $this->cronexp_traffic();
+        $this->synstraffics_drop();
     }
 
     public function cronexp_traffic()
@@ -161,7 +177,66 @@ class FixerController extends Controller
             }
         }
     }
+    public function synstraffics_drop()
+    {
+        $newarray_drop=[];
+        if (file_exists("/var/www/html/app/storage/out.json")) {
+            $out = file_get_contents("/var/www/html/app/storage/out.json");
+            $trafficlog = preg_split("/\r\n|\n|\r/", $out);
+            $trafficlog = array_filter($trafficlog);
+            $lastdata = end($trafficlog);
+            $json = json_decode($lastdata, true);
+            $traffic_base = env('TRAFFIC_BASE');
+            if (file_exists("/var/www/html/app/storage/dropbear.json")) {
 
+                if (is_array($json)) {
+                    foreach ($json as $value) {
+                        $TX = round($value["TX"], 0);
+                        $RX = round($value["RX"], 0);
+                        $PID = $value["PID"];
+                        $name = $value["name"];
+                        $jsonData = file_get_contents("/var/www/html/app/storage/dropbear.json");
+                        $dataArray = json_decode($jsonData, true);
+                        foreach ($dataArray as $item) {
+                            if (isset($item['PID']) && $item['PID'] == $PID && $name=='/usr/sbin/dropbear') {
+                                $username = $item['user'];
+                                $traffic = Traffic::where('username', $username)->get();
+                                $user = $traffic[0];
+                                $userdownload = $user->download;
+                                $userupload = $user->upload;
+                                $usertotal = $user->total;
+                                $rx = round($RX);
+                                $rx = ($rx) / 10;
+                                $rx = round(($rx / $traffic_base) * 100);
+                                $tx = round($TX);
+                                $tx = ($tx) / 10;
+                                $tx = round(($tx / $traffic_base) * 100);
+                                $tot = $rx + $tx;
+                                $lastdownload = $userdownload + $rx;
+                                $lastupload = $userupload + $tx;
+                                $lasttotal = $usertotal + $tot;
+
+                                $check_traffic = Traffic::where('username', $username)->count();
+                                if ($check_traffic < 1) {
+
+                                    Traffic::create([
+                                        'username' => $username,
+                                        'download' => $lastdownload,
+                                        'upload' => $lastupload,
+                                        'total' => $lasttotal
+                                    ]);
+
+                                } else {
+                                    Traffic::where('username', $username)
+                                        ->update(['download' => $lastdownload, 'upload' => $lastupload, 'total' => $lasttotal]);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
     public function synstraffics()
     {
         $list = Process::run("pgrep nethogs");
@@ -180,14 +255,13 @@ class FixerController extends Controller
                 foreach ($json as $value) {
                     $TX = round($value["TX"], 0);
                     $RX = round($value["RX"], 0);
+                    $PID = round($value["PID"], 0);
+
                     $name = preg_replace("/\\s+/", "", $value["name"]);
                     if (strpos($name, "sshd") === false) {
                         $name = "";
                     }
                     if (strpos($name, "root") !== false) {
-                        $name = "";
-                    }
-                    if (strpos($name, "/usr/sbin/dropbear") !== false) {
                         $name = "";
                     }
                     if (strpos($name, "/usr/bin/stunnel4") !== false) {
@@ -231,8 +305,9 @@ class FixerController extends Controller
                         if (isset($newarray[$name])) {
                             $newarray[$name]["TX"] + $TX;
                             $newarray[$name]["RX"] + $RX;
+                            $newarray[$name]["PID"] + $PID;
                         } else {
-                            $newarray[$name] = ["RX" => $RX, "TX" => $TX, "Total" => $RX + $TX];
+                            $newarray[$name] = ["RX" => $RX, "TX" => $TX, "Total" => $RX + $TX, "PID" => $PID];
                         }
                     }
                 }
@@ -256,7 +331,6 @@ class FixerController extends Controller
                     $lasttotal = $usertotal + $tot;
 
                     $check_traffic = Traffic::where('username', $username)->count();
-
                     if ($check_traffic < 1) {
 
                         Traffic::create([

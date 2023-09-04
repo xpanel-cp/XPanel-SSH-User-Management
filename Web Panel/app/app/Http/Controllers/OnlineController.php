@@ -45,10 +45,15 @@ class OnlineController extends Controller
         $this->check();
         $duplicate = [];
         $data = [];
+        $total = [];
 
         $list = Process::run("sudo lsof -i :" . env('PORT_SSH') . " -n | grep -v root | grep ESTABLISHED");
         $output = $list->output();
         $onlineuserlist = preg_split("/\r\n|\n|\r/", $output);
+
+        $list_drop = Process::run("sudo lsof -i :" . env('PORT_DROPBEAR') . " -n | grep ESTABLISHED");
+        $output_drop = $list_drop->output();
+        $onlineuserlist_drop = preg_split("/\r\n|\n|\r/", $output_drop);
 
         foreach ($onlineuserlist as $user) {
             $user = preg_replace("/\\s+/", " ", $user);
@@ -79,11 +84,86 @@ class OnlineController extends Controller
                     "username" => $userarray[2],
                     "color" => $color,
                     "ip" => $userip,
-                    "pid" => $userarray[1]
+                    "pid" => $userarray[1],
+                    "protocol" => "Direct OR TLS"
                 ];
             }
         }
-        $data = json_decode(json_encode($data));
+
+        //Dropbear
+
+        foreach ($onlineuserlist_drop as $user_drop) {
+            $user_drop = preg_replace("/\\s+/", " ", $user_drop);
+
+            $user_droparray = explode(" ", $user_drop);
+
+            if (!isset($user_droparray[8])) {
+                $user_droparray[8] = null;
+            }
+            if (isset($user_droparray[8])) {
+                $ip = explode('->', $user_droparray[8]);
+                $ip = explode(':', $ip[1]);
+                $user_dropip = $ip[0];
+            }
+            if (isset($user_droparray[1])) {
+                $jsonFilePath = '/var/www/html/app/storage/dropbear.json';
+                $jsonData = file_get_contents($jsonFilePath);
+                $dataArray = json_decode($jsonData, true);
+                $targetPID = $user_droparray[1];
+                $foundUser = null;
+                foreach ($dataArray as $item) {
+                    if (trim($item['PID']) === $targetPID) {
+                        $color = "#dc2626";
+                        if (!in_array($user_droparray[2], $duplicate)) {
+                            $color = "#269393";
+                            array_push($duplicate, $user_droparray[2]);
+                        }
+                        $data[] = [
+                            "username" => $item['user'],
+                            "color" => $color,
+                            "ip" => $user_dropip,
+                            "pid" => $user_droparray[1],
+                            "protocol" => "Dropbear"
+                        ];
+                    }
+                }
+            }
+
+        }
+
+
+        $data = json_decode(json_encode($data), true);
+        //dd($data);
+        $uniqueUsernames = array();
+        $uniquePids = array();
+        $tot='';
+        foreach ($data as $user) {
+            $username=$user['username'];
+            $currentPid = $user['pid'];
+
+            if (in_array($username, $uniqueUsernames)) {
+                $username = $username;
+                $tot++;
+            } else {
+                $uniqueUsernames[] = $username;
+                $uniquePids[$username] = $currentPid;
+            }
+            if ($currentPid == $uniquePids[$username]) {
+                $color = "#269393";
+            }
+            else
+            {
+                $color="#dc2626";
+            }
+            $total[] = [
+                "username" => $username,
+                "color" => $color,
+                "ip" => $user['ip'],
+                "pid" => $user['pid'],
+                "protocol" => $user['protocol']
+            ];
+        }
+        $data = json_decode(json_encode($total));
         return view('users.online', compact('data'));
     }
     public function filtering()

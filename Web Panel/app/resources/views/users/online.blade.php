@@ -39,7 +39,7 @@
                                             <td>{{$val->username}}<i
                                                     style="color:{{$val->color}}!important;"
                                                     class="ti ti-live-photo"></i></td>
-                                            <td>{{$val->ip}}<br><small>Protocol:SSH</small></td>
+                                            <td>{{$val->ip}}<br><small>Protocol:{{$val->protocol}}</small></td>
                                             <td class="text-center">
                                                 <ul class="list-inline me-auto mb-0">
                                                     <li class="list-inline-item align-bottom">
