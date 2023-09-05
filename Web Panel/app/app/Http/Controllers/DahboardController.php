@@ -29,9 +29,15 @@ class DahboardController extends Controller
     {
         $this->check();
         $u_online=0;
+        $u_online_drop=0;
         $list = Process::run("sudo lsof -i :" . env('PORT_SSH') . " -n | grep -v root | grep ESTABLISHED");
         $output = $list->output();
         $onlineuserlist = preg_split("/\r\n|\n|\r/", $output);
+
+        $list_drop = Process::run("sudo lsof -i :" . env('PORT_DROPBEAR') . " -n | grep ESTABLISHED");
+        $output_drop = $list_drop->output();
+        $onlineuserlist_drop = preg_split("/\r\n|\n|\r/", $output_drop);
+
         foreach ($onlineuserlist as $user) {
             $user = preg_replace("/\\s+/", " ", $user);
             if (strpos($user, ":AAAA") !== false) {
@@ -46,6 +52,33 @@ class DahboardController extends Controller
                 $u_online++;
 
             }
+        }
+        //Dropbear
+
+        foreach ($onlineuserlist_drop as $user_drop) {
+            $user_drop = preg_replace("/\\s+/", " ", $user_drop);
+
+            $user_droparray = explode(" ", $user_drop);
+
+            if (!isset($user_droparray[8])) {
+                $user_droparray[8] = null;
+            }
+            if (isset($user_droparray[8])) {
+                $ip = explode('->', $user_droparray[8]);
+                $ip = explode(':', $ip[1]);
+                $user_dropip = $ip[0];
+            }
+            if (isset($user_droparray[1])) {
+                $jsonFilePath = '/var/www/html/app/storage/dropbear.json';
+                $jsonData = file_get_contents($jsonFilePath);
+                $dataArray = json_decode($jsonData, true);
+                $targetPID = $user_droparray[1];
+                $foundUser = null;
+                foreach ($dataArray as $item) {
+                    $u_online_drop++;
+                }
+            }
+
         }
         $free = shell_exec("free");
         $free = (string)trim($free);
@@ -122,7 +155,7 @@ class DahboardController extends Controller
         $traffic_total = formatBytes(($traffic_total*1024)*1024);
 
         $alluser=$all_user;
-        $online_user=$u_online;
+        $online_user=$u_online+$u_online_drop;
         return view('dashboard.home', compact('alluser','active_user','deactive_user','online_user','cpu_free','ram_free','disk_free','traffic_total','total'));
     }
 
