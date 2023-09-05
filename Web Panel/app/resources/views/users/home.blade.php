@@ -25,7 +25,7 @@
                 <div class="col-sm-12">
                     <div class="card table-card">
                         <div class="card-body">
-                            <form action="{{route('user.delete.bulk')}}" method="post" enctype="multipart/form-data">
+                            <form action="{{route('user.delete.bulk')}}" method="post" enctype="multipart/form-data" onkeydown="return event.key != 'Enter';">
                                 @csrf
 
                                 <div class="text-end p-4 pb-0">
