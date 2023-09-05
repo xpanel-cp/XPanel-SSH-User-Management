@@ -96,14 +96,15 @@ class FixerController extends Controller
             $onlinelist[] = $userarray[2];
         }
 
-        $jsonFilePath = '/var/www/html/app/storage/dropbear.json';
-        $jsonData = file_get_contents($jsonFilePath);
-        $dataArray = json_decode($jsonData, true);
-        foreach ($dataArray as $item) {
-            $user = $item['user'];
-            $onlinelist[] = $user;
+        if (file_exists("/var/www/html/app/storage/dropbear.json")) {
+            $jsonFilePath = '/var/www/html/app/storage/dropbear.json';
+            $jsonData = file_get_contents($jsonFilePath);
+            $dataArray = json_decode($jsonData, true);
+            foreach ($dataArray as $item) {
+                $user = $item['user'];
+                $onlinelist[] = $user;
+            }
         }
-
         //print_r($onlinelist);
         $onlinelist = array_replace($onlinelist, array_fill_keys(array_keys($onlinelist, null), ''));
         $onlinecount = array_count_values($onlinelist);
@@ -132,10 +133,12 @@ class FixerController extends Controller
                 }
                 if ($limitation !== "0" && $onlinecount[$username] > $limitation){
                     if ($multiuser == 'active') {
-                        foreach ($dataArray as $item) {
-                            if (isset($item['user']) && $item['user'] === $username) {
-                                $pid = $item['PID'];
-                                Process::run("sudo kill -9 {$pid}");
+                        if (file_exists("/var/www/html/app/storage/dropbear.json")) {
+                            foreach ($dataArray as $item) {
+                                if (isset($item['user']) && $item['user'] === $username) {
+                                    $pid = $item['PID'];
+                                    Process::run("sudo kill -9 {$pid}");
+                                }
                             }
                         }
                         Process::run("sudo killall -u {$username}");
