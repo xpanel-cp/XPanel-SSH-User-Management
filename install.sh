@@ -464,7 +464,7 @@ cat > /var/www/html/kill.sh << ENDOFFILE
 #!/bin/bash
 #By Alireza
 i=0
-while [ 1i -lt 20 ]; do
+while [ 1i -lt 10 ]; do
 cmd=(bbh '$multiin')
 echo cmd &
 sleep 6
