@@ -306,7 +306,7 @@ cat > /var/www/html/kill.sh << ENDOFFILE
 #!/bin/bash
 #By Alireza
 i=0
-while [ 1i -lt 20 ]; do 
+while [ 1i -lt 10 ]; do 
 cmd=(bbh '$multiin')
 echo cmd &
   sleep 6
@@ -324,5 +324,6 @@ sudo sed -i 's/((/$((/' /var/www/html/kill.sh
 
 (crontab -l | grep . ; echo -e "* * * * * /var/www/html/kill.sh") | crontab -
 (crontab -l ; echo "* * * * * wget -q -O /dev/null 'https://${domain}:$portssl/fixer/exp' > /dev/null 2>&1") | crontab -
+(crontab -l | grep . ; echo -e "* * * * * /var/www/html/dropbear.sh") | crontab -
 clear
 printf "\nHTTPS Address : https://${domain}:$portssl/login \n"
