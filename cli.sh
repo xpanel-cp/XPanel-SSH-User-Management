@@ -63,7 +63,7 @@ function select_option() {
     read -p "Please enter the option number: " choice
     case $choice in
         1)
-            echo "Please enter a username:"
+            echo "Please enter a username: "
             read username
             echo "Please enter a Password: "
             read password
