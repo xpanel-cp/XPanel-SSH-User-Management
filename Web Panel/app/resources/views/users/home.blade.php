@@ -359,7 +359,7 @@ Password:{{$user->password}}&nbsp;
                 <div class="modal-footer justify-content-between">
                     <div class="flex-grow-1 text-end">
                         <button type="button" class="btn btn-link-danger btn-pc-default"
-                                data-bs-dismiss="modal">Ccancell
+                                data-bs-dismiss="modal">Cancel
                         </button>
                         <button type="submit" class="btn btn-primary" value="submit"
                                 name="renewal_date">Registration</button>
