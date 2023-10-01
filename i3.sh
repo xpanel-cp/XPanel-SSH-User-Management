@@ -93,11 +93,6 @@ xport=""
 dmp=""
 dmssl=""
 fi
-ENV_FILE="/var/www/html/app/.env"
-COPY_FILE="/var/www/html/app/.env_copy"
-if [ -f "$ENV_FILE" ]; then
-  cp "$ENV_FILE" "$COPY_FILE"
-fi
 
 echo -e "${YELLOW}************ Select XPanel Version ************"
 echo -e "${GREEN}  1)XPanel v3.8.0"
@@ -200,6 +195,11 @@ sudo sed -i '/www-data/d' /etc/sudoers &
 wait
 sudo sed -i '/apache/d' /etc/sudoers &
 wait
+ENV_FILE="/var/www/html/app/.env"
+COPY_FILE="/var/www/html/app/.env_copy"
+if [ -f "$ENV_FILE" ]; then
+  cp "$ENV_FILE" "$COPY_FILE"
+fi
 
 if command -v apt-get >/dev/null; then
 
