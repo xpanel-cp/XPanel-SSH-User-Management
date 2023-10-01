@@ -1,9 +1,3 @@
-<img alt="GitHub all releases" src="https://img.shields.io/github/downloads/xpanel-cp/XPanel-SSH-User-Management/total">
-
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/xpanel-cp/XPanel-SSH-User-Management)](https://github.com/xpanel-cp/XPanel-SSH-User-Management/releases/latest) 
-[![Telegram Channel](https://img.shields.io/endpoint?label=Channel&style=flat-square&url=https%3A%2F%2Ftg.sumanjay.workers.dev%2FXpanelssh&color=blue)](https://t.me/Xpanelssh)
-
-
 <p align="center">
 <picture>
 <img width="160" height="160"  alt="XPanel" src="https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/xlogo.png">
@@ -12,7 +6,11 @@
 <h1 align="center"/>XPanel</h1>
 <h6 align="center">XPanel SSH User Management<h6>
 <p align="center">
+<img alt="GitHub all releases" src="https://img.shields.io/github/downloads/xpanel-cp/XPanel-SSH-User-Management/total">
 <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/xpanel-cp/XPanel-SSH-User-Management">
+<a href="https://t.me/Xpanelssh" target="_blank">
+<img alt="Telegram Channel" src="https://img.shields.io/endpoint?label=Channel&style=flat-square&url=https%3A%2F%2Ftg.sumanjay.workers.dev%2FXpanelssh&color=blue">
+</a>
 </p>
  
 <p align="center">
