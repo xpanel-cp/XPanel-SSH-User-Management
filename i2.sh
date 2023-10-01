@@ -93,45 +93,11 @@ xport=""
 dmp=""
 dmssl=""
 fi
-
-DEFAULT_APP_LOCALE=en
-DEFAULT_APP_MODE=light
-DEFAULT_PANEL_DIRECT=cp
-DEFAULT_CRON_TRAFFIC=active
-DEFAULT_DAY=active
-DEFAULT_PORT_DROPBEAR=2083
-DEFAULT_TRAFFIC_BASE=12
-
-if [ -f /var/www/html/app/.env ]; then
-  while IFS= read -r line; do
-    key=$(echo "$line" | awk -F'=' '{print $1}')
-    value=$(echo "$line" | awk -F'=' '{print $2}')
-
-    if [ "$key" = "APP_LOCALE" ]; then
-      APP_LOCALE="$value"
-    elif [ "$key" = "APP_MODE" ]; then
-      APP_MODE="$value"
-    elif [ "$key" = "PANEL_DIRECT" ]; then
-      PANEL_DIRECT="$value"
-    elif [ "$key" = "CRON_TRAFFIC" ]; then
-      CRON_TRAFFIC="$value"
-    elif [ "$key" = "DAY" ]; then
-      DAY="$value"
-    elif [ "$key" = "PORT_DROPBEAR" ]; then
-      PORT_DROPBEAR="$value"
-    elif [ "$key" = "TRAFFIC_BASE" ]; then
-      TRAFFIC_BASE="$value"
-    fi
-  done < /var/www/html/app/.env
+ENV_FILE="/var/www/html/app/.env"
+COPY_FILE="/var/www/html/app/.env_copy"
+if [ -f "$ENV_FILE" ]; then
+  cp "$ENV_FILE" "$COPY_FILE"
 fi
-
-APP_LOCALE="${APP_LOCALE:-$DEFAULT_APP_LOCALE}"
-APP_MODE="${APP_MODE:-$DEFAULT_APP_MODE}"
-PANEL_DIRECT="${PANEL_DIRECT:-$DEFAULT_PANEL_DIRECT}"
-CRON_TRAFFIC="${CRON_TRAFFIC:-$DEFAULT_CRON_TRAFFIC}"
-DAY="${DAY:-$DEFAULT_DAY}"
-PORT_DROPBEAR="${PORT_DROPBEAR:-$DEFAULT_PORT_DROPBEAR}"
-TRAFFIC_BASE="${TRAFFIC_BASE:-$DEFAULT_TRAFFIC_BASE}"
 
 echo -e "${YELLOW}************ Select XPanel Version ************"
 echo -e "${GREEN}  1)XPanel v3.8.0"
@@ -497,13 +463,6 @@ mysql -e "USE XPanel_plus; INSERT INTO admins (username, password, permission, c
 home_url=$protcohttp://${defdomain}:$sshttp
 mysql -e "USE XPanel_plus; INSERT INTO settings (ssh_port, tls_port, t_token, t_id, language, multiuser, ststus_multiuser, home_url) VALUES ('${port}', '444', '', '', '', 'active', '', '${home_url}');"
 fi
-sed -i "s/APP_LOCALE=.*/APP_LOCALE=$APP_LOCALE/g" /var/www/html/app/.env
-sed -i "s/APP_MODE=.*/APP_MODE=$APP_MODE/g" /var/www/html/app/.env
-sed -i "s/PANEL_DIRECT=.*/PANEL_DIRECT=$PANEL_DIRECT/g" /var/www/html/app/.env
-sed -i "s/CRON_TRAFFIC=.*/CRON_TRAFFIC=$CRON_TRAFFIC/g" /var/www/html/app/.env
-sed -i "s/DAY=.*/DAY=$DAY/g" /var/www/html/app/.env
-sed -i "s/PORT_DROPBEAR=.*/PORT_DROPBEAR=$PORT_DROPBEAR/g" /var/www/html/app/.env
-sed -i "s/TRAFFIC_BASE=.*/TRAFFIC_BASE=$TRAFFIC_BASE/g" /var/www/html/app/.env
 sed -i "s/PORT_SSH=.*/PORT_SSH=$port/g" /var/www/html/app/.env
 sudo chown -R www-data:www-data /var/www/html/app
 crontab -r
@@ -546,6 +505,53 @@ sudo wget -4 -O /usr/local/bin/xpanel https://raw.githubusercontent.com/xpanel-c
 chmod +x /usr/local/bin/xpanel 
 chown www-data:www-data /var/www/html/example/index.php
 sed -i "s/PORT_PANEL=.*/PORT_PANEL=$sshttp/g" /var/www/html/app/.env
+DEFAULT_APP_LOCALE=en
+DEFAULT_APP_MODE=light
+DEFAULT_PANEL_DIRECT=cp
+DEFAULT_CRON_TRAFFIC=active
+DEFAULT_DAY=active
+DEFAULT_PORT_DROPBEAR=2083
+DEFAULT_TRAFFIC_BASE=12
+
+if [ -f /var/www/html/app/.env_copy ]; then
+  while IFS= read -r line; do
+    key=$(echo "$line" | awk -F'=' '{print $1}')
+    value=$(echo "$line" | awk -F'=' '{print $2}')
+
+    if [ "$key" = "APP_LOCALE" ]; then
+      APP_LOCALE="$value"
+    elif [ "$key" = "APP_MODE" ]; then
+      APP_MODE="$value"
+    elif [ "$key" = "PANEL_DIRECT" ]; then
+      PANEL_DIRECT="$value"
+    elif [ "$key" = "CRON_TRAFFIC" ]; then
+      CRON_TRAFFIC="$value"
+    elif [ "$key" = "DAY" ]; then
+      DAY="$value"
+    elif [ "$key" = "PORT_DROPBEAR" ]; then
+      PORT_DROPBEAR="$value"
+    elif [ "$key" = "TRAFFIC_BASE" ]; then
+      TRAFFIC_BASE="$value"
+    fi
+  done < /var/www/html/app/.env_copy
+fi
+
+APP_LOCALE="${APP_LOCALE:-$DEFAULT_APP_LOCALE}"
+APP_MODE="${APP_MODE:-$DEFAULT_APP_MODE}"
+PANEL_DIRECT="${PANEL_DIRECT:-$DEFAULT_PANEL_DIRECT}"
+CRON_TRAFFIC="${CRON_TRAFFIC:-$DEFAULT_CRON_TRAFFIC}"
+DAY="${DAY:-$DEFAULT_DAY}"
+PORT_DROPBEAR="${PORT_DROPBEAR:-$DEFAULT_PORT_DROPBEAR}"
+TRAFFIC_BASE="${TRAFFIC_BASE:-$DEFAULT_TRAFFIC_BASE}"
+
+sed -i "s/APP_LOCALE=.*/APP_LOCALE=$APP_LOCALE/g" /var/www/html/app/.env
+sed -i "s/APP_MODE=.*/APP_MODE=$APP_MODE/g" /var/www/html/app/.env
+sed -i "s/PANEL_DIRECT=.*/PANEL_DIRECT=$PANEL_DIRECT/g" /var/www/html/app/.env
+sed -i "s/CRON_TRAFFIC=.*/CRON_TRAFFIC=$CRON_TRAFFIC/g" /var/www/html/app/.env
+sed -i "s/DAY=.*/DAY=$DAY/g" /var/www/html/app/.env
+sed -i "s/PORT_DROPBEAR=.*/PORT_DROPBEAR=$PORT_DROPBEAR/g" /var/www/html/app/.env
+sed -i "s/TRAFFIC_BASE=.*/TRAFFIC_BASE=$TRAFFIC_BASE/g" /var/www/html/app/.env
+
 clear
 
 echo -e "************ XPanel ************ \n"
