@@ -11,11 +11,7 @@ if [ "$EUID" -ne 0 ]
 then echo "Please run as root"
 exit
 fi
-ENV_FILE="/var/www/html/app/.env"
-COPY_FILE="/var/www/html/app/.env_copy"
-if [ -f "$ENV_FILE" ]; then
-  cp "$ENV_FILE" "$COPY_FILE"
-fi
+cp /var/www/html/app/.env /var/www/html/app/.env_copy
 
 # List of supported distributions
 #supported_distros=("Ubuntu" "Debian" "Fedora" "CentOS" "Arch")
