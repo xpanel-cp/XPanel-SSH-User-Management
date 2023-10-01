@@ -11,7 +11,11 @@ if [ "$EUID" -ne 0 ]
 then echo "Please run as root"
 exit
 fi
-
+ENV_FILE="/var/www/html/app/.env"
+COPY_FILE="/var/www/html/app/.env_copy"
+if [ -f "$ENV_FILE" ]; then
+  cp "$ENV_FILE" "$COPY_FILE"
+fi
 
 # List of supported distributions
 #supported_distros=("Ubuntu" "Debian" "Fedora" "CentOS" "Arch")
@@ -195,12 +199,6 @@ sudo sed -i '/www-data/d' /etc/sudoers &
 wait
 sudo sed -i '/apache/d' /etc/sudoers &
 wait
-ENV_FILE="/var/www/html/app/.env"
-COPY_FILE="/var/www/html/app/.env.example"
-if [ -f "$ENV_FILE" ]; then
-  cp "$ENV_FILE" "$COPY_FILE"
-  chmod 644 /var/www/html/app/.env.example
-fi
 
 if command -v apt-get >/dev/null; then
 
@@ -514,7 +512,7 @@ DEFAULT_DAY=active
 DEFAULT_PORT_DROPBEAR=2083
 DEFAULT_TRAFFIC_BASE=12
 
-if [ -f /var/www/html/app/.env.example ]; then
+if [ -f /var/www/html/app/.env_copy ]; then
   while IFS= read -r line; do
     key=$(echo "$line" | awk -F'=' '{print $1}')
     value=$(echo "$line" | awk -F'=' '{print $2}')
@@ -534,7 +532,7 @@ if [ -f /var/www/html/app/.env.example ]; then
     elif [ "$key" = "TRAFFIC_BASE" ]; then
       TRAFFIC_BASE="$value"
     fi
-  done < /var/www/html/app/.env.example
+  done < /var/www/html/app/.env_copy
 fi
 
 APP_LOCALE="${APP_LOCALE:-$DEFAULT_APP_LOCALE}"
