@@ -44,8 +44,8 @@ function show_menu() {
     echo "XPanel CLI Menu"
     echo "------------------"
     echo "1. Change Username AND Password"
-    echo "2. Chnage Port SSH"
-    echo "3. Chnage Port SSH TLS"
+    echo "2. Change Port SSH"
+    echo "3. Change Port SSH TLS"
     echo "4. Update XPanel"
     echo "5. Remove XPanel"
     echo "6. Remove All Admin XPanel"
@@ -53,7 +53,7 @@ function show_menu() {
     echo "8. Blocked Port 80 and 443 IRAN"
     echo "9. UnBlock Port 80 and 443 IRAN"
     echo "10. Install Dropbear"
-    echo "11. Install Wordpress"
+    echo "11. Install WordPress"
     echo "12. Fix Call (UDPGW)"
     echo "13. Exit"
 }
@@ -63,9 +63,9 @@ function select_option() {
     read -p "Please enter the option number: " choice
     case $choice in
         1)
-            echo "Please enter a username:"
+            echo "Please enter a username: "
             read username
-            echo "Please enter a Password : "
+            echo "Please enter a Password: "
             read password
             if [[ -n "${username}" ]]; then
             username=${username}
