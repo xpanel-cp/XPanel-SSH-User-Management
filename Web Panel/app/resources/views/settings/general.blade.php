@@ -24,11 +24,11 @@
                 <!-- [ sample-page ] start -->
                 <form action="{{route('settings.general')}}" method="post" enctype="multipart/form-data">
                     @csrf
-                <div class="col-sm-12">
-                    <div class="card">
-                        @include('layouts.setting_menu')
-                        <div class="tab-content" id="myTabContent">
-                            <div class="card-body">
+                    <div class="col-sm-12">
+                        <div class="card">
+                            @include('layouts.setting_menu')
+                            <div class="tab-content" id="myTabContent">
+                                <div class="card-body">
                                     <div class="form-group row">
                                         <div class="col-lg-3">
                                             <input type="text" name="trafficbase" class="form-control" value="{{$traffic_base}}" required="">
@@ -77,41 +77,52 @@
                                         </div>
 
                                     </div>
+                                </div>
+
                             </div>
-
                         </div>
                     </div>
-                </div>
-                <!-- [ sample-page ] end -->
-                <div class="col-lg-12">
-                    <div class="card">
-                        <div class="card-body">
-                            <ul class="list-group list-group-flush">
-                                <li class="list-group-item px-0 pb-0">
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <div>
-                                            <p class="mb-1">{{__('setting-status-traffic')}}</p>
+                    <!-- [ sample-page ] end -->
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item px-0 pb-0">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div>
+                                                <p class="mb-1">{{__('setting-status-traffic')}}</p>
+                                            </div>
+                                            <div class="form-check form-switch p-0">
+                                                <input class="form-check-input h4 position-relative m-0" type="checkbox" role="switch" name="status_traffic" id="status_traffic" @if(env('CRON_TRAFFIC', 'active')=='active')value="active" checked=""@else value="deactive"@endif>
+                                            </div>
                                         </div>
-                                        <div class="form-check form-switch p-0">
-                                            <input class="form-check-input h4 position-relative m-0" type="checkbox" role="switch" name="status_traffic" id="status_traffic" @if(env('CRON_TRAFFIC', 'active')=='active')value="active" checked=""@else value="deactive"@endif>
-                                        </div>
-                                    </div>
-                                </li>
+                                    </li>
 
-                                <li class="list-group-item px-0 pb-0">
-                                    <div class="d-flex align-items-center justify-content-between">
-                                        <div>
-                                            <p class="mb-1">{{__('setting-status-miltiu')}}</p>
+                                    <li class="list-group-item px-0 pb-0">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div>
+                                                <p class="mb-1">{{__('setting-status-miltiu')}}</p>
+                                            </div>
+                                            <div class="form-check form-switch p-0">
+                                                <input class="form-check-input h4 position-relative m-0" type="checkbox" role="switch" name="status_multiuser" id="status_multiuser" @if($status=='active')value="active" checked=""@else value="deactive"@endif>
+                                            </div>
                                         </div>
-                                        <div class="form-check form-switch p-0">
-                                            <input class="form-check-input h4 position-relative m-0" type="checkbox" role="switch" name="status_multiuser" id="status_multiuser" @if($status=='active')value="active" checked=""@else value="deactive"@endif>
+                                    </li>
+
+                                    <li class="list-group-item px-0 pb-0">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div>
+                                                <p class="mb-1">{{__('user-table-day')}}</p>
+                                            </div>
+                                            <div class="form-check form-switch p-0">
+                                                <input class="form-check-input h4 position-relative m-0" type="checkbox" role="switch" name="status_day" id="status_day" @if(env('DAY', 'deactive')=='active')value="active" checked=""@else value="deactive"@endif>
+                                            </div>
                                         </div>
-                                    </div>
-                                </li>
-                            </ul>
+                                    </li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
-                </div>
                     <div class="col-lg-12">
                         <button type="submit" class="btn btn-primary" value="submit" name="submit">{{__('setting-save')}}</button>
                     </div>

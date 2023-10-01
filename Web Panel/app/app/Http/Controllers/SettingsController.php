@@ -60,7 +60,7 @@ class SettingsController extends Controller
 
         return redirect()->back()->with('success', 'success');
     }
-        public function index(Request $request,$name)
+    public function index(Request $request,$name)
     {
         $this->check();
         if (!is_string($name)) {
@@ -115,6 +115,7 @@ class SettingsController extends Controller
             'mode'=>'required|string',
             'status_traffic'=>'string',
             'status_multiuser'=>'string',
+            'status_day'=>'string',
         ]);
         $traffic_base_old=env('TRAFFIC_BASE');
         $traffic_base_new=$request->trafficbase;
@@ -130,6 +131,15 @@ class SettingsController extends Controller
             Process::run("sed -i \"s/APP_MODE=.*/APP_MODE=$request->mode/g\" /var/www/html/app/.env");
         }
         Process::run("sed -i \"s/PANEL_DIRECT=.*/PANEL_DIRECT=$request->direct_login/g\" /var/www/html/app/.env");
+        if (empty($request->status_day) or $request->status_day=='deactive')
+        {
+            $status_day='deactive';
+        }
+        else
+        {
+            $status_day='active';
+        }
+
         if (empty($request->status_traffic) or $request->status_traffic=='deactive')
         {
             $status_traffic='deactive';
@@ -148,10 +158,11 @@ class SettingsController extends Controller
             $status_multiuser='active';
         }
         Process::run("sed -i \"s/CRON_TRAFFIC=.*/CRON_TRAFFIC=$status_traffic/g\" /var/www/html/app/.env");
-            $check_setting = Settings::where('id', '1')->count();
-            if ($check_setting > 0) {
-                Settings::where('id', 1)->update(['multiuser' => $status_multiuser]);
-            }
+        Process::run("sed -i \"s/DAY=.*/DAY=$status_day/g\" /var/www/html/app/.env");
+        $check_setting = Settings::where('id', '1')->count();
+        if ($check_setting > 0) {
+            Settings::where('id', 1)->update(['multiuser' => $status_multiuser]);
+        }
 
         return redirect()->intended(route('settings', ['name' => 'general']));
     }
@@ -173,7 +184,7 @@ class SettingsController extends Controller
         }
         return redirect()->intended(route('settings', ['name' => 'telegram']));
     }
-    
+
     public function upload_backup(Request $request)
     {
         $this->check();

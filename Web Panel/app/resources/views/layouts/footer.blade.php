@@ -84,6 +84,17 @@
         }
     });
 </script>
+
+<script type="text/javascript">
+    const status_day = document.getElementById("status_day");
+    status_day.addEventListener("change", function() {
+        if (status_day.checked) {
+            status_day.value = "active";
+        } else {
+            status_day.value = "deactive";
+        }
+    });
+</script>
 <!-- [Page Specific JS] end -->
 </body>
 <!-- [Body] end -->

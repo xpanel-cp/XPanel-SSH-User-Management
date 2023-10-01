@@ -55,7 +55,11 @@
                                             <th>{{__('user-table-traffic')}}</th>
                                             <th>{{__('user-table-limit-user')}}</th>
                                             <th>{{__('user-table-contact')}}</th>
-                                            <th>{{__('user-table-date')}}</th>
+                                            @if(env('DAY', 'deactive')=='active')
+                                                <th>{{__('user-table-day')}}</th>
+                                            @else
+                                                <th>{{__('user-table-date')}}</th>
+                                            @endif
                                             <th>{{__('user-table-status')}}</th>
                                             <th class="text-center">{{__('user-table-action')}}</th>
                                         </tr>
@@ -130,6 +134,19 @@
                                                 @php $finishdate=$user->end_date; @endphp
                                             @endif
 
+
+                                            @if(!empty($finishdate))
+                                                @php
+                                                    $start_inp = date("Y-m-d");
+                                                    $today = new DateTime($start_inp); // تاریخ امروز
+                                                    $futureDate = new DateTime($finishdate);
+                                                    $interval = $today->diff($futureDate);
+                                                    $daysDifference_day = $interval->days;
+                                                @endphp
+                                            @else
+                                                @php $daysDifference_day='Unlimit'; @endphp
+                                            @endif
+
                                             <tr>
                                                 <td><input name="usernamed[]" id="checkItem" type="checkbox"
                                                            class="checkItem form-check-input"
@@ -149,17 +166,23 @@
                                                 <td>{{$user->multiuser}}</td>
                                                 <td>{{$user->mobile}}<br>
                                                     <small>{{$user->email}}</small></td>
-                                                <td><small>
-                                                        @if(env('APP_LOCALE', 'en')=='fa')
-                                                            {{__('user-table-date-start')}}: @if(!empty($startdate))<span style="display: inline-block;">{{Verta::instance($startdate)->format('Y-m-d')}}</span>@endif
-                                                            <br>
-                                                            {{__('user-table-date-end')}}: @if(!empty($finishdate))<span style="display: inline-block;">{{Verta::instance($finishdate)->format('Y-m-d')}}</span>@endif
-                                                        @else
-                                                            {{__('user-table-date-start')}}: <span style="display: inline-block;">{{$startdate}}</span>
-                                                            <br>
-                                                            {{__('user-table-date-end')}}: <span style="display: inline-block;">{{$finishdate}}</span>
-                                                        @endif
-                                                    </small></td>
+                                                <td>
+                                                    @if(env('DAY', 'deactive')=='active')
+                                                        {{$daysDifference_day}}
+                                                    @else
+                                                        <small>
+                                                            @if(env('APP_LOCALE', 'en')=='fa')
+                                                                {{__('user-table-date-start')}}: @if(!empty($startdate))<span style="display: inline-block;">{{Verta::instance($startdate)->format('Y-m-d')}}</span>@endif
+                                                                <br>
+                                                                {{__('user-table-date-end')}}: @if(!empty($finishdate))<span style="display: inline-block;">{{Verta::instance($finishdate)->format('Y-m-d')}}</span>@endif
+                                                            @else
+                                                                {{__('user-table-date-start')}}: <span style="display: inline-block;">{{$startdate}}</span>
+                                                                <br>
+                                                                {{__('user-table-date-end')}}: <span style="display: inline-block;">{{$finishdate}}</span>
+                                                            @endif
+                                                        </small>
+                                                    @endif
+                                                </td>
                                                 <td>{!! $status !!}</td>
                                                 <td class="text-center">
                                                     <ul class="list-inline me-auto mb-0">
