@@ -16,6 +16,7 @@ COPY_FILE="/var/www/html/.env_copy"
 
 if [ -f "$ENV_FILE" ]; then
   cp "$ENV_FILE" "$COPY_FILE"
+  chmod 644 /var/www/html/.env_copy
 fi
 # List of supported distributions
 #supported_distros=("Ubuntu" "Debian" "Fedora" "CentOS" "Arch")
