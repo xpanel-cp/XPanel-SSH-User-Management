@@ -513,7 +513,7 @@ DEFAULT_DAY=active
 DEFAULT_PORT_DROPBEAR=2083
 DEFAULT_TRAFFIC_BASE=12
 
-if [ -f /var/www/html/.env_copy]; then
+if [ -f /var/www/html/.env_copy ]; then
   while IFS= read -r line; do
     key=$(echo "$line" | awk -F'=' '{print $1}')
     value=$(echo "$line" | awk -F'=' '{print $2}')
