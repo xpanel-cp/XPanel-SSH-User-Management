@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title','XPanel - Users')
+@section('title','XPanel - '.__('user-title'))
 @section('content')
     <!-- [ Main Content ] start -->
     <div class="pc-container">
@@ -10,7 +10,7 @@
                     <div class="row align-items-center">
                         <div class="col-md-12">
                             <div class="page-header-title">
-                                <h2 class="mb-0">Users</h2>
+                                <h2 class="mb-0">{{__('user-title')}}</h2>
                             </div>
                         </div>
                     </div>
@@ -28,18 +28,18 @@
                             <form action="{{route('user.delete.bulk')}}" method="post" enctype="multipart/form-data" onkeydown="return event.key != 'Enter';">
                                 @csrf
 
-                                <div class="text-end p-4 pb-0">
+                                <div class="p-4 pb-0">
                                     <a href="javascript:void(0);" class="btn btn-primary d-inline-flex align-items-center"
                                        style="margin-bottom: 5px;" data-bs-toggle="modal" data-bs-target="#customer_add-modal">
-                                        <i class="ti ti-plus f-18"></i>New User
+                                        <i class="ti ti-plus f-18"></i>{{__('user-modal-user')}}
                                     </a>
 
                                     <a href="javascript:void(0);" class="btn btn-primary d-inline-flex align-items-center"
                                        data-bs-toggle="modal"
                                        data-bs-target="#customer_bulk-modal">
-                                        <i class="ti ti-plus f-18"></i> Bulk User</a>
-                                    <button type="submit" class="btn btn-danger d-inline-flex align-items-center"
-                                            value="delete" name="delete">Delete
+                                        <i class="ti ti-plus f-18"></i>{{__('user-modal-bulkuser')}}</a>
+                                    <button type="submit" id="btndl" class="btn btn-danger d-inline-flex align-items-center"
+                                            value="delete" name="delete">{{__('user-bulk-delete')}}
                                     </button>
                                 </div>
 
@@ -49,15 +49,15 @@
                                         <thead>
                                         <tr>
                                             <th>#ID</th>
-                                            <th>Customer</th>
-                                            <th>Username</th>
-                                            <th>Password</th>
-                                            <th>Traffic</th>
-                                            <th>Limit User</th>
-                                            <th>Contacts</th>
-                                            <th>Date</th>
-                                            <th>Status</th>
-                                            <th class="text-center">Action</th>
+                                            <th>{{__('user-table-customer')}}</th>
+                                            <th>{{__('user-table-username')}}</th>
+                                            <th>{{__('user-table-password')}}</th>
+                                            <th>{{__('user-table-traffic')}}</th>
+                                            <th>{{__('user-table-limit-user')}}</th>
+                                            <th>{{__('user-table-contact')}}</th>
+                                            <th>{{__('user-table-date')}}</th>
+                                            <th>{{__('user-table-status')}}</th>
+                                            <th class="text-center">{{__('user-table-action')}}</th>
                                         </tr>
                                         </thead>
                                         <tbody>
@@ -97,16 +97,16 @@
                                             @endforeach
 
                                             @if ($user->status == "active" or $user->status == "true")
-                                                @php $status = "<span class='badge bg-light-success rounded-pill f-12'>Active</span>"; @endphp
+                                                @php $status = "<span class='badge bg-light-success rounded-pill f-12'>".__('user-table-status-active')."</span>"; @endphp
                                             @endif
                                             @if ($user->status == "deactive" or $user->status == "false")
-                                                @php $status = "<span class='badge bg-light-danger rounded-pill f-12'>Deactive</span>"; @endphp
+                                                @php $status = "<span class='badge bg-light-danger rounded-pill f-12'>".__('user-table-status-deactive')."</span>"; @endphp
                                             @endif
                                             @if ($user->status == "expired")
-                                                @php $status = "<span class='badge bg-light-warning rounded-pill f-12'>Expired</span>"; @endphp
+                                                @php $status = "<span class='badge bg-light-warning rounded-pill f-12'>".__('user-table-status-exp')."</span>"; @endphp
                                             @endif
                                             @if ($user->status == "traffic")
-                                                @php $status = "<span class='badge bg-light-primary rounded-pill f-12'>Traffic</span>"; @endphp
+                                                @php $status = "<span class='badge bg-light-primary rounded-pill f-12'>".__('user-table-status-traffic')."</span>"; @endphp
                                             @endif
                                             @if (empty($user->customer_user) OR $user->customer_user=='NULL')
                                                 @php $customer_user = env('DB_USERNAME'); @endphp
@@ -130,7 +130,6 @@
                                                 @php $finishdate=$user->end_date; @endphp
                                             @endif
 
-
                                             <tr>
                                                 <td><input name="usernamed[]" id="checkItem" type="checkbox"
                                                            class="checkItem form-check-input"
@@ -151,9 +150,15 @@
                                                 <td>{{$user->mobile}}<br>
                                                     <small>{{$user->email}}</small></td>
                                                 <td><small>
-                                                        Register Date: {{$startdate}}
-                                                        <br>
-                                                        Expired Date: {{$finishdate}}
+                                                        @if(env('APP_LOCALE', 'en')=='fa')
+                                                            {{__('user-table-date-start')}}: @if(!empty($startdate))<span style="display: inline-block;">{{Verta::instance($startdate)->format('Y-m-d')}}</span>@endif
+                                                            <br>
+                                                            {{__('user-table-date-end')}}: @if(!empty($finishdate))<span style="display: inline-block;">{{Verta::instance($finishdate)->format('Y-m-d')}}</span>@endif
+                                                        @else
+                                                            {{__('user-table-date-start')}}: <span style="display: inline-block;">{{$startdate}}</span>
+                                                            <br>
+                                                            {{__('user-table-date-end')}}: <span style="display: inline-block;">{{$finishdate}}</span>
+                                                        @endif
                                                     </small></td>
                                                 <td>{!! $status !!}</td>
                                                 <td class="text-center">
@@ -166,24 +171,24 @@
                                                                     class="ti ti-adjustments f-18"></i></button>
                                                             <div class="dropdown-menu">
                                                                 <a class="dropdown-item"
-                                                                   href="{{ route('user.active', ['username' => $user->username]) }}">Active</a>
+                                                                   href="{{ route('user.active', ['username' => $user->username]) }}">{{__('user-table-active')}}</a>
                                                                 <a class="dropdown-item"
-                                                                   href="{{ route('user.deactive', ['username' => $user->username]) }}">Deactive</a>
+                                                                   href="{{ route('user.deactive', ['username' => $user->username]) }}">{{__('user-table-deactive')}}</a>
                                                                 <a class="dropdown-item"
-                                                                   href="{{ route('user.reset', ['username' => $user->username]) }}">Reset Traffic</a>
+                                                                   href="{{ route('user.reset', ['username' => $user->username]) }}">{{__('user-table-reset')}}</a>
                                                                 <a class="dropdown-item"
-                                                                   href="{{ route('user.delete', ['username' => $user->username]) }}">Delete</a>
+                                                                   href="{{ route('user.delete', ['username' => $user->username]) }}">{{__('user-table-delete')}}</a>
                                                             </div>
                                                         </li>
                                                         <li class="list-inline-item align-bottom" data-bs-toggle="tooltip"
-                                                            title="Edit">
+                                                            title="{{__('user-table-tog-edit')}}">
                                                             <a href="{{ route('user.edit', ['username' => $user->username]) }}"
                                                                class="avtar avtar-xs btn-link-success btn-pc-default">
                                                                 <i class="ti ti-edit-circle f-18"></i>
                                                             </a>
                                                         </li>
                                                         <li class="list-inline-item align-bottom" data-bs-toggle="tooltip"
-                                                            title="Renewal">
+                                                            title="{{__('user-table-tog-renewal')}}">
                                                             <a href="javascript:void(0);" data-user="{{$user->username}}" data-bs-toggle="modal"
                                                                data-bs-target="#renewal-modal"
                                                                class="re_user avtar avtar-xs btn-link-success btn-pc-default">
@@ -209,7 +214,7 @@ Password:{{$user->password}}&nbsp;
 @endif
                                                                    @if (!empty($finishdate))
                                                                        EndTime:{{$finishdate}}
-                                                                   @endif">Copy Config (Direct)</a>
+                                                                   @endif">{{__('user-table-copy')}} (Direct)</a>
                                                                 <a href="javascript:void(0);" class="dropdown-item" style="border:none"
                                                                    data-clipboard="true"
                                                                    data-clipboard-text="Host:{{$_SERVER["SERVER_NAME"]}}&nbsp;
@@ -221,7 +226,7 @@ Password:{{$user->password}}&nbsp;
 @endif
                                                                    @if (!empty($finishdate))
                                                                        EndTime:{{$finishdate}}
-                                                                   @endif">Copy Config (TLS)</a>
+                                                                   @endif">{{__('user-table-copy')}} (TLS)</a>
                                                                 <a href="javascript:void(0);" class="dropdown-item" style="border:none"
                                                                    data-clipboard="true"
                                                                    data-clipboard-text="Host:{{$_SERVER["SERVER_NAME"]}}&nbsp;
@@ -233,22 +238,22 @@ Password:{{$user->password}}&nbsp;
 @endif
                                                                    @if (!empty($finishdate))
                                                                        EndTime:{{$finishdate}}
-                                                                   @endif">Copy Config (Dropbear)</a>
+                                                                   @endif">{{__('user-table-copy')}} (Dropbear)</a>
                                                                 @php
                                                                     $at="@";
                                                                 @endphp
 
                                                                 <a href="javascript:void(0);" class="dropdown-item" style="border:none"
                                                                    data-clipboard="true"
-                                                                   data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$_SERVER["SERVER_NAME"]}}:{{env('PORT_SSH')}}/#{{$user->username}}">Link SSH
+                                                                   data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$_SERVER["SERVER_NAME"]}}:{{env('PORT_SSH')}}/#{{$user->username}}">{{__('user-table-link')}} SSH
                                                                 </a>
                                                                 <a href="javascript:void(0);" class="dropdown-item" style="border:none"
                                                                    data-clipboard="true"
-                                                                   data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$_SERVER["SERVER_NAME"]}}:{{$tls_port}}/#{{$user->username}}">Link SSH TLS
+                                                                   data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$_SERVER["SERVER_NAME"]}}:{{$tls_port}}/#{{$user->username}}">{{__('user-table-link')}} SSH TLS
                                                                 </a>
                                                                 <a href="javascript:void(0);" class="dropdown-item" style="border:none"
                                                                    data-clipboard="true"
-                                                                   data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$_SERVER["SERVER_NAME"]}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}">Link SSH Dropbear
+                                                                   data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$_SERVER["SERVER_NAME"]}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}">{{__('user-table-link')}} SSH Dropbear
                                                                 </a>
                                                                 <a href="javascript:void(0);" class="qrs dropdown-item"
                                                                    data-tls="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$_SERVER["SERVER_NAME"]}}:{{$tls_port}}/#{{$user->username}}"
@@ -301,7 +306,7 @@ Password:{{$user->password}}&nbsp;
             <form class="modal-content" action="{{route('new.renewal')}}" method="POST" enctype="multipart/form-data"
                   onsubmit="return confirm('Are you sure you want to perform this operation?');">
                 <div class="modal-header">
-                    <h5 class="mb-0">Renewal</h5>
+                    <h5 class="mb-0">{{__('user-pop-renewal-title')}}</h5>
                     <a href="javascript:void(0);" class="avtar avtar-s btn-link-danger btn-pc-default" data-bs-dismiss="modal">
                         <i class="ti ti-x f-20"></i>
                     </a>
@@ -322,32 +327,32 @@ Password:{{$user->password}}&nbsp;
                         <div class="col-lg-6">
                             <div class="row">
                                 <div class="col-lg-6">
-                                    <small>Registered from today</small>
+                                    <small>{{__('user-pop-renewal-today')}}</small>
                                     <div class="input-group">
 
                                         <div class="form-check form-check-inline">
                                             <input type="radio" name="re_date" value="yes" class="form-check-input input-primary" checked>
-                                            <label class="form-check-label" for="customCheckinl311">Yes</label>
+                                            <label class="form-check-label" for="customCheckinl311">{{__('user-pop-renewal-yes')}}</label>
                                         </div>
                                         <div class="form-check form-check-inline">
                                             <input type="radio" name="re_date" value="no" class="form-check-input input-primary" >
-                                            <label class="form-check-label" for="customCheckinl311">No</label>
+                                            <label class="form-check-label" for="customCheckinl311">{{__('user-pop-renewal-no')}}</label>
                                         </div>
 
                                     </div>
                                 </div>
 
                                 <div class="col-lg-6">
-                                    <small>Reset the traffic</small>
+                                    <small>{{__('user-pop-renewal-reset')}}</small>
                                     <div class="input-group">
 
                                         <div class="form-check form-check-inline">
                                             <input type="radio" name="re_traffic" value="yes" class="form-check-input input-primary" checked>
-                                            <label class="form-check-label" for="customCheckinl311">Yes</label>
+                                            <label class="form-check-label" for="customCheckinl311">{{__('user-pop-renewal-yes')}}</label>
                                         </div>
                                         <div class="form-check form-check-inline">
                                             <input type="radio" name="re_traffic" value="no" class="form-check-input input-primary" >
-                                            <label class="form-check-label" for="customCheckinl311">No</label>
+                                            <label class="form-check-label" for="customCheckinl311">{{__('user-pop-renewal-no')}}</label>
                                         </div>
 
                                     </div>
@@ -359,10 +364,10 @@ Password:{{$user->password}}&nbsp;
                 <div class="modal-footer justify-content-between">
                     <div class="flex-grow-1 text-end">
                         <button type="button" class="btn btn-link-danger btn-pc-default"
-                                data-bs-dismiss="modal">Ccancell
+                                data-bs-dismiss="modal">{{__('user-pop-renewal-cancel')}}
                         </button>
                         <button type="submit" class="btn btn-primary" value="submit"
-                                name="renewal_date">Registration</button>
+                                name="renewal_date">{{__('user-pop-renewal-submit')}}</button>
                     </div>
                 </div>
             </form>
@@ -376,7 +381,7 @@ Password:{{$user->password}}&nbsp;
                   onsubmit="return confirm('Are you sure you want to perform this operation?');">
 
                 <div class="modal-header">
-                    <h5 class="mb-0">New User</h5>
+                    <h5 class="mb-0">{{__('user-pop-newuser-title')}}</h5>
                     <a href="javascript:void(0);" class="avtar avtar-s btn-link-danger btn-pc-default" data-bs-dismiss="modal">
                         <i class="ti ti-x f-20"></i>
                     </a>
@@ -390,10 +395,10 @@ Password:{{$user->password}}&nbsp;
                                         <div class="col-lg-12">
                                             @csrf
                                             <input type="text" name="username" class="form-control"
-                                                   placeholder="Username" autocomplete="off"
+                                                   placeholder="{{__('user-pop-newuser-username')}}" autocomplete="off"
                                                    onkeyup="if (/[^|a-z0-9]+/g.test(this.value)) this.value = this.value.replace(/[^-a-z0-9_]+/g,'')"
                                                    required>
-                                            <small class="form-text text-muted">Enter Username</small>
+                                            <small class="form-text text-muted">{{__('user-pop-newuser-username-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -403,10 +408,10 @@ Password:{{$user->password}}&nbsp;
                                             <div class="input-group">
                                                 <span class="input-group-text"><i class="feather icon-lock"></i></span>
                                                 <input type="text" name="password" class="form-control"
-                                                       placeholder="Password" autocomplete="off"
+                                                       placeholder="{{__('user-pop-newuser-password')}}" autocomplete="off"
                                                        value="{{$password_auto}}" required>
                                             </div>
-                                            <small class="form-text text-muted">Enter Password</small>
+                                            <small class="form-text text-muted">{{__('user-pop-newuser-password-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -416,8 +421,8 @@ Password:{{$user->password}}&nbsp;
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <input type="text" name="email" class="form-control"
-                                                   placeholder="Email">
-                                            <small class="form-text text-muted">Enter Email</small>
+                                                   placeholder="{{__('user-pop-newuser-email')}}">
+                                            <small class="form-text text-muted">{{__('user-pop-newuser-email-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -426,9 +431,9 @@ Password:{{$user->password}}&nbsp;
                                         <div class="col-lg-12">
                                             <div class="input-group">
                                                 <input type="text" name="mobile" class="form-control"
-                                                       placeholder="Phone">
+                                                       placeholder="{{__('user-pop-newuser-phone')}}">
                                             </div>
-                                            <small class="form-text text-muted">Enter Phone</small>
+                                            <small class="form-text text-muted">{{__('user-pop-newuser-phone-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -439,8 +444,8 @@ Password:{{$user->password}}&nbsp;
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <input type="text" name="multiuser" class="form-control" value="1"
-                                                   placeholder="Concurrent Users" required>
-                                            <small class="form-text text-muted">Enter number of concurrent users</small>
+                                                   placeholder="{{__('user-pop-newuser-connect')}}" required>
+                                            <small class="form-text text-muted">{{__('user-pop-newuser-connect-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -451,8 +456,8 @@ Password:{{$user->password}}&nbsp;
                                                 <input type="text" name="connection_start" class="form-control"
                                                        placeholder="30">
                                             </div>
-                                            <small class="form-text text-muted">Expiration Date (on first connection)</small>
-                                            <small style="color:red">If you want to set the expiration date on the first connection, enter the number of validity days in the field above</small>
+                                            <small class="form-text text-muted">{{__('user-pop-newuser-connect-start-desc1')}}</small>
+                                            <small style="color:red">{{__('user-pop-newuser-connect-start-desc2')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -476,7 +481,7 @@ Password:{{$user->password}}&nbsp;
                                                 <label class="form-check-label"
                                                        for="customCheckinl32">GB</label>
                                             </div>
-                                            <small class="form-text text-muted">Enter traffic</small>
+                                            <small class="form-text text-muted">{{__('user-pop-newuser-traffic-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -485,19 +490,23 @@ Password:{{$user->password}}&nbsp;
                                         <div class="col-lg-12">
                                             <div class="input-group">
                                                 <span class="input-group-text"><i class="ti ti-calendar-time"></i></span>
-                                                <input type="date" class="form-control" name="expdate" id="date"
-                                                       data-gtm-form-interact-field-id="0">
+                                                @if(env('APP_LOCALE', 'en')=='fa')
+                                                    <input type="text" name="expdate" class="form-control example1"  autocomplete="off"/>
+                                                @else
+                                                    <input type="date" class="form-control" name="expdate" id="date"
+                                                           data-gtm-form-interact-field-id="0">
+                                                @endif
                                             </div>
-                                            <small class="form-text text-muted">Expiration Date</small>
-                                            <small style="color:red">Leave this field empty if you set the expiration date automatically</small>
+                                            <small class="form-text text-muted">{{__('user-pop-newuser-date-desc1')}}</small>
+                                            <small style="color:red">{{__('user-pop-newuser-date-desc2')}}</small>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Description</label>
+                                <label class="form-label">{{__('user-pop-newuser-desc')}}</label>
                                 <textarea class="form-control" rows="3" name="desc"
-                                          placeholder="Description"></textarea>
+                                          placeholder="{{__('user-pop-newuser-desc')}}"></textarea>
                             </div>
                         </div>
                     </div>
@@ -505,10 +514,10 @@ Password:{{$user->password}}&nbsp;
                 <div class="modal-footer justify-content-between">
                     <div class="flex-grow-1 text-end">
                         <button type="button" class="btn btn-link-danger btn-pc-default"
-                                data-bs-dismiss="modal">Cancell
+                                data-bs-dismiss="modal">{{__('user-pop-newuser-cancel')}}
                         </button>
 
-                        <button type="submit" class="btn btn-primary" value="submit" >Add</button>
+                        <button type="submit" class="btn btn-primary" value="submit" >{{__('user-pop-newuser-submit')}}</button>
                     </div>
                 </div>
             </form>
@@ -522,7 +531,7 @@ Password:{{$user->password}}&nbsp;
                   onsubmit="return confirm('Are you sure you want to perform this operation?');">
 
                 <div class="modal-header">
-                    <h5 class="mb-0">Bulk User</h5>
+                    <h5 class="mb-0">{{__('user-pop-bulkuser-title')}}</h5>
                     <a href="javascript:void(0);" class="avtar avtar-s btn-link-danger btn-pc-default" data-bs-dismiss="modal">
                         <i class="ti ti-x f-20"></i>
                     </a>
@@ -536,8 +545,8 @@ Password:{{$user->password}}&nbsp;
                                         <div class="col-lg-12">
                                             @csrf
                                             <input type="text" name="count_user" class="form-control" value="5"
-                                                   placeholder="Number of user builds" required>
-                                            <small class="form-text text-muted">Enter the number of user builds</small>
+                                                   placeholder="{{__('user-pop-bulkuser-count')}}" required>
+                                            <small class="form-text text-muted">{{__('user-pop-bulkuser-count-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -545,8 +554,8 @@ Password:{{$user->password}}&nbsp;
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <input type="text" name="start_user" class="form-control" value="xpuser"
-                                                   placeholder="Initial phrase of username" required>
-                                            <small class="form-text text-muted">Enter the initial phrase of the username</small>
+                                                   placeholder="{{__('user-pop-bulkuser-name')}}" required>
+                                            <small class="form-text text-muted">{{__('user-pop-bulkuser-name-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -554,8 +563,8 @@ Password:{{$user->password}}&nbsp;
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <input type="text" name="start_number" class="form-control" value="100"
-                                                   placeholder="Starting number" required>
-                                            <small class="form-text text-muted">This number is placed after the beginning of the username</small>
+                                                   placeholder="{{__('user-pop-bulkuser-start')}}" required>
+                                            <small class="form-text text-muted">{{__('user-pop-bulkuser-start-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -567,21 +576,21 @@ Password:{{$user->password}}&nbsp;
                                             <div class="input-group">
                                                 <span class="input-group-text"><i class="feather icon-lock"></i></span>
                                                 <input type="text" name="password" class="form-control"
-                                                       placeholder="Password">
+                                                       placeholder="{{__('user-pop-bulkuser-password')}}">
                                             </div>
-                                            <small class="form-text text-muted">If you want the password to be lang, leave the above field blank</small>
+                                            <small class="form-text text-muted">{{__('user-pop-bulkuser-password-desc')}}</small>
                                             <br>
                                             <div class="form-check form-check-inline">
                                                 <input type="radio" class="form-check-input input-primary"
                                                        name="pass_random" value="number" checked="">
                                                 <label class="form-check-label"
-                                                       for="customCheckinl311">Combination of numbers</label>
+                                                       for="customCheckinl311">{{__('user-pop-bulkuser-pass-number')}}</label>
                                             </div>
                                             <div class="form-check form-check-inline">
                                                 <input type="radio" class="form-check-input input-primary"
                                                        name="pass_random" value="nmuber_az">
                                                 <label class="form-check-label"
-                                                       for="customCheckinl311">Combination of letters and numbers</label>
+                                                       for="customCheckinl311">{{__('user-pop-bulkuser-pass-number2')}}</label>
                                             </div>
                                         </div>
                                     </div>
@@ -591,9 +600,9 @@ Password:{{$user->password}}&nbsp;
                                         <div class="col-lg-12">
                                             <div class="input-group">
                                                 <input type="text" name="char_pass" class="form-control" value="6"
-                                                       placeholder="Number of password characters" required>
+                                                       placeholder="{{__('user-pop-bulkuser-chars')}}" required>
                                             </div>
-                                            <small class="form-text text-muted">Enter the number of characters of the password</small>
+                                            <small class="form-text text-muted">{{__('user-pop-bulkuser-chars-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -604,8 +613,8 @@ Password:{{$user->password}}&nbsp;
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <input type="text" name="multiuser" class="form-control" value="1"
-                                                   placeholder="Simultaneous user" required>
-                                            <small class="form-text text-muted">Enter the number of simultaneous users</small>
+                                                   placeholder="{{__('user-pop-bulkuser-connect')}}" required>
+                                            <small class="form-text text-muted">{{__('user-pop-bulkuser-connect-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -616,8 +625,8 @@ Password:{{$user->password}}&nbsp;
                                                 <input type="text" name="connection_start" class="form-control"
                                                        value="30" placeholder="30" required>
                                             </div>
-                                            <small class="form-text text-muted">Expiration Date (on first connection)</small>
-                                            <small style="color:red">If you want to set the expiration date on the first connection, enter the number of validity days in the field above</small>
+                                            <small class="form-text text-muted">{{__('user-pop-bulkuser-date-desc1')}}</small>
+                                            <small style="color:red">{{__('user-pop-bulkuser-date-desc2')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -641,7 +650,7 @@ Password:{{$user->password}}&nbsp;
                                                 <label class="form-check-label"
                                                        for="customCheckinl32">GB</label>
                                             </div>
-                                            <small class="form-text text-muted">Enter traffic</small>
+                                            <small class="form-text text-muted">{{__('user-pop-bulkuser-traffic')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -650,7 +659,7 @@ Password:{{$user->password}}&nbsp;
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <div class="alert alert-warning" role="alert">
-                                                Note that if the user is already registered, the system will not allow the registration
+                                                {{__('user-pop-bulkuser-alert')}}
                                             </div>
                                         </div>
                                     </div>
@@ -663,10 +672,10 @@ Password:{{$user->password}}&nbsp;
                 <div class="modal-footer justify-content-between">
                     <div class="flex-grow-1 text-end">
                         <button type="button" class="btn btn-link-danger btn-pc-default"
-                                data-bs-dismiss="modal">Cancell
+                                data-bs-dismiss="modal">{{__('user-pop-bulkuser-cancel')}}
                         </button>
                         <button type="submit" class="btn btn-primary" value="bulk"
-                                name="bulk">Add</button>
+                                name="bulk">{{__('user-pop-bulkuser-submit')}}</button>
                     </div>
                 </div>
             </form>
