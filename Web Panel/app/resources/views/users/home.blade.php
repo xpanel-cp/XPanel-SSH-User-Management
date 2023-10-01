@@ -61,6 +61,7 @@
                                                 <th>{{__('user-table-date')}}</th>
                                             @endif
                                             <th>{{__('user-table-status')}}</th>
+                                            <th>{{__('user-table-desc')}}</th>
                                             <th class="text-center">{{__('user-table-action')}}</th>
                                         </tr>
                                         </thead>
@@ -184,6 +185,7 @@
                                                     @endif
                                                 </td>
                                                 <td>{!! $status !!}</td>
+                                                <td style="width: 50px"><small><div style="text-wrap: pretty;">{{$user->desc}}</div></small></td>
                                                 <td class="text-center">
                                                     <ul class="list-inline me-auto mb-0">
                                                         <li class="list-inline-item align-bottom">
