@@ -93,6 +93,7 @@ xport=""
 dmp=""
 dmssl=""
 fi
+
 DEFAULT_APP_LOCALE=en
 DEFAULT_APP_MODE=light
 DEFAULT_PANEL_DIRECT=cp
@@ -100,6 +101,7 @@ DEFAULT_CRON_TRAFFIC=active
 DEFAULT_DAY=active
 DEFAULT_PORT_DROPBEAR=2083
 DEFAULT_TRAFFIC_BASE=12
+
 if [ -f /var/www/html/app/.env ]; then
   while IFS= read -r line; do
     key=$(echo "$line" | awk -F'=' '{print $1}')
@@ -115,15 +117,14 @@ if [ -f /var/www/html/app/.env ]; then
       CRON_TRAFFIC="$value"
     elif [ "$key" = "DAY" ]; then
       DAY="$value"
-    fi
     elif [ "$key" = "PORT_DROPBEAR" ]; then
       PORT_DROPBEAR="$value"
-    fi
     elif [ "$key" = "TRAFFIC_BASE" ]; then
       TRAFFIC_BASE="$value"
     fi
   done < /var/www/html/app/.env
 fi
+
 APP_LOCALE="${APP_LOCALE:-$DEFAULT_APP_LOCALE}"
 APP_MODE="${APP_MODE:-$DEFAULT_APP_MODE}"
 PANEL_DIRECT="${PANEL_DIRECT:-$DEFAULT_PANEL_DIRECT}"
@@ -131,6 +132,7 @@ CRON_TRAFFIC="${CRON_TRAFFIC:-$DEFAULT_CRON_TRAFFIC}"
 DAY="${DAY:-$DEFAULT_DAY}"
 PORT_DROPBEAR="${PORT_DROPBEAR:-$DEFAULT_PORT_DROPBEAR}"
 TRAFFIC_BASE="${TRAFFIC_BASE:-$DEFAULT_TRAFFIC_BASE}"
+
 echo -e "${YELLOW}************ Select XPanel Version ************"
 echo -e "${GREEN}  1)XPanel v3.8.0"
 echo -e "${GREEN}  1)XPanel v3.7.9"
