@@ -220,16 +220,18 @@ class SettingsController extends Controller
         Process::run("mysql -u '" .env('DB_USERNAME'). "' --password='" .env('DB_PASSWORD'). "' XPanel_plus < /var/www/html/app/storage/backup/".$name);
         $users =Users::all();
         foreach ($users as $user) {
-            Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$user->username}");
-            Process::input($user->password."\n".$user->password."\n")->timeout(120)->run("sudo passwd {$user->username}");
-            $check_traffic =Traffic::where('username', $user->username)->count();
-            if ($check_traffic < 1) {
-                Traffic::create([
-                    'username' => $user->username,
-                    'download' => '0',
-                    'upload' => '0',
-                    'total' => '0'
-                ]);
+            if($user->status=='active') {
+                Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$user->username}");
+                Process::input($user->password . "\n" . $user->password . "\n")->timeout(120)->run("sudo passwd {$user->username}");
+                $check_traffic = Traffic::where('username', $user->username)->count();
+                if ($check_traffic < 1) {
+                    Traffic::create([
+                        'username' => $user->username,
+                        'download' => '0',
+                        'upload' => '0',
+                        'total' => '0'
+                    ]);
+                }
             }
         }
         return redirect()->intended(route('settings', ['name' => 'backup']));
