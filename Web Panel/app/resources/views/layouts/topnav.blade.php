@@ -28,11 +28,11 @@
                         <div class="pt-3">
                             <a href="{{route('setting')}}">
                                 <i class="ti ti-settings"></i>
-                                <span>Settings</span>
+                                <span>{{__('menu-setting')}}</span>
                             </a>
                             <a href="{{route('user.logout')}}">
                                 <i class="ti ti-power"></i>
-                                <span>Logut</span>
+                                <span>{{__('menu-logout')}}</span>
                             </a>
                         </div>
                     </div>
@@ -47,14 +47,14 @@
                 <li class="pc-item">
                     <a href="{{route('dashboard')}}" class="pc-link">
                         <i data-feather="airplay"></i>
-                        <span class="pc-mtext">Dashboard</span>
+                        <span class="pc-mtext">{{__('menu-dashboard')}}</span>
                     </a>
                 </li>
 
                 <li class="pc-item">
                     <a href="{{route('users')}}" class="pc-link">
                         <i data-feather="users"></i>
-                        <span class="pc-mtext">Users</span>
+                        <span class="pc-mtext">{{__('menu-users')}}</span>
                     </a>
                 </li>
 
@@ -65,23 +65,23 @@
                 <use xlink:href="#custom-story"></use>
               </svg>
             </span>
-                        <span class="pc-mtext">Online User</span>
+                        <span class="pc-mtext">{{__('menu-online')}}</span>
                     </a>
                 </li>
                 <li class="pc-item pc-caption">
-                    <label>Other More</label>
+                    <label>{{__('menu-other')}}</label>
                     <i class="ti ti-chart-arcs"></i>
                 </li>
                 <li class="pc-item">
                     <a href="{{route('filtering')}}" class="pc-link">
                         <i data-feather="target"></i>
-                        <span class="pc-mtext">Filtering Status</span>
+                        <span class="pc-mtext">{{__('menu-filtering')}}</span>
                     </a>
                 </li>
                 <li class="pc-item">
                     <a href="{{route('admins')}}" class="pc-link">
                         <i data-feather="users"></i>
-                        <span class="pc-mtext">Managers</span>
+                        <span class="pc-mtext">{{__('menu-manager')}}</span>
                     </a>
                 </li>
 
@@ -108,7 +108,56 @@
                 </li>
             </ul>
         </div>
+        <div class="ms-auto">
+            <ul class="list-unstyled">
+                <li class="dropdown pc-h-item">
+                    <a href="https://github.com/xpanel-cp/XPanel-SSH-User-Management" target="_blank">
+                    <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/xpanel-cp/XPanel-SSH-User-Management?style=social&link=left">
+                    </a>
+                </li>
+                <li class="dropdown pc-h-item">
+                    <a href="https://plisio.net/donate/KL6W5z8k" target="_blank"><span class="badge bg-light-primary rounded-pill f-12"><i class="fas fa-donate"></i>&nbsp;{{__('donate')}}</span></a>
+                </li>
+                <li class="dropdown pc-h-item">
+                    <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                        <svg class="pc-icon">
+                            <use xlink:href="#custom-sun-1"></use>
+                        </svg>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end pc-h-dropdown" style="">
+                        <a href="{{ route('mod', ['name' => 'night']) }}" class="dropdown-item" onclick="layout_change('dark')">
+                            <svg class="pc-icon">
+                                <use xlink:href="#custom-moon"></use>
+                            </svg>
+                            <span>Dark</span>
+                        </a>
+                        <a href="{{ route('mod', ['name' => 'light']) }}" class="dropdown-item" onclick="layout_change('light')">
+                            <svg class="pc-icon">
+                                <use xlink:href="#custom-sun-1"></use>
+                            </svg>
+                            <span>Light</span>
+                        </a>
+                    </div>
+                </li>
 
+                <li class="dropdown pc-h-item">
+                    <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="false" aria-expanded="false">
+                        <i class="ti ti-language"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end pc-h-dropdown" style="">
+                        <a href="{{ route('lang', ['name' => 'fa']) }}" class="dropdown-item">
+                            <i class="fas fa-language"></i>
+                            <span>فارسی</span>
+                        </a>
+                        <a href="{{ route('lang', ['name' => 'en']) }}" class="dropdown-item">
+                            <i class="fas fa-language"></i>
+                            <span>English</span>
+                        </a>
+                    </div>
+                </li>
+
+            </ul>
+        </div>
 
     </div>
 </header>

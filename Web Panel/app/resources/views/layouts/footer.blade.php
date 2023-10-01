@@ -24,7 +24,12 @@
 <script src="/assets/js/plugins/simplebar.min.js"></script>
 <script src="/assets/js/plugins/bootstrap.min.js"></script>
 <script src="/assets/js/fonts/custom-font.js"></script>
-<script src="/assets/js/config.js?v=3.7.9"></script>
+@php $selectedLanguage = env('APP_MODE', 'light'); @endphp
+@if($selectedLanguage=='light')
+    <script src="/assets/js/config.js?v=3.8.0"></script>
+@elseif($selectedLanguage=='night')
+    <script src="/assets/js/config-night.js?v=3.8.0"></script>
+@endif
 <script src="/assets/js/pcoded.js"></script>
 <script src="/assets/js/plugins/feather.min.js"></script>
 <!-- [Page Specific JS] start -->
@@ -36,11 +41,12 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $(".example1").persianDatepicker({
+            initialValueType: 'persian',
             initialValue: false,
             observer: false,
-            format: 'YYYY/MM/DD',
+            format: 'YYYY-MM-DD',
             altField: '.observer-example-alt',
-            autoClose: true
+            autoClose: true,
         });
     });
 </script>
@@ -58,7 +64,26 @@
         perPage: 25
     });
 </script>
-
+<script type="text/javascript">
+    const status_traffic = document.getElementById("status_traffic");
+    status_traffic.addEventListener("change", function() {
+        if (status_traffic.checked) {
+            status_traffic.value = "active";
+        } else {
+            status_traffic.value = "deactive";
+        }
+    });
+</script>
+<script type="text/javascript">
+    const status_multiuser = document.getElementById("status_multiuser");
+    status_multiuser.addEventListener("change", function() {
+        if (status_multiuser.checked) {
+            status_multiuser.value = "active";
+        } else {
+            status_multiuser.value = "deactive";
+        }
+    });
+</script>
 <!-- [Page Specific JS] end -->
 </body>
 <!-- [Body] end -->

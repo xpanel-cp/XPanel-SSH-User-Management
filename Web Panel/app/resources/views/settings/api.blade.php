@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title','XPanel - Settings')
+@section('title','XPanel - '.__('setting-api-title'))
 @section('content')
     <!-- [ Main Content ] start -->
     <div class="pc-container">
@@ -10,7 +10,7 @@
                     <div class="row align-items-center">
                         <div class="col-md-12">
                             <div class="page-header-title">
-                                <h2 class="mb-0">Settings - Api</h2>
+                                <h2 class="mb-0">{{__('setting-api-title')}}</h2>
                             </div>
                         </div>
                     </div>
@@ -32,21 +32,21 @@
                                     <div class="form-group row">
                                         <div class="col-lg-6">
                                             <input type="text" name="desc" class="form-control" required="">
-                                            <small class="form-text text-muted">Description</small>
+                                            <small class="form-text text-muted">{{__('setting-api-desc')}}</small>
                                         </div>
                                     </div>
 
                                     <div class="form-group row">
                                         <div class="col-lg-6">
                                             <input class="form-control" type="text" name="allowip" required="" value="0.0.0.0/0">
-                                            <small class="form-text text-muted">Allowed IPs</small>
+                                            <small class="form-text text-muted">{{__('setting-api-allow')}}</small>
                                         </div>
                                     </div>
 
                                     <div class="form-group row">
                                         <div class="col-lg-4 col-form-label"></div>
                                         <div class="col-lg-6">
-                                            <input type="submit" class="btn btn-primary" value="Add">
+                                            <input type="submit" class="btn btn-primary" value="{{__('setting-api-submit')}}">
                                         </div>
                                     </div>
                                 </form>
@@ -59,10 +59,10 @@
                                                     <thead>
                                                     <tr>
                                                         <th>#</th>
-                                                        <th>Token</th>
-                                                        <th>IP</th>
-                                                        <th class="text-center">Renew</th>
-                                                        <th class="text-center">Delete</th>
+                                                        <th>{{__('setting-api-token')}}</th>
+                                                        <th>{{__('setting-api-ip')}}</th>
+                                                        <th class="text-center">{{__('setting-api-renew')}}</th>
+                                                        <th class="text-center">{{__('setting-api-delete')}}</th>
                                                     </tr>
 
                                                     @foreach($apis as $api)

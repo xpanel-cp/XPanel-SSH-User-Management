@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title','XPanel - Settings')
+@section('title','XPanel - '.__('setting-multiuser-title'))
 @section('content')
     <!-- [ Main Content ] start -->
     <div class="pc-container">
@@ -10,7 +10,7 @@
                     <div class="row align-items-center">
                         <div class="col-md-12">
                             <div class="page-header-title">
-                                <h2 class="mb-0">Settings - Multi User</h2>
+                                <h2 class="mb-0">{{__('setting-multiuser-title')}}</h2>
                             </div>
                         </div>
                     </div>
@@ -29,11 +29,11 @@
                             <div class="card-body">
 
                                     <div class="form-group row">
-                                        Status:
+                                        {{__('setting-multiuser-status')}}:
                                         @if ($status=='active') 
-                                        <span class="badge bg-light-success rounded-pill f-12" style="width:100px">Active</span>
+                                        <span class="badge bg-light-success rounded-pill f-12" style="width:100px">{{__('setting-multiuser-status-active')}}</span>
                                         @else
-                                            <span class="badge bg-light-danger rounded-pill f-12" style="width:100px">Deactive</span>
+                                            <span class="badge bg-light-danger rounded-pill f-12" style="width:100px">{{__('setting-multiuser-status-deactive')}}</span>
                                         @endif
                                     </div>
 
@@ -41,15 +41,15 @@
                                         <div class="col-lg-12">
                                             <form class="validate-me" action="{{route('settings.multiuser')}}" method="post" enctype="multipart/form-data">
                                                 @csrf
-                                                Active
+                                                {{__('setting-multiuser-status-active')}}
                                                 <input type="radio" class="form-check-input input-primary"
                                                        name="status" value="active" checked="">
-                                                Deactive
+                                                {{__('setting-multiuser-status-deactive')}}
                                                 <input type="radio" class="form-check-input input-primary"
                                                        name="status" value="deactive" >
                                                 <br>
                                                 <br>
-                                                <button type="submit" class="btn btn-primary" value="submit" >Save</button>
+                                                <button type="submit" class="btn btn-primary" value="submit" >{{__('setting-save')}}</button>
                                             </form>
                                         </div>
                                     </div>

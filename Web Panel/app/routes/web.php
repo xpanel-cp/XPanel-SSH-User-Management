@@ -21,11 +21,20 @@ use App\Http\Controllers\FixerController;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/', function () {
-    return redirect('/login');
-});
-Route::prefix('cp')->group(function()
+
+$panel=env('PANEL_DIRECT');
+if($panel=='cp')
 {
+    Route::get('/', function () {
+        return redirect('/login');
+    });
+}
+Route::prefix("$panel")->group(function()
+{
+
+    Route::get('/', [LoginController::class,'showLoginForm'])->name('login');
+    Route::get('/login', [LoginController::class,'showLoginForm'])->name('login');
+    Route::post('/login', [LoginController::class,'login']);
     Route::get('/dashboard',[DahboardController::class,'index'])->name('dashboard');
     Route::get('/users',[UserController::class,'index'])->name('users');
     Route::post('/users',[UserController::class,'newuser'])->name('new.user');
@@ -44,6 +53,8 @@ Route::prefix('cp')->group(function()
     Route::get('/checkip',[OnlineController::class,'filtering'])->name('filtering');
     Route::get('/settings',[SettingsController::class,'defualt'])->name('setting');
     Route::get('/settings/{name}',[SettingsController::class,'index'])->name('settings');
+    Route::get('/settings/mod/{name}',[SettingsController::class,'mod'])->name('mod');
+    Route::get('/settings/lang/{name}',[SettingsController::class,'lang'])->name('lang');
     Route::post('/settings/general',[SettingsController::class,'update_general'])->name('settings.general');
     Route::post('/settings/user',[SettingsController::class,'update_multiuser'])->name('settings.multiuser');
     Route::post('/settings/telegram',[SettingsController::class,'update_telegram'])->name('settings.telegram');

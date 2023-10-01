@@ -167,7 +167,8 @@ class ApiController extends Controller
             $user[] = [
                 "port_direct" => env('PORT_SSH'),
                 "port_tls" => $tls_port,
-                "port_dropbear" => env('PORT_DROPBEAR')
+                "port_dropbear" => env('PORT_DROPBEAR'),
+                "message" => 'success'
             ];
             return response()->json($user);
         }

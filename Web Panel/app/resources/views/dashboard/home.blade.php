@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title','XPanel - Dahboard')
+@section('title','XPanel - '.__('dashboard-title'))
 @section('content')
     <div class="pc-container">
         <div class="pc-content">
@@ -9,7 +9,7 @@
                     <div class="row align-items-center">
                         <div class="col-md-12">
                             <div class="page-header-title">
-                                <h2 class="mb-0">Dashboard</h2>
+                                <h2 class="mb-0">{{__('dashboard-title')}}</h2>
                             </div>
                         </div>
                     </div>
@@ -29,7 +29,7 @@
                                         <div id="total-earning-graph-cpu"></div>
                                     </div>
                                     <br>
-                                    <h6 class="mb-1">Cpu Usage</h6>
+                                    <h6 class="mb-1">{{__('dashboard-cpu')}}</h6>
                                 </div>
                             </div>
                         </div>
@@ -44,7 +44,7 @@
                                         <div id="total-earning-graph-ram"></div>
                                     </div>
                                     <br>
-                                    <h6 class="mb-1">Ram Usage</h6>
+                                    <h6 class="mb-1">{{__('dashboard-ram')}}</h6>
                                 </div>
                             </div>
                         </div>
@@ -60,7 +60,7 @@
                                         <div id="total-earning-graph-hard"></div>
                                     </div>
                                     <br>
-                                    <h6 class="mb-1">Disk Usage</h6>
+                                    <h6 class="mb-1">{{__('dashboard-disk')}}</h6>
                                 </div>
                             </div>
                         </div>
@@ -73,12 +73,12 @@
                             <div class="d-flex align-items-center">
                                 <div class="flex-shrink-0">
                                     <div class="my-n4" style="width: 130px">
-                                        <h5 style="margin-top: 10px; text-align: center;"><small>Server</small><br>{{$total}}</h5>
-                                        <h5 style="margin-top: 10px; text-align: center;"><small>Client</small><br>{{$traffic_total}}</h5>
+                                        <h5 style="margin-top: 10px; text-align: center;"><small>{{__('dashboard-server')}}</small><br>{{$total}}</h5>
+                                        <h5 style="margin-top: 10px; text-align: center;"><small>{{__('dashboard-client')}}</small><br>{{$traffic_total}}</h5>
                                     </div>
                                     <br>
                                     <br>
-                                    <h6 class="mb-1">Bandwidth Usage</h6>
+                                    <h6 class="mb-1">{{__('dashboard-bandwidth')}}</h6>
                                 </div>
                             </div>
                         </div>
@@ -93,23 +93,23 @@
                             <div class="row g-3 text-center">
                                 <div class="col-6 col-lg-4 col-xxl-4">
                                     <div class="overview-product-legends">
-                                        <p class="text-dark mb-1"><span>Active User</span></p>
+                                        <p class="text-dark mb-1"><span>{{__('dashboard-active-user')}}</span></p>
                                         <h6 class="mb-0">{{$active_user}}</h6>
                                     </div>
                                 </div>
                                 <div class="col-6 col-lg-4 col-xxl-4">
                                     <div class="overview-product-legends">
-                                        <p class="text-dark mb-1"><span>Deactive User</span></p>
+                                        <p class="text-dark mb-1"><span>{{__('dashboard-deactive-user')}}</span></p>
                                         <h6 class="mb-0">{{$deactive_user}}</h6>
                                     </div>
                                 </div>
                                 <div class="col-6 col-lg-4 col-xxl-4">
                                     <div class="overview-product-legends">
-                                        <p class="text-secondary mb-1"><span>Online User</span></p>
+                                        <p class="text-secondary mb-1"><span>{{__('dashboard-online-user')}}</span></p>
                                         <h6 class="mb-0">{{$online_user}}</h6>
                                     </div>
                                 </div>
-                                <h6>All User: {{$alluser}}</h6>
+                                <h6>{{__('dashboard-all-user')}}: {{$alluser}}</h6>
                             </div>
 
                         </div>

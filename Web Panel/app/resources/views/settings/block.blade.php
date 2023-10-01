@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title','XPanel - Settings')
+@section('title','XPanel - '.__('setting-blockip-title'))
 @section('content')
     <!-- [ Main Content ] start -->
     <div class="pc-container">
@@ -10,7 +10,7 @@
                     <div class="row align-items-center">
                         <div class="col-md-12">
                             <div class="page-header-title">
-                                <h2 class="mb-0">Settings - Block IP Iran</h2>
+                                <h2 class="mb-0">{{__('setting-blockip-title')}}</h2>
                             </div>
                         </div>
                     </div>
@@ -29,10 +29,10 @@
                             <div class="card-body">
                                 <div class="form-group row">
                                     <div class="col-lg-12">
-                                        To block Iranian IP addresses (ports 80 and 443), execute the following command in the terminal:
+                                        {{__('setting-blockip-desc1')}}
                                         <br>
                                         <b>
-                                            bash /root/xpanel.sh <span style="color:red">OR</span> bash xpanel.sh <span style="color:red">OR</span> xpanel
+                                            bash /root/xpanel.sh <span style="color:red">{{__('setting-blockip-or')}}</span> bash xpanel.sh <span style="color:red">{{__('setting-blockip-or')}}</span> xpanel
                                         </b>
                                     </div>
                                 </div>

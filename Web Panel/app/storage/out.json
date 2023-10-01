@@ -1,13 +1,5 @@
-Adding local address: 10.124.0.2
-Adding local address: fe80::2cbc:36ff:fec8:98c1
-Ethernet link detected
-Adding local address: 164.92.126.72
-Adding local address: 10.48.0.5
-Adding local address: fe80::a8b4:10ff:fe9e:8212
+Adding local address: 109.104.153.180
+Adding local address: fe80::216:3eff:fe6c:e637
 Ethernet link detected
 [{"name":"unknown TCP","PID":0,"UID":0,"RX":0.000000,"TX":0.000000 }]
-[{"name":"unknown TCP","PID":0,"UID":0,"RX":0.000107,"TX":0.000051 }]
-[{"name":"unknown TCP","PID":0,"UID":0,"RX":0.000107,"TX":0.000051 }]
-[{"name":"unknown TCP","PID":0,"UID":0,"RX":0.000107,"TX":0.000051 }]
-[{"name":"unknown TCP","PID":0,"UID":0,"RX":0.000107,"TX":0.000051 }]
-[{"name":"unknown TCP","PID":0,"UID":0,"RX":0.000107,"TX":0.000051 }]
+[{"name":"sshd: taha280","PID":477095,"UID":1074,"RX":0.807679,"TX":0.021572 },{"name":"sshd: taha282","PID":655006,"UID":1003,"RX":0.192719,"TX":0.017323 },{"name":"sshd: root@pts/0","PID":3278322,"UID":0,"RX":0.054777,"TX":0.879856 },{"name":"sshd: taha289","PID":488638,"UID":1010,"RX":0.000613,"TX":0.000189 },{"name":"unknown TCP","PID":0,"UID":0,"RX":0.000334,"TX":0.000000 },{"name":"sshd: taha288","PID":405538,"UID":1009,"RX":0.000242,"TX":0.000126 }]

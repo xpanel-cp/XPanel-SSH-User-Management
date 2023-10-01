@@ -33,9 +33,34 @@ class SettingsController extends Controller
     public function defualt()
     {
         $this->check();
-        return redirect()->intended(route('settings', ['name' => 'user']));
+        return redirect()->intended(route('settings', ['name' => 'general']));
     }
-    public function index(Request $request,$name)
+    public function mod(Request $request,$name)
+    {
+        $this->check();
+        if (!is_string($name)) {
+            abort(400, 'Not Valid Username');
+        }
+        if($name=='night' OR $name=='light')
+        {
+            Process::run("sed -i \"s/APP_MODE=.*/APP_MODE=$name/g\" /var/www/html/app/.env");
+        }
+        return redirect()->back()->with('success', 'success');
+    }
+    public function lang(Request $request,$name)
+    {
+        $this->check();
+        if (!is_string($name)) {
+            abort(400, 'Not Valid Username');
+        }
+        if($name=='fa' OR $name=='en')
+        {
+            Process::run("sed -i \"s/APP_LOCALE=.*/APP_LOCALE=$name/g\" /var/www/html/app/.env");
+        }
+
+        return redirect()->back()->with('success', 'success');
+    }
+        public function index(Request $request,$name)
     {
         $this->check();
         if (!is_string($name)) {
@@ -44,12 +69,10 @@ class SettingsController extends Controller
         $setting = Settings::all();
         $apis =Api::all();
         if($name=='general') {
-            $traffic_base=env('TRAFFIC_BASE');
-            return view('settings.general', compact('traffic_base'));}
-
-        if($name=='user') {
             $status=$setting[0]->multiuser;
-            return view('settings.index', compact('status'));}
+            $traffic_base=env('TRAFFIC_BASE');
+            return view('settings.general', compact('traffic_base','status'));}
+
 
         if($name=='backup') {
             $list = Process::run("ls /var/www/html/app/storage/backup");
@@ -86,30 +109,51 @@ class SettingsController extends Controller
     {
         $this->check();
         $request->validate([
-            'trafficbase'=>'required|numeric'
+            'trafficbase'=>'required|numeric',
+            'direct_login'=>'required|string',
+            'lang'=>'required|string',
+            'mode'=>'required|string',
+            'status_traffic'=>'string',
+            'status_multiuser'=>'string',
         ]);
         $traffic_base_old=env('TRAFFIC_BASE');
         $traffic_base_new=$request->trafficbase;
         $fileContents = file_get_contents('/var/www/html/app/.env');
         $newContents = str_replace("TRAFFIC_BASE=".$traffic_base_old, "TRAFFIC_BASE=".$traffic_base_new, $fileContents);
         file_put_contents('/var/www/html/app/.env', $newContents);
-        return redirect()->intended(route('settings', ['name' => 'general']));
-    }
-    public function update_multiuser(Request $request)
-    {
-        $this->check();
-        $request->validate([
-            'status'=>'required|string'
-        ]);
-        $check_setting = Settings::where('id','1')->count();
-        if ($check_setting > 0) {
-            Settings::where('id', 1)->update(['multiuser' => $request->status]);
-        } else {
-            Settings::create([
-                'multiuser' => $request->status
-            ]);
+        if($request->lang=='fa' OR $request->lang=='en')
+        {
+            Process::run("sed -i \"s/APP_LOCALE=.*/APP_LOCALE=$request->lang/g\" /var/www/html/app/.env");
         }
-        return redirect()->intended(route('settings', ['name' => 'user']));
+        if($request->mode=='night' OR $request->mode=='light')
+        {
+            Process::run("sed -i \"s/APP_MODE=.*/APP_MODE=$request->mode/g\" /var/www/html/app/.env");
+        }
+        Process::run("sed -i \"s/PANEL_DIRECT=.*/PANEL_DIRECT=$request->direct_login/g\" /var/www/html/app/.env");
+        if (empty($request->status_traffic) or $request->status_traffic=='deactive')
+        {
+            $status_traffic='deactive';
+        }
+        else
+        {
+            $status_traffic='active';
+        }
+
+        if (empty($request->status_multiuser) or $request->status_multiuser=='deactive')
+        {
+            $status_multiuser='deactive';
+        }
+        else
+        {
+            $status_multiuser='active';
+        }
+        Process::run("sed -i \"s/CRON_TRAFFIC=.*/CRON_TRAFFIC=$status_traffic/g\" /var/www/html/app/.env");
+            $check_setting = Settings::where('id', '1')->count();
+            if ($check_setting > 0) {
+                Settings::where('id', 1)->update(['multiuser' => $status_multiuser]);
+            }
+
+        return redirect()->intended(route('settings', ['name' => 'general']));
     }
 
     public function update_telegram(Request $request)
@@ -129,154 +173,7 @@ class SettingsController extends Controller
         }
         return redirect()->intended(route('settings', ['name' => 'telegram']));
     }
-
-    public function import_old(Request $request)
-    {
-        $this->check();
-        $request->validate([
-            'file'=>'required|mimetypes:text/plain'
-        ]);
-        if($request->file('file')) {
-            $file = $request->file('file');
-            $filename = $file->getClientOriginalName();
-            $file->move('/var/www/html/app/storage/backup/', $filename);
-            $sqlScript = file('/var/www/html/app/storage/backup/' . $filename);
-            foreach ($sqlScript as $line) {
-
-                $startWith = substr(trim($line), 0, 2);
-                $endWith = substr(trim($line), -1, 1);
-
-                if (empty($line) || $startWith == '--' || $startWith == '/*' || $startWith == '//') {
-                    continue;
-                }
-                if (strpos($line, 'INSERT INTO `users` VALUES') !== false) {
-                    //echo $line;
-                    $list = explode("VALUES ", $line);
-                    $list = explode("),", $list[1]);
-                    foreach ($list as $li) {
-                        $li = str_replace("(", "", $li);
-                        $li = str_replace("'", "", $li);
-                        $li = str_replace(");", "", $li);
-                        $data = explode(",", $li);
-                        $check_traffic = Users::where('username', $data[1])->count();
-                        if ($check_traffic < 1) {
-                            if($data[10]=='true')
-                            { $status='active';}
-                            if($data[10]=='false')
-                            { $status='deactive';}
-                            if($data[10]!='true' and $data[10]!='false')
-                            { $status=$data[10];}
-                            Users::create([
-                                'username' => $data[1],
-                                'password' => $data[2],
-                                'email' => $data[3],
-                                'mobile' => $data[4],
-                                'multiuser' => $data[5],
-                                'start_date' => $data[6],
-                                'end_date' => $data[7],
-                                'date_one_connect' => $data[8],
-                                'customer_user' => $data[9],
-                                'status' => $status,
-                                'traffic' => $data[11],
-                                'referral' => $data[12],
-                                'desc' => $data[13]
-                            ]);
-                        }
-                    }
-
-
-                }
-
-                if (strpos($line, 'INSERT INTO `Traffic` VALUES') !== false) {
-                    //echo $line;
-                    $list = explode("VALUES ", $line);
-                    $list = explode("),", $list[1]);
-                    foreach ($list as $li) {
-                        $li = str_replace("(", "", $li);
-                        $li = str_replace("'", "", $li);
-                        $li = str_replace(");", "", $li);
-                        $data = explode(",", $li);
-                        $check_traffic =Traffic::where('username', $data[0])->count();
-                        if ($check_traffic < 1) {
-                            if (!is_numeric($data[0])) {
-                                Traffic::create([
-                                    'username' => $data[0],
-                                    'download' => $data[1],
-                                    'upload' => $data[2],
-                                    'total' => $data[3]
-                                ]);
-                            }
-                            else
-                            {
-                                Traffic::create([
-                                    'username' => $data[1],
-                                    'download' => $data[2],
-                                    'upload' => $data[3],
-                                    'total' => $data[4]
-                                ]);
-                            }
-                        }
-                    }
-
-
-                }
-
-                if (strpos($line, 'INSERT INTO `traffic` VALUES') !== false) {
-                    //echo $line;
-                    $list = explode("VALUES ", $line);
-                    $list = explode("),", $list[1]);
-                    foreach ($list as $li) {
-                        $li = str_replace("(", "", $li);
-                        $li = str_replace("'", "", $li);
-                        $li = str_replace(");", "", $li);
-                        $data = explode(",", $li);
-                        $check_traffic =Traffic::where('username', $data[0])->count();
-                        if ($check_traffic < 1) {
-                            if (!is_numeric($data[0])) {
-                                Traffic::create([
-                                    'username' => $data[0],
-                                    'download' => $data[1],
-                                    'upload' => $data[2],
-                                    'total' => $data[3]
-                                ]);
-                            }
-                            else
-                            {
-                                Traffic::create([
-                                    'username' => $data[1],
-                                    'download' => $data[2],
-                                    'upload' => $data[3],
-                                    'total' => $data[4]
-                                ]);
-                            }
-                        }
-                    }
-
-
-                }
-
-            }
-            Process::run("rm -rf /var/www/html/app/storage/backup/".$filename);
-            $users = DB::table('users')->get();
-            foreach ($users as $user) {
-                Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$user->username}");
-                Process::input($user->password."\n".$user->password."\n")->timeout(120)->run("sudo passwd {$user->username}");
-                $check_traffic =Traffic::where('username', $user->username)->count();
-                if ($check_traffic < 1) {
-                    Traffic::create([
-                        'username' => $user->username,
-                        'download' => '0',
-                        'upload' => '0',
-                        'total' => '0'
-                    ]);
-                }
-            }
-
-
-        }
-        return redirect()->intended(route('settings', ['name' => 'backup']));
-    }
-
+    
     public function upload_backup(Request $request)
     {
         $this->check();

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Str;
+use Verta;
 
 class UserController extends Controller
 {
@@ -52,7 +53,18 @@ class UserController extends Controller
             'type_traffic'=>'required|string',
             'desc'=>'nullable|string'
         ]);
-
+        if(env('APP_LOCALE', 'en')=='fa') {
+            if (!empty($request->expdate)) {
+                $end_date=$this->persianToenglishNumbers($request->expdate);
+                $end_date = Verta::parse($end_date)->datetime()->format('Y-m-d');
+            } else {
+                $end_date = '';
+            }
+        }
+        else
+        {
+            $end_date= $request->expdate;
+        }
         if (!empty($request->connection_start)) {
             $start_date = '';
         } else {
@@ -73,7 +85,7 @@ class UserController extends Controller
                 'mobile' => $request->mobile,
                 'multiuser' => $request->multiuser,
                 'start_date' => $start_date,
-                'end_date' => $request->expdate,
+                'end_date' => $end_date,
                 'date_one_connect' => $request->connection_start,
                 'customer_user' => $user->username,
                 'status' => 'active',
@@ -433,7 +445,20 @@ class UserController extends Controller
             if ($check_user > 0) {
                 $user = Users::where('username', $username)->get();
                 $show = $user[0];
-                return view('users.edit', compact('show'));
+                if(env('APP_LOCALE', 'en')=='fa')
+                {
+                 if(!empty($show->end_date)){$end_date=Verta::instance($show->end_date)->format('Y-m-d');
+                 $end_date=$this->englishToPersianNumbers($end_date);}
+                 else
+                 {
+                     $end_date=''  ;
+                 }
+                }
+                else
+                {
+                    $end_date= $show->end_date;
+                }
+                return view('users.edit', compact('show','end_date'));
             } else {
                 return redirect()->back()->with('success', 'Not User');
             }
@@ -459,7 +484,7 @@ class UserController extends Controller
             'mobile'=>'nullable|string',
             'multiuser'=>'required|numeric',
             'traffic'=>'required|numeric',
-            'expdate'=>'nullable|date_format:Y-m-d',
+            'expdate'=>'nullable|string',
             'type_traffic'=>'required|string',
             'activate'=>'required|string',
             'desc'=>'nullable|string'
@@ -468,6 +493,18 @@ class UserController extends Controller
             $traffic = $request->traffic * 1024;
         } else {
             $traffic = $request->traffic;
+        }
+        if(env('APP_LOCALE', 'en')=='fa') {
+            if (!empty($request->expdate)) {
+                $end_date=$this->persianToenglishNumbers($request->expdate);
+                $end_date = Verta::parse($end_date)->datetime()->format('Y-m-d');
+            } else {
+                $end_date = '';
+            }
+        }
+        else
+        {
+            $end_date= $request->expdate;
         }
         $user = Auth::user();
         if($user->permission=='admin') {
@@ -480,7 +517,7 @@ class UserController extends Controller
                         'mobile' => $request->mobile,
                         'multiuser' => $request->multiuser,
                         'traffic' => $traffic,
-                        'end_date' => $request->expdate,
+                        'end_date' => $end_date,
                         'status' => $request->activate,
                         'desc' => $request->desc
                     ]);
@@ -511,7 +548,7 @@ class UserController extends Controller
                         'mobile' => $request->mobile,
                         'multiuser' => $request->multiuser,
                         'traffic' => $traffic,
-                        'end_date' => $request->expdate,
+                        'end_date' => $end_date,
                         'status' => $request->activate,
                         'desc' => $request->desc
                     ]);
@@ -531,6 +568,41 @@ class UserController extends Controller
             }
         }
         return redirect()->back()->with('success', 'Update Success');
+    }
+    public function englishToPersianNumbers($input)
+    {
+        $persianNumbers = [
+            '0' => '۰',
+            '1' => '۱',
+            '2' => '۲',
+            '3' => '۳',
+            '4' => '۴',
+            '5' => '۵',
+            '6' => '۶',
+            '7' => '۷',
+            '8' => '۸',
+            '9' => '۹',
+        ];
+
+        return strtr($input, $persianNumbers);
+    }
+
+    public function persianToenglishNumbers($input)
+    {
+        $persianNumbers = [
+            '۰' => '0',
+            '۱' => '1',
+            '۲' => '2',
+            '۳' => '3',
+            '۴' => '4',
+            '۵' => '5',
+            '۶' => '6',
+            '۷' => '7',
+            '۸' => '8',
+            '۹' => '9',
+        ];
+
+        return strtr($input, $persianNumbers);
     }
 
 }

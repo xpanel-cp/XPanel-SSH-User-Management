@@ -4,7 +4,7 @@
 
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Xpanel</title>
+    <title>@yield('title','page-title')</title>
     <!-- [Meta] -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
@@ -24,7 +24,12 @@
     <!-- [Material Icons] https://fonts.google.com/icons -->
     <link rel="stylesheet" href="/assets/fonts/material.css" />
     <!-- [Template CSS Files] -->
-    <link rel="stylesheet" href="/assets/css/style-en-us.css" id="main-style-link" />
+    @php $selectedLanguage = env('APP_LOCALE', 'en'); @endphp
+    @if($selectedLanguage=='fa')
+        <link rel="stylesheet" href="/assets/css/style-fa-ir.css?v=1" id="main-style-link" />
+    @else
+        <link rel="stylesheet" href="/assets/css/style-en-us.css?v=2" id="main-style-link" />
+    @endif
     <link rel="stylesheet" href="/assets/css/style-preset.css" />
     <link rel="stylesheet" href="/assets/css/persian-datepicker.css"/>
 </head>

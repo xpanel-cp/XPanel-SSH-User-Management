@@ -83,56 +83,56 @@ class FixerController extends Controller
         $setting = Settings::all();
         $multiuser = $setting[0]->multiuser;
 
-
-        $list = Process::run("sudo lsof -i :" . env('PORT_SSH') . " -n | grep -v root | grep ESTABLISHED");
-        $output = $list->output();
-        $onlineuserlist = preg_split("/\r\n|\n|\r/", $output);
-        foreach ($onlineuserlist as $user) {
-            $user = preg_replace('/\s+/', ' ', $user);
-            $userarray = explode(" ", $user);
-            if (!isset($userarray[2])) {
-                $userarray[2] = null;
-            }
-            $onlinelist[] = $userarray[2];
-        }
-
-        if (file_exists("/var/www/html/app/storage/dropbear.json")) {
-            $jsonFilePath = '/var/www/html/app/storage/dropbear.json';
-            $jsonData = file_get_contents($jsonFilePath);
-            $dataArray = json_decode($jsonData, true);
-            foreach ($dataArray as $item) {
-                $user = $item['user'];
-                $onlinelist[] = $user;
-            }
-        }
-        //print_r($onlinelist);
-        $onlinelist = array_replace($onlinelist, array_fill_keys(array_keys($onlinelist, null), ''));
-        $onlinecount = array_count_values($onlinelist);
-
-        foreach ($onlinelist as $useron) {
-            $users = Users::where('username', $useron)->get();
-            foreach ($users as $row) {
-                $limitation = $row->multiuser;
-                $username = $row->username;
-                $startdate = $row->start_date;
-                $finishdate_one_connect = $row->date_one_connect;
-                if (empty($limitation)) {
-                    $limitation = "0";
+        if ($multiuser == 'active') {
+            $list = Process::run("sudo lsof -i :" . env('PORT_SSH') . " -n | grep -v root | grep ESTABLISHED");
+            $output = $list->output();
+            $onlineuserlist = preg_split("/\r\n|\n|\r/", $output);
+            foreach ($onlineuserlist as $user) {
+                $user = preg_replace('/\s+/', ' ', $user);
+                $userarray = explode(" ", $user);
+                if (!isset($userarray[2])) {
+                    $userarray[2] = null;
                 }
-                $userlist[$username] = $limitation;
-                if (empty($startdate)) {
-                    $use_active = $username . "|" . $onlinecount[$username];
-                    $act_explode = explode("|", $use_active);
-                    if ($act_explode[1] > 0) {
-                        $start_inp = date("Y-m-d");
-                        $end_inp = date('Y-m-d', strtotime($start_inp . " + $finishdate_one_connect days"));
-                        Users::where('username', $act_explode[0])
-                            ->update(['start_date' => $start_inp,'end_date' => $end_inp]);
+                $onlinelist[] = $userarray[2];
+            }
+
+            if (file_exists("/var/www/html/app/storage/dropbear.json")) {
+                $jsonFilePath = '/var/www/html/app/storage/dropbear.json';
+                $jsonData = file_get_contents($jsonFilePath);
+                $dataArray = json_decode($jsonData, true);
+                foreach ($dataArray as $item) {
+                    $user = $item['user'];
+                    $onlinelist[] = $user;
+                }
+            }
+            //print_r($onlinelist);
+            $onlinelist = array_replace($onlinelist, array_fill_keys(array_keys($onlinelist, null), ''));
+            $onlinecount = array_count_values($onlinelist);
+
+            foreach ($onlinelist as $useron) {
+                $users = Users::where('username', $useron)->get();
+                foreach ($users as $row) {
+                    $limitation = $row->multiuser;
+                    $username = $row->username;
+                    $startdate = $row->start_date;
+                    $finishdate_one_connect = $row->date_one_connect;
+                    if (empty($limitation)) {
+                        $limitation = "0";
                     }
+                    $userlist[$username] = $limitation;
+                    if (empty($startdate)) {
+                        $use_active = $username . "|" . $onlinecount[$username];
+                        $act_explode = explode("|", $use_active);
+                        if ($act_explode[1] > 0) {
+                            $start_inp = date("Y-m-d");
+                            $end_inp = date('Y-m-d', strtotime($start_inp . " + $finishdate_one_connect days"));
+                            Users::where('username', $act_explode[0])
+                                ->update(['start_date' => $start_inp, 'end_date' => $end_inp]);
+                        }
 
-                }
-                if ($limitation !== "0" && $onlinecount[$username] > $limitation){
-                    if ($multiuser == 'active') {
+                    }
+                    if ($limitation !== "0" && $onlinecount[$username] > $limitation) {
+
                         if (file_exists("/var/www/html/app/storage/dropbear.json")) {
                             foreach ($dataArray as $item) {
                                 if (isset($item['user']) && $item['user'] === $username) {
@@ -145,16 +145,19 @@ class FixerController extends Controller
                         Process::run("sudo pkill -u {$username}");
                         Process::run("sudo timeout 10 pkill -u {$username}");
                         Process::run("sudo timeout 10 killall -u {$username}");
+
                     }
+
+
+                    //header("Refresh:1");
                 }
-
-
-                //header("Refresh:1");
             }
         }
-        $this->synstraffics();
-        $this->cronexp_traffic();
-        $this->synstraffics_drop();
+        if(env('CRON_TRAFFIC', 'active')=='active') {
+            $this->synstraffics();
+            $this->cronexp_traffic();
+            $this->synstraffics_drop();
+        }
     }
 
     public function cronexp_traffic()

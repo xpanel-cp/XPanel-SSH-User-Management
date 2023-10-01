@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title','XPanel - Check IP')
+@section('title','XPanel - '.__('filtering-title'))
 @section('content')
     <!-- [ Main Content ] start -->
     <div class="pc-container">
@@ -10,7 +10,7 @@
                     <div class="row align-items-center">
                         <div class="col-md-12">
                             <div class="page-header-title">
-                                <h2 class="mb-0">Check IP</h2>
+                                <h2 class="mb-0">{{__('filtering-title')}}</h2>
                             </div>
                         </div>
                     </div>
@@ -40,7 +40,7 @@
                                                     <div class="flex-grow-1 ms-3">
                                                         <div class="row g-1">
                                                             <div class="col-6">
-                                                                {!! $ip->flag !!}
+                                                                {{$ip->ip}}<br><small>{{$ip->location[1]}},{{$ip->location[2]}}</small>
                                                             </div>
                                                             <div class="col-6 text-end">
                                                                 {{$ip->status}}

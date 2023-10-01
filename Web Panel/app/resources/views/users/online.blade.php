@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title','XPanel - Online User')
+@section('title','XPanel - '.__('online-title'))
 @section('content')
     <!-- [ Main Content ] start -->
     <div class="pc-container">
@@ -10,7 +10,7 @@
                     <div class="row align-items-center">
                         <div class="col-md-12">
                             <div class="page-header-title">
-                                <h2 class="mb-0">Online User</h2>
+                                <h2 class="mb-0">{{__('online-title')}}</h2>
                             </div>
                         </div>
                     </div>
@@ -28,9 +28,9 @@
                                 <table class="table table-hover" id="pc-dt-simple">
                                     <thead>
                                     <tr>
-                                        <th>Username</th>
-                                        <th>IP</th>
-                                        <th class="text-center">Action</th>
+                                        <th>{{__('online-table-username')}}</th>
+                                        <th>{{__('online-table-ip')}}</th>
+                                        <th class="text-center">{{__('online-table-action')}}</th>
                                     </tr>
                                     </thead>
                                     <tbody>
@@ -45,13 +45,13 @@
                                                     <li class="list-inline-item align-bottom">
                                                         <a href="{{ route('online.kill.pid', ['pid' => $val->pid]) }}"
                                                            class="btn btn-light-primary">
-                                                            Kill ID
+                                                            {{__('online-table-action-killid')}}
                                                         </a>
                                                     </li>
                                                     <li class="list-inline-item align-bottom">
                                                         <a href="{{ route('online.kill.username', ['username' => $val->username]) }}"
                                                            class="btn btn-light-danger">
-                                                            Kill USER
+                                                            {{__('online-table-action-killu')}}
                                                         </a>
                                                     </li>
 

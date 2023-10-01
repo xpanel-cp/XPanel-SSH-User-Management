@@ -188,20 +188,48 @@ class OnlineController extends Controller
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         sleep(3);
         $server_output = curl_exec($ch);
+
         curl_close($ch);
         $array2 = json_decode($server_output, true);
+        $allowedFlags = ["ir", "us", "fr", "de"];
+
+        $data = [];
+
         foreach ($array2 as $key => $value) {
             $flag = str_replace(".node.check-host.net", "", $key);
             $flag = preg_replace("/[0-9]+/", "", $flag);
-            if ($flag == "ir" || $flag == "us" || $flag == "fr" || $flag == "de") {
+            if (in_array($flag, $allowedFlags)) {
+                $curl = curl_init();
+                $url = "https://check-host.net/nodes/hosts";
+
+                curl_setopt($curl, CURLOPT_URL, $url);
+                curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+                $response = curl_exec($curl);
+                $ip_add = '';
+                $location = '';
+                if ($response !== false) {
+                    $json_data = json_decode($response, true);
+
+                    $searchKey = $key;
+                    if (isset($json_data['nodes'][$searchKey])) {
+                        $location = $json_data['nodes'][$searchKey]['location'];
+                        $ip_add = $json_data['nodes'][$searchKey]['ip'];
+                    }
+                }
+                curl_close($curl);
+
                 if ($value === NULL) {
                     $status = "Filter";
                 } else {
                     $status = "Online";
                 }
+
                 $data[] = [
                     "flag" => $flag,
-                    "status" => $status
+                    "status" => $status,
+                    "ip" => $ip_add,
+                    "location" => $location
                 ];
             }
         }

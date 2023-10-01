@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title','XPanel - Settings')
+@section('title','XPanel - '.__('setting-fake-title'))
 @section('content')
     <!-- [ Main Content ] start -->
     <div class="pc-container">
@@ -10,7 +10,7 @@
                     <div class="row align-items-center">
                         <div class="col-md-12">
                             <div class="page-header-title">
-                                <h2 class="mb-0">Settings - Fake Address</h2>
+                                <h2 class="mb-0">{{__('setting-fake-title')}}</h2>
                             </div>
                         </div>
                     </div>
@@ -30,17 +30,17 @@
                                 <form class="validate-me" action="{{route('settings.fakeurl')}}" method="post" enctype="multipart/form-data">
                                     <div class="form-group row">
                                         <div class="col-lg-12">
-                                            <p class="form-text text-muted"><b style="color:red">Attention, by activating the fake address, it will be deleted if you have installed WordPress.</b></p>
+                                            <p class="form-text text-muted"><b style="color:red">{{__('setting-fake-desc')}}</b></p>
                                             @csrf
-                                            <input type="text" name="fake_address" id="confirm-password" placeholder="Fake address" value="" class="form-control" >
-                                            <small class="form-text text-muted">Website address</small>
+                                            <input type="text" name="fake_address" id="confirm-password" placeholder="{{__('setting-fake-website')}}" value="" class="form-control" >
+                                            <small class="form-text text-muted">{{__('setting-fake-website')}}</small>
                                         </div>
                                     </div>
 
                                     <div class="form-group row">
                                         <div class="col-lg-4 col-form-label"></div>
                                         <div class="col-lg-6">
-                                            <input type="submit" class="btn btn-primary" value="Save">
+                                            <input type="submit" class="btn btn-primary" value="{{__('setting-save')}}">
                                         </div>
                                     </div>
                                 </form>
