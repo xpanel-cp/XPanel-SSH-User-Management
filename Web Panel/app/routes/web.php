@@ -93,6 +93,7 @@ Route::prefix('api')->group(function()
     Route::post('/deactive',[ApiController::class,'deactive_user'])->name('api.user.deactive');
     Route::post('/retraffic',[ApiController::class,'retraffic_user'])->name('api.user.retraffic');
     Route::post('/renewal',[ApiController::class,'renewal_user'])->name('api.user.renewal');
+    Route::post('/traffic',[ApiController::class,'renewal_user'])->name('api.user.traffic');
     Route::get('/{token}/online',[ApiController::class,'online_user'])->name('api.user.online');
     Route::get('/{token}/kill/{method}/{param}',[ApiController::class,'kill'])->name('api.user.kill');
     Route::get('/{token}/backup',[ApiController::class,'backup'])->name('api.backup');

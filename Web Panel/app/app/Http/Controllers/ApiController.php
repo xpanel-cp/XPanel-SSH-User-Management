@@ -335,6 +335,34 @@ class ApiController extends Controller
             return response()->json(['message' => 'Not Exist User']);
         }
     }
+    public function traffic_user(Request $request)
+    {
+        $request->validate([
+            'token' => 'required|string',
+            'username' => 'required|string',
+            'traffic' => 'required|numeric',
+            'type_traffic' => 'required|string',
+        ]);
+        $this->checktoken($request->token);
+        $check_user = Users::where('username', $request->username)->count();
+        if ($check_user > 0) {
+            if ($request->type_traffic == "gb") {
+                $traffic = $request->traffic * 1024;
+            } else {
+                $traffic = $request->traffic;
+            }
+            Users::where('username', $request->username)->increment('traffic', $traffic)->update(['status' => 'active']);
+            $user = Users::where('username', $request->username)->get();
+            Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$user[0]->username}");
+            Process::input($user[0]->password."\n".$user[0]->password."\n")->timeout(120)->run("sudo passwd {$request->username}");
+
+            return response()->json(['message' => 'User Add Traffic']);
+        }
+        else
+        {
+            return response()->json(['message' => 'Not Exist User']);
+        }
+    }
     public function online_user(Request $request,$token)
     {
         if (!is_string($token)) {

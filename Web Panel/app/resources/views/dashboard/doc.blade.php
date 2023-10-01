@@ -270,6 +270,30 @@
                         </div>
 
                         <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTraffic">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTraffic" aria-expanded="false" aria-controls="collapseTraffic">
+                                    Add Traffic
+                                </button>
+                            </h2>
+                            <div id="collapseTraffic" class="accordion-collapse collapse" aria-labelledby="headingTraffic" data-bs-parent="#accordionExample">
+                                <div class="accordion-body" dir="ltr">
+                                    <a href="{{$path}}cp/settings/api" target="_blank">List API</a><br>
+                                    <span class="pc-collapse">Method POST</span><br>
+                                    <code>{{$path}}api/traffic</code><br>
+                                    Send Data Post
+                                    <div class="p-3 color-block bg-green-100">
+                                        <code>
+                                            <b>token</b> Required<br>
+                                            <b>username</b> Required<br>
+                                            <b>traffic</b> Required numeric<br>
+                                            <b>type_traffic</b> Required(gb or mb)<br>
+                                        </code>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item">
                             <h2 class="accordion-header" id="heading11">
                                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse11" aria-expanded="false" aria-controls="collapse11">
                                     Online User
