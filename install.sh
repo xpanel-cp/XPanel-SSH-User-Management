@@ -101,10 +101,10 @@ fi
 
 echo -e "${YELLOW}************ Select XPanel Version ************"
 echo -e "${GREEN}  1)XPanel v3.8.0"
-echo -e "${GREEN}  1)XPanel v3.7.9"
-echo -e "${GREEN}  2)XPanel v3.7.8"
-echo -e "${GREEN}  3)XPanel v3.7.7"
-echo -e "${GREEN}  4)XPanel v3.7.6"
+echo -e "${GREEN}  2)XPanel v3.7.9"
+echo -e "${GREEN}  3)XPanel v3.7.8"
+echo -e "${GREEN}  4)XPanel v3.7.7"
+echo -e "${GREEN}  5)XPanel v3.7.6"
 echo -ne "${GREEN}\nSelect Version : ${ENDCOLOR}" ;read n
 if [ "$n" != "" ]; then
 if [ "$n" == "1" ]; then
