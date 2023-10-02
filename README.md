@@ -1,6 +1,6 @@
 <p align="center">
 <picture>
-<img width="160" height="160"  alt="XPanel" src="https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/xlogo.png">
+<img width="160" height="160"  alt="XPanel" src="https://madonetserver.com/wp-content/uploads/2023/10/Asset-1.png">
 </picture>
   </p> 
 <h1 align="center"/>XPanel</h1>
