@@ -56,6 +56,7 @@ https://t.me/Xpanelssh
 ## حمایت از ما :hearts:
 حمایت های شما برای ما دلگرمی بزرگی است<br> 
 <p align="left">
+<a href="https://plisio.net/donate/KL6W5z8k" target="_blank"><img src="https://plisio.net/img/donate/donate_light_icons_mono.png" alt="Donate Crypto on Plisio" width="240" height="80" /></a><br>
 	
 |                    TRX                   |                       ETH                         |                    Litecoin                       |
 | ---------------------------------------- |:-------------------------------------------------:| -------------------------------------------------:|
