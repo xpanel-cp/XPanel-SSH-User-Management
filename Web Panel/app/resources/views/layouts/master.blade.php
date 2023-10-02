@@ -27,11 +27,11 @@
     <div class="p-4 mb-2" style="position: fixed;z-index: 9999;left: 0;">
         <div class="toast fade show" role="alert" aria-live="assertive" aria-atomic="true">
             <div class="toast-header">
-                <img src="/assets/images/xlogo.png" class="img-fluid m-r-5" alt="XPanel" style="width: 17px">
-                <strong class="me-auto">XPanel</strong>
+                <img src="/assets/images/xlogo.png" class="img-fluid m-r-5" alt="MadoPanel" style="width: 17px">
+                <strong class="me-auto">MadoPanel</strong>
                 <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
             </div>
-            <div class="toast-body">New Version XPanel <a href="{!! $github !!}" target="_blank">Github</a> </div>
+            <div class="toast-body">New Version MadoPanel <a href="{!! $github !!}" target="_blank">Github</a> </div>
         </div>
     </div>
 @endif

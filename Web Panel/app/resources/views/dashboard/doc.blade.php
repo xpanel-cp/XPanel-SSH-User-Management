@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title','XPanel - Documents')
+@section('title','MadoPanel - Documents')
 @section('content')
     <style>
         .pc-collapse {

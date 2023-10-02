@@ -3,8 +3,8 @@
 <img width="160" height="160"  alt="XPanel" src="https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/xlogo.png">
 </picture>
   </p> 
-<h1 align="center"/>XPanel</h1>
-<h6 align="center">XPanel SSH User Management<h6>
+<h1 align="center"/>MadoPanel</h1>
+<h6 align="center">MadoPanel SSH User Management<h6>
 <p align="center">
 <img alt="GitHub all releases" src="https://img.shields.io/github/downloads/xpanel-cp/XPanel-SSH-User-Management/total">
 <img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/xpanel-cp/XPanel-SSH-User-Management">

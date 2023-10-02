@@ -6,7 +6,7 @@
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
                         <div class="text-center">
-                            <a href="#"><img src="assets/images/xlogo.png" alt="XPanel" style="width: 60px; margin-bottom: 30px;"></a>
+                            <a href="#"><img src="assets/images/xlogo.png" alt="MadoPanel" style="width: 60px; margin-bottom: 30px;"></a>
 
                         </div>
                         <div class="form-group mb-3">

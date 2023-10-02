@@ -7,8 +7,8 @@
             <div class="col-auto my-1">
                 <ul class="list-inline footer-link mb-0">
                     <li class="list-inline-item"><a href="{{route('document')}}">API</a></li>
-                    <li class="list-inline-item"><a href="https://github.com/xpanel-cp/XPanel-SSH-User-Management/blob/master/README-EN.md#supporting-us-hearts">Supporting us</a></li>
-                    <li class="list-inline-item"><a href="https://github.com/xpanel-cp/XPanel-SSH-User-Management/">GitHub</a></li>
+                    <li class="list-inline-item"><a href="https://github.com/vahidazimi/madopanel/blob/master/README-EN.md#supporting-us-hearts">Supporting us</a></li>
+                    <li class="list-inline-item"><a href="https://github.com/vahidazimi/madopanel/">GitHub</a></li>
                 </ul>
             </div>
         </div>

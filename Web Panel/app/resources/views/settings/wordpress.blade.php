@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title','XPanel - '.__('setting-wordpress-title'))
+@section('title','MadoPanel - '.__('setting-wordpress-title'))
 @section('content')
     <!-- [ Main Content ] start -->
     <div class="pc-container">

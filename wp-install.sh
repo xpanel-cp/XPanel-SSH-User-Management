@@ -8,8 +8,8 @@ read -e -p "Database Name: " -i "wpxp" db
 db=${db:-"wpxp"}
 read -e -p "Database Username: " -i "usxp" user
 user=${user:-"usxp"}
-read -e -p "Password User: " -i "Xpanel2023" pass
-pass=${pass:-"Xpanel2023"}
+read -e -p "Password User: " -i "MadoPanel2023" pass
+pass=${pass:-"MadoPanel2023"}
 
 if [ ! -d "$dir" ]; then
 	sudo mkdir -p $dir

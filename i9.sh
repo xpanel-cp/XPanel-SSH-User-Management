@@ -99,12 +99,12 @@ dmp=""
 dmssl=""
 fi
 
-echo -e "${YELLOW}************ Select XPanel Version ************"
-echo -e "${GREEN}  1)XPanel v3.8.0"
-echo -e "${GREEN}  1)XPanel v3.7.9"
-echo -e "${GREEN}  2)XPanel v3.7.8"
-echo -e "${GREEN}  3)XPanel v3.7.7"
-echo -e "${GREEN}  4)XPanel v3.7.6"
+echo -e "${YELLOW}************ Select MadoPanel Version ************"
+echo -e "${GREEN}  1)MadoPanel v3.8.0"
+echo -e "${GREEN}  1)MadoPanel v3.7.9"
+echo -e "${GREEN}  2)MadoPanel v3.7.8"
+echo -e "${GREEN}  3)MadoPanel v3.7.7"
+echo -e "${GREEN}  4)MadoPanel v3.7.6"
 echo -ne "${GREEN}\nSelect Version : ${ENDCOLOR}" ;read n
 if [ "$n" != "" ]; then
 if [ "$n" == "1" ]; then
@@ -243,7 +243,7 @@ cat << EOF > /etc/stunnel/stunnel.conf
  connect = 0.0.0.0:$port
 EOF
 
-echo "=================  XPanel OpenSSL ======================"
+echo "=================  MadoPanel OpenSSL ======================"
 country=ID
 state=Semarang
 locality=XPanel
@@ -554,7 +554,7 @@ sed -i "s/TRAFFIC_BASE=.*/TRAFFIC_BASE=$TRAFFIC_BASE/g" /var/www/html/app/.env
 
 clear
 
-echo -e "************ XPanel ************ \n"
+echo -e "************ MadoPanel ************ \n"
 echo -e "XPanel Link : $protcohttp://${defdomain}:$sshttp/login"
 echo -e "Username : ${adminusername}"
 echo -e "Password : ${adminpassword}"

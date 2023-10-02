@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title','XPanel - '.__('setting-blockip-title'))
+@section('title','MadoPanel - '.__('setting-blockip-title'))
 @section('content')
     <!-- [ Main Content ] start -->
     <div class="pc-container">

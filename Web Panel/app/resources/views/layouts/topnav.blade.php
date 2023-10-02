@@ -4,7 +4,7 @@
         <div class="m-header">
             <a href="#" class="b-brand text-primary">
                 <!-- ========   Change your logo from here   ============ -->
-                <img src="/assets/images/xlogo.png" alt="Xpanel" style="width:50px"/>
+                <img src="/assets/images/xlogo.png" alt="MadoPanel" style="width:50px"/>
                 <span class="badge bg-light-success rounded-pill ms-2 theme-version" style="font-size: 13px;"></span>
             </a>
         </div>
@@ -111,8 +111,8 @@
         <div class="ms-auto">
             <ul class="list-unstyled">
                 <li class="dropdown pc-h-item">
-                    <a href="https://github.com/xpanel-cp/XPanel-SSH-User-Management" target="_blank">
-                    <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/xpanel-cp/XPanel-SSH-User-Management?style=social&link=left">
+                    <a href="https://github.com/vahidazimi/madopanel" target="_blank">
+                    <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/vahidazimi/madopanel?style=social&link=left">
                     </a>
                 </li>
                 <li class="dropdown pc-h-item">

@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title','XPanel - '.__('filtering-title'))
+@section('title','MadoPanel - '.__('filtering-title'))
 @section('content')
     <!-- [ Main Content ] start -->
     <div class="pc-container">

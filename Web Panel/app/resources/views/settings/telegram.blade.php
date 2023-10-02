@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title','XPanel - Settings')
+@section('title','MadoPanel - Settings')
 @section('content')
     <!-- [ Main Content ] start -->
     <div class="pc-container">
