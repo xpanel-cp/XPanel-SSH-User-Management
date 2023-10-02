@@ -1,13 +1,13 @@
 <p align="center">
 <picture>
-<img width="160" height="160"  alt="XPanel" src="https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/xlogo.png">
+<img width="160" height="160"  alt="XPanel" src="https://raw.githubusercontent.com/vahidazimi/madopanel/master/xlogo.png">
 </picture>
   </p> 
 <h1 align="center"/>MadoPanel</h1>
 <h6 align="center">MadoPanel SSH User Management<h6>
 <p align="center">
-<img alt="GitHub all releases" src="https://img.shields.io/github/downloads/xpanel-cp/XPanel-SSH-User-Management/total">
-<img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/xpanel-cp/XPanel-SSH-User-Management">
+<img alt="GitHub all releases" src="https://img.shields.io/github/downloads/vahidazimi/madopanel/total">
+<img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/vahidazimi/madopanel">
 <a href="https://t.me/Xpanelssh" target="_blank">
 <img alt="Telegram Channel" src="https://img.shields.io/endpoint?label=Channel&style=flat-square&url=https%3A%2F%2Ftg.sumanjay.workers.dev%2FXpanelssh&color=blue">
 </a>
@@ -61,24 +61,24 @@ bash /root/xpanel.sh OR bash xpanel.sh OR xpanel
 
 To install the X-Panel simply input the following command in the terminal:<br>
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/install.sh --ipv4)
+bash <(curl -Ls https://raw.githubusercontent.com/vahidazimi/madopanel/master/install.sh --ipv4)
 ```
 
 To resolve audio and video call issues use this command:<br>
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/fix-call.sh --ipv4)
+bash <(curl -Ls https://raw.githubusercontent.com/vahidazimi/madopanel/master/fix-call.sh --ipv4)
 ```
 
 ### Server optimization
 Use the following command to install or remove<br>
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/TCP-Tweaker --ipv4)
+bash <(curl -Ls https://raw.githubusercontent.com/vahidazimi/madopanel/master/TCP-Tweaker --ipv4)
 ```
 
 
 ### Enabling SSL
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/ssl.sh --ipv4)
+bash <(curl -Ls https://raw.githubusercontent.com/vahidazimi/madopanel/master/ssl.sh --ipv4)
 ```
 With the above command you can install SSL on the panel **(First pay attention to tips below)** <br>
 1- Make sure to update the panel BEFORE installing the SSL<br>

@@ -108,22 +108,22 @@ echo -e "${GREEN}  4)MadoPanel v3.7.6"
 echo -ne "${GREEN}\nSelect Version : ${ENDCOLOR}" ;read n
 if [ "$n" != "" ]; then
 if [ "$n" == "1" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-0
+linkd=https://api.github.com/repos/vahidazimi/madopanel/releases/tags/v3-8-0
 fi
 if [ "$n" == "2" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-9
+linkd=https://api.github.com/repos/vahidazimi/madopanel/releases/tags/v3-7-9
 fi
 if [ "$n" == "3" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-8
+linkd=https://api.github.com/repos/vahidazimi/madopanel/releases/tags/v3-7-8
 fi
 if [ "$n" == "4" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/37
+linkd=https://api.github.com/repos/vahidazimi/madopanel/releases/tags/37
 fi
 if [ "$n" == "5" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/xpanel
+linkd=https://api.github.com/repos/vahidazimi/madopanel/releases/tags/xpanel
 fi
 else
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-9
+linkd=https://api.github.com/repos/vahidazimi/madopanel/releases/tags/v3-7-9
 fi
 
 echo -e "\nPlease input IP Server"
@@ -500,8 +500,8 @@ systemctl enable stunnel4 &
 wait
 systemctl restart stunnel4 &
 wait
-curl -o /root/xpanel.sh https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/cli.sh
-sudo wget -4 -O /usr/local/bin/xpanel https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/cli.sh
+curl -o /root/xpanel.sh https://raw.githubusercontent.com/vahidazimi/madopanel/master/cli.sh
+sudo wget -4 -O /usr/local/bin/xpanel https://raw.githubusercontent.com/vahidazimi/madopanel/master/cli.sh
 chmod +x /usr/local/bin/xpanel 
 chown www-data:www-data /var/www/html/example/index.php
 sed -i "s/PORT_PANEL=.*/PORT_PANEL=$sshttp/g" /var/www/html/app/.env

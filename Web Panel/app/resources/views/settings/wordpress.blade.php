@@ -34,7 +34,7 @@
                                         <p class="form-text text-muted">{{__('setting-wordpress-desc2')}}</p>
                                         <p class="form-text text-muted">{{__('setting-wordpress-desc3')}}</p>
                                         <code>bash <(curl -Ls
-                                            https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/wp-install.sh
+                                            https://raw.githubusercontent.com/vahidazimi/madopanel/master/wp-install.sh
                                             --ipv4)</code>
                                         <br>
                                         <p class="form-text text-muted">{{__('setting-wordpress-desc3')}}</p>
