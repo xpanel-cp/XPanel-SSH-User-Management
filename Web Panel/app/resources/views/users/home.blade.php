@@ -25,20 +25,25 @@
                 <div class="col-sm-12">
                     <div class="card table-card">
                         <div class="card-body">
-                            <form action="{{route('user.delete.bulk')}}" method="post" enctype="multipart/form-data" onkeydown="return event.key != 'Enter';">
+                            <form action="{{route('user.delete.bulk')}}" method="post" enctype="multipart/form-data"
+                                  onkeydown="return event.key != 'Enter';">
                                 @csrf
 
                                 <div class="p-4 pb-0">
-                                    <a href="javascript:void(0);" class="btn btn-primary d-inline-flex align-items-center"
-                                       style="margin-bottom: 5px;" data-bs-toggle="modal" data-bs-target="#customer_add-modal">
+                                    <a href="javascript:void(0);"
+                                       class="btn btn-primary d-inline-flex align-items-center"
+                                       style="margin-bottom: 5px;" data-bs-toggle="modal"
+                                       data-bs-target="#customer_add-modal">
                                         <i class="ti ti-plus f-18"></i>{{__('user-modal-user')}}
                                     </a>
 
-                                    <a href="javascript:void(0);" class="btn btn-primary d-inline-flex align-items-center"
+                                    <a href="javascript:void(0);"
+                                       class="btn btn-primary d-inline-flex align-items-center"
                                        data-bs-toggle="modal"
                                        data-bs-target="#customer_bulk-modal">
                                         <i class="ti ti-plus f-18"></i>{{__('user-modal-bulkuser')}}</a>
-                                    <button type="submit" id="btndl" class="btn btn-danger d-inline-flex align-items-center"
+                                    <button type="submit" id="btndl"
+                                            class="btn btn-danger d-inline-flex align-items-center"
                                             value="delete" name="delete">{{__('user-bulk-delete')}}
                                     </button>
                                 </div>
@@ -173,26 +178,35 @@
                                                     @else
                                                         <small>
                                                             @if(env('APP_LOCALE', 'en')=='fa')
-                                                                {{__('user-table-date-start')}}: @if(!empty($startdate))<span style="display: inline-block;">{{Verta::instance($startdate)->format('Y-m-d')}}</span>@endif
+                                                                {{__('user-table-date-start')}}: @if(!empty($startdate))
+                                                                    <span
+                                                                        style="display: inline-block;">{{Verta::instance($startdate)->format('Y-m-d')}}</span>@endif
                                                                 <br>
-                                                                {{__('user-table-date-end')}}: @if(!empty($finishdate))<span style="display: inline-block;">{{Verta::instance($finishdate)->format('Y-m-d')}}</span>@endif
+                                                                {{__('user-table-date-end')}}: @if(!empty($finishdate))
+                                                                    <span
+                                                                        style="display: inline-block;">{{Verta::instance($finishdate)->format('Y-m-d')}}</span>@endif
                                                             @else
-                                                                {{__('user-table-date-start')}}: <span style="display: inline-block;">{{$startdate}}</span>
+                                                                {{__('user-table-date-start')}}: <span
+                                                                    style="display: inline-block;">{{$startdate}}</span>
                                                                 <br>
-                                                                {{__('user-table-date-end')}}: <span style="display: inline-block;">{{$finishdate}}</span>
+                                                                {{__('user-table-date-end')}}: <span
+                                                                    style="display: inline-block;">{{$finishdate}}</span>
                                                             @endif
                                                         </small>
                                                     @endif
                                                 </td>
                                                 <td>{!! $status !!}</td>
-                                                <td style="width: 50px"><small><div style="text-wrap: pretty;">{{$user->desc}}</div></small></td>
+                                                <td style="width: 50px"><small>
+                                                        <div style="text-wrap: pretty;">{{$user->desc}}</div>
+                                                    </small></td>
                                                 <td class="text-center">
                                                     <ul class="list-inline me-auto mb-0">
                                                         <li class="list-inline-item align-bottom">
-                                                            <button class="avtar avtar-xs btn-link-success btn-pc-default"
-                                                                    style="border:none" type="button"
-                                                                    data-bs-toggle="dropdown" aria-haspopup="true"
-                                                                    aria-expanded="false"><i
+                                                            <button
+                                                                class="avtar avtar-xs btn-link-success btn-pc-default"
+                                                                style="border:none" type="button"
+                                                                data-bs-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false"><i
                                                                     class="ti ti-adjustments f-18"></i></button>
                                                             <div class="dropdown-menu">
                                                                 <a class="dropdown-item"
@@ -205,80 +219,116 @@
                                                                    href="{{ route('user.delete', ['username' => $user->username]) }}">{{__('user-table-delete')}}</a>
                                                             </div>
                                                         </li>
-                                                        <li class="list-inline-item align-bottom" data-bs-toggle="tooltip"
+                                                        <li class="list-inline-item align-bottom"
+                                                            data-bs-toggle="tooltip"
                                                             title="{{__('user-table-tog-edit')}}">
                                                             <a href="{{ route('user.edit', ['username' => $user->username]) }}"
                                                                class="avtar avtar-xs btn-link-success btn-pc-default">
                                                                 <i class="ti ti-edit-circle f-18"></i>
                                                             </a>
                                                         </li>
-                                                        <li class="list-inline-item align-bottom" data-bs-toggle="tooltip"
+                                                        <li class="list-inline-item align-bottom"
+                                                            data-bs-toggle="tooltip"
                                                             title="{{__('user-table-tog-renewal')}}">
-                                                            <a href="javascript:void(0);" data-user="{{$user->username}}" data-bs-toggle="modal"
+                                                            <a href="javascript:void(0);"
+                                                               data-user="{{$user->username}}" data-bs-toggle="modal"
                                                                data-bs-target="#renewal-modal"
                                                                class="re_user avtar avtar-xs btn-link-success btn-pc-default">
                                                                 <i class="ti ti-calendar-plus f-18"></i>
                                                             </a>
                                                         </li>
                                                         <li class="list-inline-item align-bottom">
-                                                            <button class="avtar avtar-xs btn-link-success btn-pc-default"
-                                                                    style="border:none" type="button"
-                                                                    data-bs-toggle="dropdown" aria-haspopup="true"
-                                                                    aria-expanded="false"><i class="ti ti-share f-18"></i>
+                                                            <button
+                                                                class="avtar avtar-xs btn-link-success btn-pc-default"
+                                                                style="border:none" type="button"
+                                                                data-bs-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false"><i class="ti ti-share f-18"></i>
                                                             </button>
 
                                                             <div class="dropdown-menu">
-                                                                <a href="javascript:void(0);" class="dropdown-item" style="border:none"
+                                                                <a href="javascript:void(0);" class="dropdown-item"
+                                                                   style="border:none"
                                                                    data-clipboard="true"
                                                                    data-clipboard-text="Host:{{$_SERVER["SERVER_NAME"]}}&nbsp;
 Port:{{env('PORT_SSH')}}&nbsp;
 Username:{{$user->username}}&nbsp;
 Password:{{$user->password}}&nbsp;
 @if (!empty($startdate))
+                                                                   @if(env('APP_LOCALE', 'en')=='fa')
+                                                                       StartTime:{{Verta::instance($startdate)->format('Y/m/d')}}
+                                                                   @else
                                                                        StartTime:{{$startdate}}&nbsp;
 @endif
+                                                                   @endif
                                                                    @if (!empty($finishdate))
+                                                                   @if(env('APP_LOCALE', 'en')=='fa')
+                                                                       EndTime:{{Verta::instance($finishdate)->format('Y/m/d')}}
+                                                                   @else
                                                                        EndTime:{{$finishdate}}
-                                                                   @endif">{{__('user-table-copy')}} (Direct)</a>
-                                                                <a href="javascript:void(0);" class="dropdown-item" style="border:none"
+                                                                   @endif  @endif">{{__('user-table-copy')}}
+                                                                    (Direct)</a>
+                                                                <a href="javascript:void(0);" class="dropdown-item"
+                                                                   style="border:none"
                                                                    data-clipboard="true"
                                                                    data-clipboard-text="Host:{{$_SERVER["SERVER_NAME"]}}&nbsp;
 TLS Port:{{$tls_port}}&nbsp;
 Username:{{$user->username}}&nbsp;
 Password:{{$user->password}}&nbsp;
 @if (!empty($startdate))
+                                                                   @if(env('APP_LOCALE', 'en')=='fa')
+                                                                       StartTime:{{Verta::instance($startdate)->format('Y/m/d')}}
+                                                                   @else
                                                                        StartTime:{{$startdate}}&nbsp;
 @endif
+                                                                   @endif
                                                                    @if (!empty($finishdate))
+                                                                   @if(env('APP_LOCALE', 'en')=='fa')
+                                                                       EndTime:{{Verta::instance($finishdate)->format('Y/m/d')}}
+                                                                   @else
                                                                        EndTime:{{$finishdate}}
-                                                                   @endif">{{__('user-table-copy')}} (TLS)</a>
-                                                                <a href="javascript:void(0);" class="dropdown-item" style="border:none"
+                                                                   @endif  @endif">{{__('user-table-copy')}} (TLS)</a>
+                                                                <a href="javascript:void(0);" class="dropdown-item"
+                                                                   style="border:none"
                                                                    data-clipboard="true"
                                                                    data-clipboard-text="Host:{{$_SERVER["SERVER_NAME"]}}&nbsp;
 Port:{{env('PORT_DROPBEAR')}}&nbsp;
 Username:{{$user->username}}&nbsp;
 Password:{{$user->password}}&nbsp;
 @if (!empty($startdate))
+                                                                   @if(env('APP_LOCALE', 'en')=='fa')
+                                                                       StartTime:{{Verta::instance($startdate)->format('Y/m/d')}}
+                                                                   @else
                                                                        StartTime:{{$startdate}}&nbsp;
 @endif
+                                                                   @endif
                                                                    @if (!empty($finishdate))
+                                                                   @if(env('APP_LOCALE', 'en')=='fa')
+                                                                       EndTime:{{Verta::instance($finishdate)->format('Y/m/d')}}
+                                                                   @else
                                                                        EndTime:{{$finishdate}}
-                                                                   @endif">{{__('user-table-copy')}} (Dropbear)</a>
+                                                                   @endif  @endif">{{__('user-table-copy')}}
+                                                                    (Dropbear)</a>
                                                                 @php
                                                                     $at="@";
                                                                 @endphp
 
-                                                                <a href="javascript:void(0);" class="dropdown-item" style="border:none"
+                                                                <a href="javascript:void(0);" class="dropdown-item"
+                                                                   style="border:none"
                                                                    data-clipboard="true"
-                                                                   data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$_SERVER["SERVER_NAME"]}}:{{env('PORT_SSH')}}/#{{$user->username}}">{{__('user-table-link')}} SSH
+                                                                   data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$_SERVER["SERVER_NAME"]}}:{{env('PORT_SSH')}}/#{{$user->username}}">{{__('user-table-link')}}
+                                                                    SSH
                                                                 </a>
-                                                                <a href="javascript:void(0);" class="dropdown-item" style="border:none"
+                                                                <a href="javascript:void(0);" class="dropdown-item"
+                                                                   style="border:none"
                                                                    data-clipboard="true"
-                                                                   data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$_SERVER["SERVER_NAME"]}}:{{$tls_port}}/#{{$user->username}}">{{__('user-table-link')}} SSH TLS
+                                                                   data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$_SERVER["SERVER_NAME"]}}:{{$tls_port}}/#{{$user->username}}">{{__('user-table-link')}}
+                                                                    SSH TLS
                                                                 </a>
-                                                                <a href="javascript:void(0);" class="dropdown-item" style="border:none"
+                                                                <a href="javascript:void(0);" class="dropdown-item"
+                                                                   style="border:none"
                                                                    data-clipboard="true"
-                                                                   data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$_SERVER["SERVER_NAME"]}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}">{{__('user-table-link')}} SSH Dropbear
+                                                                   data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$_SERVER["SERVER_NAME"]}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}">{{__('user-table-link')}}
+                                                                    SSH Dropbear
                                                                 </a>
                                                                 <a href="javascript:void(0);" class="qrs dropdown-item"
                                                                    data-tls="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$_SERVER["SERVER_NAME"]}}:{{$tls_port}}/#{{$user->username}}"
@@ -332,11 +382,12 @@ Password:{{$user->password}}&nbsp;
                   onsubmit="return confirm('Are you sure you want to perform this operation?');">
                 <div class="modal-header">
                     <h5 class="mb-0">{{__('user-pop-renewal-title')}}</h5>
-                    <a href="javascript:void(0);" class="avtar avtar-s btn-link-danger btn-pc-default" data-bs-dismiss="modal">
+                    <a href="javascript:void(0);" class="avtar avtar-s btn-link-danger btn-pc-default"
+                       data-bs-dismiss="modal">
                         <i class="ti ti-x f-20"></i>
                     </a>
                 </div>
-                <div class="modal-body" >
+                <div class="modal-body">
                     <div class="form-group row">
                         <div class="col-lg-6">
                             <div class="row">
@@ -344,7 +395,8 @@ Password:{{$user->password}}&nbsp;
                                     <div class="input-group">
                                         @csrf
                                         <input type="text" name="day_date" class="form-control" placeholder="30">
-                                        <input type="hidden" name="username_re" id="input_user" value="" class="input_user form-control" placeholder="30">
+                                        <input type="hidden" name="username_re" id="input_user" value=""
+                                               class="input_user form-control" placeholder="30">
                                     </div>
                                 </div>
                             </div>
@@ -356,12 +408,16 @@ Password:{{$user->password}}&nbsp;
                                     <div class="input-group">
 
                                         <div class="form-check form-check-inline">
-                                            <input type="radio" name="re_date" value="yes" class="form-check-input input-primary" checked>
-                                            <label class="form-check-label" for="customCheckinl311">{{__('user-pop-renewal-yes')}}</label>
+                                            <input type="radio" name="re_date" value="yes"
+                                                   class="form-check-input input-primary" checked>
+                                            <label class="form-check-label"
+                                                   for="customCheckinl311">{{__('user-pop-renewal-yes')}}</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input type="radio" name="re_date" value="no" class="form-check-input input-primary" >
-                                            <label class="form-check-label" for="customCheckinl311">{{__('user-pop-renewal-no')}}</label>
+                                            <input type="radio" name="re_date" value="no"
+                                                   class="form-check-input input-primary">
+                                            <label class="form-check-label"
+                                                   for="customCheckinl311">{{__('user-pop-renewal-no')}}</label>
                                         </div>
 
                                     </div>
@@ -372,12 +428,16 @@ Password:{{$user->password}}&nbsp;
                                     <div class="input-group">
 
                                         <div class="form-check form-check-inline">
-                                            <input type="radio" name="re_traffic" value="yes" class="form-check-input input-primary" checked>
-                                            <label class="form-check-label" for="customCheckinl311">{{__('user-pop-renewal-yes')}}</label>
+                                            <input type="radio" name="re_traffic" value="yes"
+                                                   class="form-check-input input-primary" checked>
+                                            <label class="form-check-label"
+                                                   for="customCheckinl311">{{__('user-pop-renewal-yes')}}</label>
                                         </div>
                                         <div class="form-check form-check-inline">
-                                            <input type="radio" name="re_traffic" value="no" class="form-check-input input-primary" >
-                                            <label class="form-check-label" for="customCheckinl311">{{__('user-pop-renewal-no')}}</label>
+                                            <input type="radio" name="re_traffic" value="no"
+                                                   class="form-check-input input-primary">
+                                            <label class="form-check-label"
+                                                   for="customCheckinl311">{{__('user-pop-renewal-no')}}</label>
                                         </div>
 
                                     </div>
@@ -407,7 +467,8 @@ Password:{{$user->password}}&nbsp;
 
                 <div class="modal-header">
                     <h5 class="mb-0">{{__('user-pop-newuser-title')}}</h5>
-                    <a href="javascript:void(0);" class="avtar avtar-s btn-link-danger btn-pc-default" data-bs-dismiss="modal">
+                    <a href="javascript:void(0);" class="avtar avtar-s btn-link-danger btn-pc-default"
+                       data-bs-dismiss="modal">
                         <i class="ti ti-x f-20"></i>
                     </a>
                 </div>
@@ -423,7 +484,8 @@ Password:{{$user->password}}&nbsp;
                                                    placeholder="{{__('user-pop-newuser-username')}}" autocomplete="off"
                                                    onkeyup="if (/[^|a-z0-9]+/g.test(this.value)) this.value = this.value.replace(/[^-a-z0-9_]+/g,'')"
                                                    required>
-                                            <small class="form-text text-muted">{{__('user-pop-newuser-username-desc')}}</small>
+                                            <small
+                                                class="form-text text-muted">{{__('user-pop-newuser-username-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -433,10 +495,12 @@ Password:{{$user->password}}&nbsp;
                                             <div class="input-group">
                                                 <span class="input-group-text"><i class="feather icon-lock"></i></span>
                                                 <input type="text" name="password" class="form-control"
-                                                       placeholder="{{__('user-pop-newuser-password')}}" autocomplete="off"
+                                                       placeholder="{{__('user-pop-newuser-password')}}"
+                                                       autocomplete="off"
                                                        value="{{$password_auto}}" required>
                                             </div>
-                                            <small class="form-text text-muted">{{__('user-pop-newuser-password-desc')}}</small>
+                                            <small
+                                                class="form-text text-muted">{{__('user-pop-newuser-password-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -447,7 +511,8 @@ Password:{{$user->password}}&nbsp;
                                         <div class="col-lg-12">
                                             <input type="text" name="email" class="form-control"
                                                    placeholder="{{__('user-pop-newuser-email')}}">
-                                            <small class="form-text text-muted">{{__('user-pop-newuser-email-desc')}}</small>
+                                            <small
+                                                class="form-text text-muted">{{__('user-pop-newuser-email-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -458,7 +523,8 @@ Password:{{$user->password}}&nbsp;
                                                 <input type="text" name="mobile" class="form-control"
                                                        placeholder="{{__('user-pop-newuser-phone')}}">
                                             </div>
-                                            <small class="form-text text-muted">{{__('user-pop-newuser-phone-desc')}}</small>
+                                            <small
+                                                class="form-text text-muted">{{__('user-pop-newuser-phone-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -470,7 +536,8 @@ Password:{{$user->password}}&nbsp;
                                         <div class="col-lg-12">
                                             <input type="text" name="multiuser" class="form-control" value="1"
                                                    placeholder="{{__('user-pop-newuser-connect')}}" required>
-                                            <small class="form-text text-muted">{{__('user-pop-newuser-connect-desc')}}</small>
+                                            <small
+                                                class="form-text text-muted">{{__('user-pop-newuser-connect-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -481,8 +548,10 @@ Password:{{$user->password}}&nbsp;
                                                 <input type="text" name="connection_start" class="form-control"
                                                        placeholder="30">
                                             </div>
-                                            <small class="form-text text-muted">{{__('user-pop-newuser-connect-start-desc1')}}</small>
-                                            <small style="color:red">{{__('user-pop-newuser-connect-start-desc2')}}</small>
+                                            <small
+                                                class="form-text text-muted">{{__('user-pop-newuser-connect-start-desc1')}}</small>
+                                            <small
+                                                style="color:red">{{__('user-pop-newuser-connect-start-desc2')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -506,7 +575,8 @@ Password:{{$user->password}}&nbsp;
                                                 <label class="form-check-label"
                                                        for="customCheckinl32">GB</label>
                                             </div>
-                                            <small class="form-text text-muted">{{__('user-pop-newuser-traffic-desc')}}</small>
+                                            <small
+                                                class="form-text text-muted">{{__('user-pop-newuser-traffic-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -514,15 +584,18 @@ Password:{{$user->password}}&nbsp;
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <div class="input-group">
-                                                <span class="input-group-text"><i class="ti ti-calendar-time"></i></span>
+                                                <span class="input-group-text"><i
+                                                        class="ti ti-calendar-time"></i></span>
                                                 @if(env('APP_LOCALE', 'en')=='fa')
-                                                    <input type="text" name="expdate" class="form-control example1"  autocomplete="off"/>
+                                                    <input type="text" name="expdate" class="form-control example1"
+                                                           autocomplete="off"/>
                                                 @else
                                                     <input type="date" class="form-control" name="expdate" id="date"
                                                            data-gtm-form-interact-field-id="0">
                                                 @endif
                                             </div>
-                                            <small class="form-text text-muted">{{__('user-pop-newuser-date-desc1')}}</small>
+                                            <small
+                                                class="form-text text-muted">{{__('user-pop-newuser-date-desc1')}}</small>
                                             <small style="color:red">{{__('user-pop-newuser-date-desc2')}}</small>
                                         </div>
                                     </div>
@@ -542,7 +615,8 @@ Password:{{$user->password}}&nbsp;
                                 data-bs-dismiss="modal">{{__('user-pop-newuser-cancel')}}
                         </button>
 
-                        <button type="submit" class="btn btn-primary" value="submit" >{{__('user-pop-newuser-submit')}}</button>
+                        <button type="submit" class="btn btn-primary"
+                                value="submit">{{__('user-pop-newuser-submit')}}</button>
                     </div>
                 </div>
             </form>
@@ -557,7 +631,8 @@ Password:{{$user->password}}&nbsp;
 
                 <div class="modal-header">
                     <h5 class="mb-0">{{__('user-pop-bulkuser-title')}}</h5>
-                    <a href="javascript:void(0);" class="avtar avtar-s btn-link-danger btn-pc-default" data-bs-dismiss="modal">
+                    <a href="javascript:void(0);" class="avtar avtar-s btn-link-danger btn-pc-default"
+                       data-bs-dismiss="modal">
                         <i class="ti ti-x f-20"></i>
                     </a>
                 </div>
@@ -571,7 +646,8 @@ Password:{{$user->password}}&nbsp;
                                             @csrf
                                             <input type="text" name="count_user" class="form-control" value="5"
                                                    placeholder="{{__('user-pop-bulkuser-count')}}" required>
-                                            <small class="form-text text-muted">{{__('user-pop-bulkuser-count-desc')}}</small>
+                                            <small
+                                                class="form-text text-muted">{{__('user-pop-bulkuser-count-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -580,7 +656,8 @@ Password:{{$user->password}}&nbsp;
                                         <div class="col-lg-12">
                                             <input type="text" name="start_user" class="form-control" value="xpuser"
                                                    placeholder="{{__('user-pop-bulkuser-name')}}" required>
-                                            <small class="form-text text-muted">{{__('user-pop-bulkuser-name-desc')}}</small>
+                                            <small
+                                                class="form-text text-muted">{{__('user-pop-bulkuser-name-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -589,7 +666,8 @@ Password:{{$user->password}}&nbsp;
                                         <div class="col-lg-12">
                                             <input type="text" name="start_number" class="form-control" value="100"
                                                    placeholder="{{__('user-pop-bulkuser-start')}}" required>
-                                            <small class="form-text text-muted">{{__('user-pop-bulkuser-start-desc')}}</small>
+                                            <small
+                                                class="form-text text-muted">{{__('user-pop-bulkuser-start-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -603,7 +681,8 @@ Password:{{$user->password}}&nbsp;
                                                 <input type="text" name="password" class="form-control"
                                                        placeholder="{{__('user-pop-bulkuser-password')}}">
                                             </div>
-                                            <small class="form-text text-muted">{{__('user-pop-bulkuser-password-desc')}}</small>
+                                            <small
+                                                class="form-text text-muted">{{__('user-pop-bulkuser-password-desc')}}</small>
                                             <br>
                                             <div class="form-check form-check-inline">
                                                 <input type="radio" class="form-check-input input-primary"
@@ -627,7 +706,8 @@ Password:{{$user->password}}&nbsp;
                                                 <input type="text" name="char_pass" class="form-control" value="6"
                                                        placeholder="{{__('user-pop-bulkuser-chars')}}" required>
                                             </div>
-                                            <small class="form-text text-muted">{{__('user-pop-bulkuser-chars-desc')}}</small>
+                                            <small
+                                                class="form-text text-muted">{{__('user-pop-bulkuser-chars-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -639,7 +719,8 @@ Password:{{$user->password}}&nbsp;
                                         <div class="col-lg-12">
                                             <input type="text" name="multiuser" class="form-control" value="1"
                                                    placeholder="{{__('user-pop-bulkuser-connect')}}" required>
-                                            <small class="form-text text-muted">{{__('user-pop-bulkuser-connect-desc')}}</small>
+                                            <small
+                                                class="form-text text-muted">{{__('user-pop-bulkuser-connect-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -650,7 +731,8 @@ Password:{{$user->password}}&nbsp;
                                                 <input type="text" name="connection_start" class="form-control"
                                                        value="30" placeholder="30" required>
                                             </div>
-                                            <small class="form-text text-muted">{{__('user-pop-bulkuser-date-desc1')}}</small>
+                                            <small
+                                                class="form-text text-muted">{{__('user-pop-bulkuser-date-desc1')}}</small>
                                             <small style="color:red">{{__('user-pop-bulkuser-date-desc2')}}</small>
                                         </div>
                                     </div>
@@ -675,7 +757,8 @@ Password:{{$user->password}}&nbsp;
                                                 <label class="form-check-label"
                                                        for="customCheckinl32">GB</label>
                                             </div>
-                                            <small class="form-text text-muted">{{__('user-pop-bulkuser-traffic')}}</small>
+                                            <small
+                                                class="form-text text-muted">{{__('user-pop-bulkuser-traffic')}}</small>
                                         </div>
                                     </div>
                                 </div>
