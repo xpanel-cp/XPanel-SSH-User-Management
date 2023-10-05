@@ -44,7 +44,7 @@
                                                         <input class="uppy-FileInput-input form-control" type="file" name="file" multiple="" style="">
                                                         <small class="form-text text-muted">{{__('setting-backup-desc')}}</small>
                                                         <br>
-                                                        <input type="submit" class="btn btn-primary" value="{{__('setting-backup-uplod')}}">
+                                                        <input type="submit" class="btn btn-primary" value="{{__('setting-backup-upload')}}">
 
                                                     </div>
                                                 </div>
