@@ -256,7 +256,7 @@ $day
                 else{
                     $startdate = $us->start_date;
                     if(!empty($us->end_date))
-                    {$finishdate = Verta::instance($us->end_date)->format('Y-m-d');}
+                    {$finishdate = $us->end_date;}
                     else
                     {$finishdate='Unlimited';}
                     if ($us->traffic > 0)
