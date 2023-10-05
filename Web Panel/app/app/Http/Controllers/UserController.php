@@ -49,7 +49,7 @@ class UserController extends Controller
             'multiuser'=>'required|numeric',
             'connection_start'=>'nullable|numeric',
             'traffic'=>'required|numeric',
-            'expdate'=>'nullable|date_format:Y-m-d',
+            'expdate'=>'nullable|string',
             'type_traffic'=>'required|string',
             'desc'=>'nullable|string'
         ]);
