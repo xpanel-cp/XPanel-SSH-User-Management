@@ -131,10 +131,7 @@ class SettingsController extends Controller
         {
             Process::run("sed -i \"s/APP_MODE=.*/APP_MODE=$request->mode/g\" /var/www/html/app/.env");
         }
-        if($request->status_log=='active' OR $request->status_log=='deactice')
-        {
-            Process::run("sed -i \"s/STATUS_LOG=.*/STATUS_LOG=$request->status_log/g\" /var/www/html/app/.env");
-        }
+
         Process::run("sed -i \"s/PANEL_DIRECT=.*/PANEL_DIRECT=$request->direct_login/g\" /var/www/html/app/.env");
         if (empty($request->status_day) or $request->status_day=='deactive')
         {
@@ -162,6 +159,16 @@ class SettingsController extends Controller
         {
             $status_multiuser='active';
         }
+
+        if (empty($request->status_log) or $request->status_log=='deactive')
+        {
+            $status_log='deactive';
+        }
+        else
+        {
+            $status_log='active';
+        }
+        Process::run("sed -i \"s/STATUS_LOG=.*/STATUS_LOG=$status_log/g\" /var/www/html/app/.env");
         Process::run("sed -i \"s/CRON_TRAFFIC=.*/CRON_TRAFFIC=$status_traffic/g\" /var/www/html/app/.env");
         Process::run("sed -i \"s/DAY=.*/DAY=$status_day/g\" /var/www/html/app/.env");
         $check_setting = Settings::where('id', '1')->count();

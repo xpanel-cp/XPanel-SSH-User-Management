@@ -65,6 +65,16 @@
     });
 </script>
 <script type="text/javascript">
+    const status_log = document.getElementById("status_log");
+    status_log.addEventListener("change", function() {
+        if (status_log.checked) {
+            status_log.value = "active";
+        } else {
+            status_log.value = "deactive";
+        }
+    });
+</script>
+<script type="text/javascript">
     const status_traffic = document.getElementById("status_traffic");
     status_traffic.addEventListener("change", function() {
         if (status_traffic.checked) {
