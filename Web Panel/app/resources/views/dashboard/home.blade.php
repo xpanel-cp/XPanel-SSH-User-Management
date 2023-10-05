@@ -91,19 +91,31 @@
                                 <div id="overview-product-graph"></div>
                             </div>
                             <div class="row g-3 text-center">
-                                <div class="col-6 col-lg-4 col-xxl-4">
+                                <div class="col-6 col-lg-3 col-xxl-3">
                                     <div class="overview-product-legends">
                                         <p class="text-dark mb-1"><span>{{__('dashboard-active-user')}}</span></p>
                                         <h6 class="mb-0">{{$active_user}}</h6>
                                     </div>
                                 </div>
-                                <div class="col-6 col-lg-4 col-xxl-4">
+                                <div class="col-6 col-lg-3 col-xxl-3">
+                                    <div class="overview-product-legends">
+                                        <p class="text-dark mb-1"><span>{{__('dashboard-expired-user')}}</span></p>
+                                        <h6 class="mb-0">{{$expired_user}}</h6>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-lg-3 col-xxl-3">
+                                    <div class="overview-product-legends">
+                                        <p class="text-dark mb-1"><span>{{__('dashboard-traffic-user')}}</span></p>
+                                        <h6 class="mb-0">{{$traffic_user}}</h6>
+                                    </div>
+                                </div>
+                                <div class="col-6 col-lg-3 col-xxl-3">
                                     <div class="overview-product-legends">
                                         <p class="text-dark mb-1"><span>{{__('dashboard-deactive-user')}}</span></p>
                                         <h6 class="mb-0">{{$deactive_user}}</h6>
                                     </div>
                                 </div>
-                                <div class="col-6 col-lg-4 col-xxl-4">
+                                <div class="col-12 col-lg-12 col-xxl-12">
                                     <div class="overview-product-legends">
                                         <p class="text-secondary mb-1"><span>{{__('dashboard-online-user')}}</span></p>
                                         <h6 class="mb-0">{{$online_user}}</h6>

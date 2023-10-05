@@ -100,7 +100,17 @@ class UserController extends Controller
                 'upload' => '0',
                 'total' => '0'
             ]);
-
+            $replacement = "Match User {$user->username}\nBanner /var/www/html/app/storage/banner/{$user->username}-detail\nMatch all";
+            $file = fopen("/etc/ssh/sshd_config", "r+");
+            $fileContent = fread($file, filesize("/etc/ssh/sshd_config"));
+            if (strpos($fileContent, "Match User {$user->username}") === false)
+            {
+                $modifiedContent = str_replace("Match all", $replacement, $fileContent);
+                rewind($file);
+                fwrite($file, $modifiedContent);
+            }
+            fclose($file);
+            Process::run("sudo service ssh restart");
             Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$user->username}");
             Process::input($user->password."\n".$user->password."\n")->timeout(120)->run("sudo passwd {$user->username}");
 
@@ -179,7 +189,17 @@ class UserController extends Controller
                     'upload' => '0',
                     'total' => '0'
                 ]);
-
+                $replacement = "Match User {$user->username}\nBanner /var/www/html/app/storage/banner/{$user->username}-detail\nMatch all";
+                $file = fopen("/etc/ssh/sshd_config", "r+");
+                $fileContent = fread($file, filesize("/etc/ssh/sshd_config"));
+                if (strpos($fileContent, "Match User {$user->username}") === false)
+                {
+                    $modifiedContent = str_replace("Match all", $replacement, $fileContent);
+                    rewind($file);
+                    fwrite($file, $modifiedContent);
+                }
+                fclose($file);
+                Process::run("sudo service ssh restart");
                 Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$user->username}");
                 Process::input($user->password."\n".$user->password."\n")->timeout(120)->run("sudo passwd {$user->username}");
 
@@ -203,6 +223,18 @@ class UserController extends Controller
 
                 $user = Users::where('username',$username)->get();
                 $password=$user[0]->password;
+
+                $replacement = "Match User {$username}\nBanner /var/www/html/app/storage/banner/{$username}-detail\nMatch all";
+                $file = fopen("/etc/ssh/sshd_config", "r+");
+                $fileContent = fread($file, filesize("/etc/ssh/sshd_config"));
+                if (strpos($fileContent, "Match User {$username}") === false)
+                {
+                    $modifiedContent = str_replace("Match all", $replacement, $fileContent);
+                    rewind($file);
+                    fwrite($file, $modifiedContent);
+                }
+                fclose($file);
+                Process::run("sudo service ssh restart");
                 Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$username}");
                 Process::input($password."\n".$password."\n")->timeout(120)->run("sudo passwd {$username}");
             }
@@ -214,6 +246,17 @@ class UserController extends Controller
 
                 $user = Users::where('username',$username)->get();
                 $password=$user[0]->username;
+                $replacement = "Match User {$username}\nBanner /var/www/html/app/storage/banner/{$username}-detail\nMatch all";
+                $file = fopen("/etc/ssh/sshd_config", "r+");
+                $fileContent = fread($file, filesize("/etc/ssh/sshd_config"));
+                if (strpos($fileContent, "Match User {$username}") === false)
+                {
+                    $modifiedContent = str_replace("Match all", $replacement, $fileContent);
+                    rewind($file);
+                    fwrite($file, $modifiedContent);
+                }
+                fclose($file);
+                Process::run("sudo service ssh restart");
                 Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$username}");
                 Process::input($password."\n".$password."\n")->timeout(120)->run("sudo passwd {$username}");
             }
@@ -230,6 +273,13 @@ class UserController extends Controller
         if($user->permission=='admin') {
             $check_user = Users::where('username',$username)->count();
             if ($check_user > 0) {
+                $fileContent = file_get_contents("/etc/ssh/sshd_config");
+                $modifiedContent = str_replace("Match User {$username}", "", $fileContent);
+                $modifiedContent = str_replace("Banner /var/www/html/app/storage/banner/{$username}-detail", "", $modifiedContent);
+                $modifiedContent = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $modifiedContent);
+                file_put_contents("/etc/ssh/sshd_config", $modifiedContent);
+                Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$username}-detail");
+                Process::run("sudo service ssh restart");
                 Users::where('username', $username)->update(['status' => 'deactive']);
                 Process::run("sudo killall -u {$username}");
                 Process::run("sudo pkill -u {$username}");
@@ -241,6 +291,13 @@ class UserController extends Controller
         else{
             $check_user = Users::where('username', $username)->where('customer_user', $user->username)->count();
             if ($check_user > 0) {
+                $fileContent = file_get_contents("/etc/ssh/sshd_config");
+                $modifiedContent = str_replace("Match User {$username}", "", $fileContent);
+                $modifiedContent = str_replace("Banner /var/www/html/app/storage/banner/{$username}-detail", "", $modifiedContent);
+                $modifiedContent = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $modifiedContent);
+                file_put_contents("/etc/ssh/sshd_config", $modifiedContent);
+                Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$username}-detail");
+                Process::run("sudo service ssh restart");
                 Users::where('username', $username)->update(['status' => 'deactive']);
                 Process::run("sudo killall -u {$username}");
                 Process::run("sudo pkill -u {$username}");
@@ -285,6 +342,13 @@ class UserController extends Controller
             $check_user = Users::where('username',$username)->count();
             $status_user = Users::where('username',$username)->get();
             if ($check_user > 0) {
+                $fileContent = file_get_contents("/etc/ssh/sshd_config");
+                $modifiedContent = str_replace("Match User {$username}", "", $fileContent);
+                $modifiedContent = str_replace("Banner /var/www/html/app/storage/banner/{$username}-detail", "", $modifiedContent);
+                $modifiedContent = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $modifiedContent);
+                file_put_contents("/etc/ssh/sshd_config", $modifiedContent);
+                Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$username}-detail");
+                Process::run("sudo service ssh restart");
                 if($status_user[0]->status=='active') {
                     Process::run("sudo killall -u {$username}");
                     Process::run("sudo pkill -u {$username}");
@@ -307,6 +371,13 @@ class UserController extends Controller
             $check_user = Users::where('username', $username)->where('customer_user', $user->username)->count();
             $status_user = Users::where('username',$username)->get();
             if ($check_user > 0) {
+                $fileContent = file_get_contents("/etc/ssh/sshd_config");
+                $modifiedContent = str_replace("Match User {$username}", "", $fileContent);
+                $modifiedContent = str_replace("Banner /var/www/html/app/storage/banner/{$username}-detail", "", $modifiedContent);
+                $modifiedContent = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $modifiedContent);
+                file_put_contents("/etc/ssh/sshd_config", $modifiedContent);
+                Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$username}-detail");
+                Process::run("sudo service ssh restart");
                 if ($status_user[0]->status == 'active') {
                     Process::run("sudo killall -u {$username}");
                     Process::run("sudo pkill -u {$username}");
@@ -336,6 +407,13 @@ class UserController extends Controller
                 $check_user = Users::where('username',$username)->count();
                 $status_user = Users::where('username',$username)->get();
                 if ($check_user > 0) {
+                    $fileContent = file_get_contents("/etc/ssh/sshd_config");
+                    $modifiedContent = str_replace("Match User {$username}", "", $fileContent);
+                    $modifiedContent = str_replace("Banner /var/www/html/app/storage/banner/{$username}-detail", "", $modifiedContent);
+                    $modifiedContent = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $modifiedContent);
+                    file_put_contents("/etc/ssh/sshd_config", $modifiedContent);
+                    Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$username}-detail");
+                    Process::run("sudo service ssh restart");
                     if ($status_user[0]->status == 'active') {
                         Process::run("sudo killall -u {$username}");
                         Process::run("sudo pkill -u {$username}");
@@ -358,6 +436,13 @@ class UserController extends Controller
                 $status_user = Users::where('username', $username)->get();
                 $check_user = Users::where('username', $username)->where('customer_user', $user->username)->count();
                 if ($check_user > 0) {
+                    $fileContent = file_get_contents("/etc/ssh/sshd_config");
+                    $modifiedContent = str_replace("Match User {$username}", "", $fileContent);
+                    $modifiedContent = str_replace("Banner /var/www/html/app/storage/banner/{$username}-detail", "", $modifiedContent);
+                    $modifiedContent = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $modifiedContent);
+                    file_put_contents("/etc/ssh/sshd_config", $modifiedContent);
+                    Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$username}-detail");
+                    Process::run("sudo service ssh restart");
                     if ($status_user[0]->status == 'active') {
                         Process::run("sudo killall -u {$username}");
                         Process::run("sudo pkill -u {$username}");
@@ -394,6 +479,17 @@ class UserController extends Controller
         if($user->permission=='admin') {
             $check_user = Users::where('username', $request->username_re)->count();
             if ($check_user > 0) {
+                $replacement = "Match User {$request->username_re}\nBanner /var/www/html/app/storage/banner/{$request->username_re}-detail\nMatch all";
+                $file = fopen("/etc/ssh/sshd_config", "r+");
+                $fileContent = fread($file, filesize("/etc/ssh/sshd_config"));
+                if (strpos($fileContent, "Match User {$request->username_re}") === false)
+                {
+                    $modifiedContent = str_replace("Match all", $replacement, $fileContent);
+                    rewind($file);
+                    fwrite($file, $modifiedContent);
+                }
+                fclose($file);
+                Process::run("sudo service ssh restart");
                 Users::where('username', $request->username_re)->update(['status' => 'active', 'end_date' => $newdate]);
 
                 $user = Users::where('username', $request->username_re)->get();
@@ -414,6 +510,17 @@ class UserController extends Controller
         {
             $check_user = Users::where('username', $request->username_re)->where('customer_user', $user->username)->count();
             if ($check_user > 0) {
+                $replacement = "Match User {$request->username_re}\nBanner /var/www/html/app/storage/banner/{$request->username_re}-detail\nMatch all";
+                $file = fopen("/etc/ssh/sshd_config", "r+");
+                $fileContent = fread($file, filesize("/etc/ssh/sshd_config"));
+                if (strpos($fileContent, "Match User {$request->username_re}") === false)
+                {
+                    $modifiedContent = str_replace("Match all", $replacement, $fileContent);
+                    rewind($file);
+                    fwrite($file, $modifiedContent);
+                }
+                fclose($file);
+                Process::run("sudo service ssh restart");
                 Users::where('username', $request->username_re)->update(['status' => 'active', 'end_date' => $newdate]);
 
                 $user = Users::where('username', $request->username_re)->get();
@@ -447,12 +554,12 @@ class UserController extends Controller
                 $show = $user[0];
                 if(env('APP_LOCALE', 'en')=='fa')
                 {
-                 if(!empty($show->end_date)){$end_date=Verta::instance($show->end_date)->format('Y-m-d');
-                 $end_date=$this->englishToPersianNumbers($end_date);}
-                 else
-                 {
-                     $end_date=''  ;
-                 }
+                    if(!empty($show->end_date)){$end_date=Verta::instance($show->end_date)->format('Y-m-d');
+                        $end_date=$this->englishToPersianNumbers($end_date);}
+                    else
+                    {
+                        $end_date=''  ;
+                    }
                 }
                 else
                 {

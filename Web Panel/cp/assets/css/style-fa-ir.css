@@ -21065,18 +21065,6 @@ pre[class*=language-] > code {
   display: inline-flex;
   align-items: center;
 }
-.overview-product-legends p::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  right: 0;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  transform: translate(-50%, -50%);
-  background: currentColor;
-  margin-right: -10px;
-}
 .overview-product-legends p span {
   color: var(--bs-body-color);
 }
