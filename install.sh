@@ -100,34 +100,38 @@ dmssl=""
 fi
 
 echo -e "${YELLOW}************ Select XPanel Version ************"
-echo -e "${GREEN}  1)XPanel v3.8.1"
-echo -e "${GREEN}  2)XPanel v3.8.0"
-echo -e "${GREEN}  3)XPanel v3.7.9"
-echo -e "${GREEN}  4)XPanel v3.7.8"
-echo -e "${GREEN}  5)XPanel v3.7.7"
-echo -e "${GREEN}  6)XPanel v3.7.6"
+echo -e "${GREEN}  1)XPanel v3.8.2"
+echo -e "${GREEN}  2)XPanel v3.8.1"
+echo -e "${GREEN}  3)XPanel v3.8.0"
+echo -e "${GREEN}  4)XPanel v3.7.9"
+echo -e "${GREEN}  5)XPanel v3.7.8"
+echo -e "${GREEN}  6)XPanel v3.7.7"
+echo -e "${GREEN}  7)XPanel v3.7.6"
 echo -ne "${GREEN}\nSelect Version : ${ENDCOLOR}" ;read n
 if [ "$n" != "" ]; then
 if [ "$n" == "1" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-1
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-2
 fi
 if [ "$n" == "2" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-0
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-1
 fi
 if [ "$n" == "3" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-9
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-0
 fi
 if [ "$n" == "4" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-8
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-9
 fi
 if [ "$n" == "5" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/37
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-8
 fi
 if [ "$n" == "6" ]; then
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/37
+fi
+if [ "$n" == "7" ]; then
 linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/xpanel
 fi
 else
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-1
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-2
 fi
 
 echo -e "\nPlease input IP Server"
@@ -532,6 +536,7 @@ DEFAULT_CRON_TRAFFIC=active
 DEFAULT_DAY=active
 DEFAULT_PORT_DROPBEAR=2083
 DEFAULT_TRAFFIC_BASE=12
+DEFAULT_STATUS_LOG=deactive
 
 if [ -f /var/www/html/.env_copy ]; then
   while IFS= read -r line; do
@@ -553,6 +558,9 @@ if [ -f /var/www/html/.env_copy ]; then
     elif [ "$key" = "TRAFFIC_BASE" ]; then
       TRAFFIC_BASE="$value"
     fi
+    elif [ "$key" = "STATUS_LOG" ]; then
+      STATUS_LOG="$value"
+    fi
   done < /var/www/html/.env_copy
 fi
 
@@ -563,6 +571,7 @@ CRON_TRAFFIC="${CRON_TRAFFIC:-$DEFAULT_CRON_TRAFFIC}"
 DAY="${DAY:-$DEFAULT_DAY}"
 PORT_DROPBEAR="${PORT_DROPBEAR:-$DEFAULT_PORT_DROPBEAR}"
 TRAFFIC_BASE="${TRAFFIC_BASE:-$DEFAULT_TRAFFIC_BASE}"
+STATUS_LOG="${STATUS_LOG:-$DEFAULT_STATUS_LOG}"
 
 sed -i "s/APP_LOCALE=.*/APP_LOCALE=$APP_LOCALE/g" /var/www/html/app/.env
 sed -i "s/APP_MODE=.*/APP_MODE=$APP_MODE/g" /var/www/html/app/.env
@@ -571,6 +580,7 @@ sed -i "s/CRON_TRAFFIC=.*/CRON_TRAFFIC=$CRON_TRAFFIC/g" /var/www/html/app/.env
 sed -i "s/DAY=.*/DAY=$DAY/g" /var/www/html/app/.env
 sed -i "s/PORT_DROPBEAR=.*/PORT_DROPBEAR=$PORT_DROPBEAR/g" /var/www/html/app/.env
 sed -i "s/TRAFFIC_BASE=.*/TRAFFIC_BASE=$TRAFFIC_BASE/g" /var/www/html/app/.env
+sed -i "s/STATUS_LOG=.*/STATUS_LOG=$STATUS_LOG/g" /var/www/html/app/.env
 
 clear
 
