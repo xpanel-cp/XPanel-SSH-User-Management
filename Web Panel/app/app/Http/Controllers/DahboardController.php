@@ -150,13 +150,15 @@ class DahboardController extends Controller
         $all_user = Users::count();
         $active_user = Users::where('status', 'active')->count();
         $deactive_user = Users::where('status', 'deactive')->count();
+        $expired_user = Users::where('status', 'expired')->count();
+        $traffic_user = Users::where('status', 'traffic')->count();
         $traffic_total = Traffic::sum('total');
 
         $traffic_total = formatBytes(($traffic_total*1024)*1024);
 
         $alluser=$all_user;
         $online_user=$u_online+$u_online_drop;
-        return view('dashboard.home', compact('alluser','active_user','deactive_user','online_user','cpu_free','ram_free','disk_free','traffic_total','total'));
+        return view('dashboard.home', compact('alluser','active_user','expired_user','traffic_user','deactive_user','online_user','cpu_free','ram_free','disk_free','traffic_total','total'));
     }
 
 }
