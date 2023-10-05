@@ -557,10 +557,10 @@ if [ -f /var/www/html/.env_copy ]; then
       PORT_DROPBEAR="$value"
     elif [ "$key" = "TRAFFIC_BASE" ]; then
       TRAFFIC_BASE="$value"
-    fi
     elif [ "$key" = "STATUS_LOG" ]; then
       STATUS_LOG="$value"
     fi
+   
   done < /var/www/html/.env_copy
 fi
 
