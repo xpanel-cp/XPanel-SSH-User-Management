@@ -60,7 +60,7 @@ fi
 done
 
 sed -i 's/#Port 22/Port 22/' /etc/ssh/sshd_config
-sed -i 's/#Banner none/Banner \/root\/banner.txt/g' /etc/ssh/sshd_config
+sed -i 's/Banner \/root\/banner.txt/#Banner none/g' /etc/ssh/sshd_config
 sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
 port=$(grep -oE 'Port [0-9]+' /etc/ssh/sshd_config | cut -d' ' -f2)
 
@@ -100,30 +100,34 @@ dmssl=""
 fi
 
 echo -e "${YELLOW}************ Select XPanel Version ************"
-echo -e "${GREEN}  1)XPanel v3.8.0"
-echo -e "${GREEN}  2)XPanel v3.7.9"
-echo -e "${GREEN}  3)XPanel v3.7.8"
-echo -e "${GREEN}  4)XPanel v3.7.7"
-echo -e "${GREEN}  5)XPanel v3.7.6"
+echo -e "${GREEN}  1)XPanel v3.8.1"
+echo -e "${GREEN}  2)XPanel v3.8.0"
+echo -e "${GREEN}  3)XPanel v3.7.9"
+echo -e "${GREEN}  4)XPanel v3.7.8"
+echo -e "${GREEN}  5)XPanel v3.7.7"
+echo -e "${GREEN}  6)XPanel v3.7.6"
 echo -ne "${GREEN}\nSelect Version : ${ENDCOLOR}" ;read n
 if [ "$n" != "" ]; then
 if [ "$n" == "1" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-0
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-1
 fi
 if [ "$n" == "2" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-9
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-0
 fi
 if [ "$n" == "3" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-8
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-9
 fi
 if [ "$n" == "4" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/37
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-8
 fi
 if [ "$n" == "5" ]; then
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/37
+fi
+if [ "$n" == "6" ]; then
 linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/xpanel
 fi
 else
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-9
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-1
 fi
 
 echo -e "\nPlease input IP Server"
@@ -301,6 +305,8 @@ wait
 echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/local/sbin/nethogs' | sudo EDITOR='tee -a' visudo &
 wait
 echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/netstat' | sudo EDITOR='tee -a' visudo &
+wait
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/sbin/service' | sudo EDITOR='tee -a' visudo &
 wait
 sudo a2enmod rewrite
 wait
@@ -489,6 +495,18 @@ wait
 sudo sed -i 's/((/$((/' /var/www/html/kill.sh
 wait
 chmod +x /var/www/html/kill.sh
+chmod +x /etc/ssh/sshd_config
+file="/etc/ssh/sshd_config"
+text_to_check="Match all"
+if grep -q "$text_to_check" "$file"; then
+  echo "$text_to_check exists in $file"
+else
+  echo "$text_to_check does not exist in $file"
+  echo "Appending the text to $file"
+  echo "Match User not-delete" >> "$file"
+  echo "Banner /var/www/html/app/storage/banner/not-delete" >> "$file"
+  echo "Match all" >> "$file"
+fi
 wait
 if [ "$xport" != "" ]; then
 pssl=$((xport+1))
