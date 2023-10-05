@@ -496,9 +496,17 @@ sudo sed -i 's/((/$((/' /var/www/html/kill.sh
 wait
 chmod +x /var/www/html/kill.sh
 chmod +x /etc/ssh/sshd_config
-echo "Match User not-delete
-Banner /var/www/html/app/storage/banner/not-delete
-Match all" >> /etc/ssh/sshd_config
+file="/etc/ssh/sshd_config"
+text_to_check="Match all"
+if grep -q "$text_to_check" "$file"; then
+  echo "$text_to_check exists in $file"
+else
+  echo "$text_to_check does not exist in $file"
+  echo "Appending the text to $file"
+  echo "Match User not-delete" >> "$file"
+  echo "Banner /var/www/html/app/storage/banner/not-delete" >> "$file"
+  echo "Match all" >> "$file"
+fi
 wait
 if [ "$xport" != "" ]; then
 pssl=$((xport+1))
