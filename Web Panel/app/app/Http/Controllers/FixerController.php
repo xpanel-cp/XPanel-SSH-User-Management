@@ -194,51 +194,57 @@ class FixerController extends Controller
                     }
                 }
                 //traffic log html
-                if(!empty($us->end_date)) {
-                    $start_inp = date("Y-m-d");
-                    $today = new DateTime($start_inp);
-                    $futureDate = new DateTime($us->end_date);
-                    $interval = $today->diff($futureDate);
-                    $daysDifference_day = $interval->days;
-                }
-                if(env('APP_LOCALE', 'en')=='fa') {
-                    $startdate = Verta::instance($us->start_date)->formatWord('ds F');
-                    if(!empty($us->end_date))
-                    {$finishdate = Verta::instance($us->end_date)->formatWord('ds F');}
-                    else
-                    {$finishdate='بدون محدودیت';}
-
-                    if ($us->traffic > 0)
-                        if (1024 <= $us->traffic) {
-                            $trafficValue = floatval($us->traffic);
-                            $traffic_user = round($trafficValue / 1024, 3) . ' گیگابات';
-                        } else {
-                            $traffic_user = $us->traffic . ' مگابایت';
-                        }
-                    else {
-                        $traffic_user = 'بدون محدودیت';
+                if(env('STATUS_LOG', 'deactive')=='active') {
+                    if (!empty($us->end_date)) {
+                        $start_inp = date("Y-m-d");
+                        $today = new DateTime($start_inp);
+                        $futureDate = new DateTime($us->end_date);
+                        $interval = $today->diff($futureDate);
+                        $daysDifference_day = $interval->days;
                     }
-                    foreach ($us->traffics as $traffic) {
-                        if (1024 <= $traffic->total) {
-
-                            $trafficValue = floatval($traffic->total);
-                            $total = round($trafficValue / 1024, 3) . ' گیگابایت';
+                    if (env('APP_LOCALE', 'en') == 'fa') {
+                        $startdate = Verta::instance($us->start_date)->formatWord('ds F');
+                        if (!empty($us->end_date)) {
+                            $finishdate = Verta::instance($us->end_date)->formatWord('ds F');
                         } else {
-                            $total = $traffic->total . ' مگابایت';
+                            $finishdate = 'بدون محدودیت';
                         }
-                    }
-                    $day="";
-                    if($us->status=='active' and !empty($us->end_date))
-                    {$day="\n• اشتراک شما <span style='color: #e99c26'><b>$daysDifference_day</b></span> روز دیگر پایان خواهد یافت.\n";}
-                    if($us->status=='deactive')
-                    {$day= "\n• اشتراک شما <span style='color: #e92626'><b>غیرفعال</b></span> است.\n";}
-                    if($us->status=='expired')
-                    {$day= "\n• اشتراک شما <span style='color: #e98826'><b>منقضی شده</b></span> است.\n";}
-                    if($us->status=='traffic')
-                    {$day= "\n• اشتراک شما <span style='color: #26aee9'><b>ترافیک تمام کرده</b></span> است.\n";}
 
-                    $traffic_log =
-                        "
+                        if ($us->traffic > 0)
+                            if (1024 <= $us->traffic) {
+                                $trafficValue = floatval($us->traffic);
+                                $traffic_user = round($trafficValue / 1024, 3) . ' گیگابات';
+                            } else {
+                                $traffic_user = $us->traffic . ' مگابایت';
+                            }
+                        else {
+                            $traffic_user = 'بدون محدودیت';
+                        }
+                        foreach ($us->traffics as $traffic) {
+                            if (1024 <= $traffic->total) {
+
+                                $trafficValue = floatval($traffic->total);
+                                $total = round($trafficValue / 1024, 3) . ' گیگابایت';
+                            } else {
+                                $total = $traffic->total . ' مگابایت';
+                            }
+                        }
+                        $day = "";
+                        if ($us->status == 'active' and !empty($us->end_date)) {
+                            $day = "\n• اشتراک شما <span style='color: #e99c26'><b>$daysDifference_day</b></span> روز دیگر پایان خواهد یافت.\n";
+                        }
+                        if ($us->status == 'deactive') {
+                            $day = "\n• اشتراک شما <span style='color: #e92626'><b>غیرفعال</b></span> است.\n";
+                        }
+                        if ($us->status == 'expired') {
+                            $day = "\n• اشتراک شما <span style='color: #e98826'><b>منقضی شده</b></span> است.\n";
+                        }
+                        if ($us->status == 'traffic') {
+                            $day = "\n• اشتراک شما <span style='color: #26aee9'><b>ترافیک تمام کرده</b></span> است.\n";
+                        }
+
+                        $traffic_log =
+                            "
                         <div dir='rtl' style='text-align:right'>
 کاربر <span style='color: #35cc00'><b>$us->username</b></span> عزیز
 $day
@@ -252,48 +258,48 @@ $day
 &nbsp;⁞ ┘ ترافیک مصرفی: <span style='color: #e99c26'><b>$total</b></span>
 </div>
                         ";
-                }
-                else{
-                    $startdate = $us->start_date;
-                    if(!empty($us->end_date))
-                    {$finishdate = $us->end_date;}
-                    else
-                    {$finishdate='Unlimited';}
-                    if ($us->traffic > 0)
-                        if (1024 <= $us->traffic) {
-                            $trafficValue = floatval($us->traffic);
-                            $traffic_user = round($trafficValue / 1024, 3) . ' GB';
+                    } else {
+                        $startdate = $us->start_date;
+                        if (!empty($us->end_date)) {
+                            $finishdate = $us->end_date;
                         } else {
-                            $traffic_user = $us->traffic . ' MB';
+                            $finishdate = 'Unlimited';
                         }
-                    else {
-                        $traffic_user = 'Unlimited';
-                    }
-                    foreach ($us->traffics as $traffic) {
-                        if (1024 <= $traffic->total) {
-
-                            $trafficValue = floatval($traffic->total);
-                            $total = round($trafficValue / 1024, 3) . ' GB';
-                        } else {
-                            $total = $traffic->total . ' MB';
+                        if ($us->traffic > 0)
+                            if (1024 <= $us->traffic) {
+                                $trafficValue = floatval($us->traffic);
+                                $traffic_user = round($trafficValue / 1024, 3) . ' GB';
+                            } else {
+                                $traffic_user = $us->traffic . ' MB';
+                            }
+                        else {
+                            $traffic_user = 'Unlimited';
                         }
-                    }
-                    $day="";
-                    if ($us->status == 'active' && !empty($us->end_date)) {
-                        $day = "\n• Your subscription will end in <span style='color: #e99c26'><b>$daysDifference_day</b></span> days.\n";
-                    }
-                    if ($us->status == 'deactive') {
-                        $day = "\n• Your subscription is <span style='color: #e92626'><b>Inactive</b></span>.\n";
-                    }
-                    if ($us->status == 'expired') {
-                        $day = "\n• Your subscription has <span style='color: #e98826'><b>Expired</b></span>.\n";
-                    }
-                    if ($us->status == 'traffic') {
-                        $day = "\n• Your subscription has <span style='color: #26aee9'><b>Exhausted its traffic</b></span>.\n";
-                    }
+                        foreach ($us->traffics as $traffic) {
+                            if (1024 <= $traffic->total) {
 
-                    $traffic_log =
-                        "
+                                $trafficValue = floatval($traffic->total);
+                                $total = round($trafficValue / 1024, 3) . ' GB';
+                            } else {
+                                $total = $traffic->total . ' MB';
+                            }
+                        }
+                        $day = "";
+                        if ($us->status == 'active' && !empty($us->end_date)) {
+                            $day = "\n• Your subscription will end in <span style='color: #e99c26'><b>$daysDifference_day</b></span> days.\n";
+                        }
+                        if ($us->status == 'deactive') {
+                            $day = "\n• Your subscription is <span style='color: #e92626'><b>Inactive</b></span>.\n";
+                        }
+                        if ($us->status == 'expired') {
+                            $day = "\n• Your subscription has <span style='color: #e98826'><b>Expired</b></span>.\n";
+                        }
+                        if ($us->status == 'traffic') {
+                            $day = "\n• Your subscription has <span style='color: #26aee9'><b>Exhausted its traffic</b></span>.\n";
+                        }
+
+                        $traffic_log =
+                            "
                         <div dir='ltr' style='text-align:left'>
 Dear user <span style='color: #35cc00'><b>$us->username</b></span>,
 $day
@@ -307,25 +313,25 @@ $day
 &nbsp;⁞ ┘ Consumed Traffic: <span style='color: #e99c26'><b>$total</b></span>
 </div>
 ";
-                }
-                $replacement = "Match User {$us->username}\nBanner /var/www/html/app/storage/banner/{$us->username}-detail\nMatch all";
-                $file = fopen("/etc/ssh/sshd_config", "r+");
-                $fileContent = fread($file, filesize("/etc/ssh/sshd_config"));
-                if (strpos($fileContent, "Match User {$us->username}") === false)
-                {
-                    $modifiedContent = str_replace("Match all", $replacement, $fileContent);
-                    rewind($file);
-                    fwrite($file, $modifiedContent);
-                }
-                fclose($file);
-                $filePath = "/var/www/html/app/storage/banner/$us->username-detail";
-                $command = "echo \"$traffic_log\" > $filePath";
-                exec($command, $output, $returnCode);
+                    }
+                    $replacement = "Match User {$us->username}\nBanner /var/www/html/app/storage/banner/{$us->username}-detail\nMatch all";
+                    $file = fopen("/etc/ssh/sshd_config", "r+");
+                    $fileContent = fread($file, filesize("/etc/ssh/sshd_config"));
+                    if (strpos($fileContent, "Match User {$us->username}") === false) {
+                        $modifiedContent = str_replace("Match all", $replacement, $fileContent);
+                        rewind($file);
+                        fwrite($file, $modifiedContent);
+                    }
+                    fclose($file);
+                    $filePath = "/var/www/html/app/storage/banner/$us->username-detail";
+                    $command = "echo \"$traffic_log\" > $filePath";
+                    exec($command, $output, $returnCode);
 
-                if ($returnCode === 0) {
-                    echo "";
-                } else {
-                    echo "";
+                    if ($returnCode === 0) {
+                        echo "";
+                    } else {
+                        echo "";
+                    }
                 }
             }
         }

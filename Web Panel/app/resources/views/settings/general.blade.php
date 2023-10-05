@@ -112,10 +112,10 @@
                                     <li class="list-group-item px-0 pb-0">
                                         <div class="d-flex align-items-center justify-content-between">
                                             <div>
-                                                <p class="mb-1">{{__('user-table-day')}}</p>
+                                                <p class="mb-1">{{__('setting-status-log')}}</p>
                                             </div>
                                             <div class="form-check form-switch p-0">
-                                                <input class="form-check-input h4 position-relative m-0" type="checkbox" role="switch" name="status_day" id="status_day" @if(env('DAY', 'deactive')=='active')value="active" checked=""@else value="deactive"@endif>
+                                                <input class="form-check-input h4 position-relative m-0" type="checkbox" role="switch" name="status_log" id="status_log" @if(env('STATUS_LOG', 'deactive')=='active')value="active" checked=""@else value="deactive"@endif>
                                             </div>
                                         </div>
                                     </li>

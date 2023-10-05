@@ -116,6 +116,7 @@ class SettingsController extends Controller
             'status_traffic'=>'string',
             'status_multiuser'=>'string',
             'status_day'=>'string',
+            'status_log'=>'string',
         ]);
         $traffic_base_old=env('TRAFFIC_BASE');
         $traffic_base_new=$request->trafficbase;
@@ -129,6 +130,10 @@ class SettingsController extends Controller
         if($request->mode=='night' OR $request->mode=='light')
         {
             Process::run("sed -i \"s/APP_MODE=.*/APP_MODE=$request->mode/g\" /var/www/html/app/.env");
+        }
+        if($request->status_log=='active' OR $request->status_log=='deactice')
+        {
+            Process::run("sed -i \"s/STATUS_LOG=.*/STATUS_LOG=$request->status_log/g\" /var/www/html/app/.env");
         }
         Process::run("sed -i \"s/PANEL_DIRECT=.*/PANEL_DIRECT=$request->direct_login/g\" /var/www/html/app/.env");
         if (empty($request->status_day) or $request->status_day=='deactive')

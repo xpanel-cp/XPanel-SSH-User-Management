@@ -140,6 +140,7 @@
     "setting-general-night": "Night",
     "setting-status-traffic": "Calculate Traffic in Cron job",
     "setting-status-miltiu": "Multi-User",
+    "setting-status-log": "Displaying the connection traffic log within the application.",
     "setting-multiuser-title": "Settings - Multi User",
     "setting-multiuser-menu": "Multi User",
     "setting-multiuser-status": "Status",
