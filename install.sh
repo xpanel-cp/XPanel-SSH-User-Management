@@ -495,6 +495,7 @@ wait
 sudo sed -i 's/((/$((/' /var/www/html/kill.sh
 wait
 chmod +x /var/www/html/kill.sh
+mkdir /var/www/html/app/storage/banner
 chmod 777 /etc/ssh/sshd_config
 chmod 777 /var/www/html/app/storage/banner
 file="/etc/ssh/sshd_config"
