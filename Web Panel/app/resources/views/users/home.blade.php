@@ -146,9 +146,18 @@
                                                     $start_inp = date("Y-m-d");
                                                     $today = new DateTime($start_inp); // تاریخ امروز
                                                     $futureDate = new DateTime($finishdate);
-                                                    $interval = $today->diff($futureDate);
-                                                    $daysDifference_day = $interval->days;
                                                 @endphp
+                                                @if ($today > $futureDate)
+                                                    @php
+                                                        $interval = $futureDate->diff($today);
+                                                        $daysDifference_day = -1 * $interval->days; // تعداد روزهای منفی برای تاریخ‌های گذشته
+                                                    @endphp
+                                                @else
+                                                    @php
+                                                        $interval = $today->diff($futureDate);
+                                                        $daysDifference_day = $interval->days;
+                                                    @endphp
+                                                @endif
                                             @else
                                                 @php $daysDifference_day='Unlimit'; @endphp
                                             @endif
