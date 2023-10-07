@@ -450,7 +450,7 @@ sudo systemctl enable httpd
 sudo systemctl enable stunnel4
 sudo systemctl restart stunnel4wait
 fi
-sudo bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/Nethogs-Json-main/master/install.sh --ipv4)
+sudo bash -c "$(curl -Lfo- https://raw.githubusercontent.com/xpanel-cp/Nethogs-Json-main/master/install.sh)"
 sudo mysql -e "create database XPanel_plus;" &
 wait
 sudo mysql -e "CREATE USER '${adminusername}'@'localhost' IDENTIFIED BY '${adminpassword}';" &
