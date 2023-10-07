@@ -356,12 +356,6 @@ fi
 serverPort=${serverPort##*=}
 ##Remove the "" marks from the variable as they will not be needed
 serverPort=${serverPort//'"'}
-mkdir /etc/nginx/ssl
-private_key_path="/etc/nginx/ssl/private.key"
-csr_path="/etc/nginx/ssl/certificate.csr"
-openssl genpkey -algorithm RSA -out "$private_key_path"
-openssl req -new -key "$private_key_path" -out "$csr_path" -subj "/C=US/ST=California/L=San Francisco/O=Example Company/OU=IT Department/CN=example.com"
-chmod 600 "$private_key_path" "$csr_path"
 sudo tee /etc/nginx/sites-available/default <<EOF
 server {
     listen 80;
@@ -381,46 +375,10 @@ server {
     }
 }
 server {
-    listen 443 ssl;
-    server_name example.com;
-    root /var/www/html/example;
-    index index.php index.html;
-    ssl_certificate /etc/nginx/ssl/certificate.crt;
-    ssl_certificate_key /etc/nginx/ssl/private.key;
-    location / {
-        try_files \$uri \$uri/ /index.php?\$query_string;
-    }
-    location ~ \.php$ {
-        include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
-    }
-    location ~ /\.ht {
-        deny all;
-    }
-}
-server {
     listen $serverPort;
     server_name example.com;
     root /var/www/html/cp;
     index index.php index.html;
-    location / {
-        try_files \$uri \$uri/ /index.php?\$query_string;
-    }
-    location ~ \.php$ {
-        include snippets/fastcgi-php.conf;
-        fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
-    }
-    location ~ /\.ht {
-        deny all;
-    }
-}
-server {
-    listen $serverPort ssl;
-    server_name example.com;
-    root /var/www/html/cp;
-    index index.php index.html;
-    ssl_certificate /etc/nginx/ssl/certificate.crt;
-    ssl_certificate_key /etc/nginx/ssl/private.key;
     location / {
         try_files \$uri \$uri/ /index.php?\$query_string;
     }
