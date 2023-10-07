@@ -60,7 +60,6 @@ fi
 done
 
 sed -i 's/#Port 22/Port 22/' /etc/ssh/sshd_config
-sed -i 's/Banner \/root\/banner.txt/#Banner none/g' /etc/ssh/sshd_config
 sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
 port=$(grep -oE 'Port [0-9]+' /etc/ssh/sshd_config | cut -d' ' -f2)
 
