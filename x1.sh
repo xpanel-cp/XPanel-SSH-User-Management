@@ -356,6 +356,9 @@ fi
 serverPort=${serverPort##*=}
 ##Remove the "" marks from the variable as they will not be needed
 serverPort=${serverPort//'"'}
+sudo openssl req -new -key /etc/nginx/ssl/private.key -out /etc/nginx/ssl/certificate.csr
+sudo openssl x509 -req -days 365 -in /etc/nginx/ssl/certificate.csr -signkey /etc/nginx/ssl/private.key -out /etc/nginx/ssl/certificate.crt
+
 sudo tee /etc/nginx/sites-available/default <<EOF
 server {
     listen 80;
