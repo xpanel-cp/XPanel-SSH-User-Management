@@ -448,7 +448,8 @@ port=$(echo "$po" | sed "s/Port //g")
 sudo systemctl restart httpd
 sudo systemctl enable httpd
 sudo systemctl enable stunnel4
-sudo systemctl restart stunnel4wait
+sudo systemctl restart stunnel4
+wait
 fi
 sudo bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/Nethogs-Json-main/master/install.sh --ipv4)
 sudo mysql -e "create database XPanel_plus;" &
