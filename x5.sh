@@ -430,9 +430,8 @@ server {
         proxy_read_timeout 52w;
     }
 }
-EOF
-echo "server {
-    listen $serverPort;
+server {
+    listen serverPort;
     server_name example.com;
     root /var/www/html/cp;
     index index.php index.html;
@@ -446,7 +445,9 @@ echo "server {
     location ~ /\.ht {
         deny all;
     }
-}" >> /etc/nginx/sites-enabled/default
+}
+EOF
+sed -i "s/serverPort/$serverPort/g" /etc/nginx/sites-available/default
 sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
 echo '#Xpanel' > /var/www/xpanelport
 sudo sed -i -e '$a\'$'\n''Xpanelport '$serverPort /var/www/xpanelport
