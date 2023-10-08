@@ -489,7 +489,6 @@ systemctl restart mariadb &
 wait
 systemctl enable mariadb &
 wait
-sudo phpenmod curl
 PHP_INI=$(php -i | grep /.+/php.ini -oE)
 sed -i 's/extension=intl/;extension=intl/' ${PHP_INI}
 wait
