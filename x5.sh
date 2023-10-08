@@ -377,7 +377,7 @@ server {
     location ~ /\.ht {
         deny all;
     }
-     location /wsspath
+     location /ws
     {
     proxy_pass http://127.0.0.1:8880/;
     proxy_redirect off;
@@ -415,7 +415,7 @@ server {
         deny all;
     }
 
-    location /wsspath {
+    location /ws {
         if ($http_upgrade != "websocket") {
                 return 404;
         }
