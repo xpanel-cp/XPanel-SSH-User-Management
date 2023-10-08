@@ -360,7 +360,7 @@ fi
 serverPort=${serverPort##*=}
 ##Remove the "" marks from the variable as they will not be needed
 serverPort=${serverPort//'"'}
-sudo tee /etc/nginx/sites-available/default <<EOF
+sudo tee /etc/nginx/sites-available/default <<'EOF'
 server {
     listen 80;
     server_name example.com;
