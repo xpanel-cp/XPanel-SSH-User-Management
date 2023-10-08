@@ -377,7 +377,7 @@ server {
     location ~ /\.ht {
         deny all;
     }
-    location /wsspath
+     location /wsspath
     {
     proxy_pass http://127.0.0.1:8880/;
     proxy_redirect off;
@@ -400,7 +400,7 @@ server {
     ssl_certificate /root/cert.pem;
     ssl_certificate_key /root/key.pem;
     ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACH>
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
 
     location / {
         try_files $uri $uri/ /index.php?$query_string;
