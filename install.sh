@@ -59,9 +59,9 @@ sudo killall -u f4cabs & deluser f4cabs
 fi
 done
 
-sudo sed -i 's/#Port 22/Port 22/' /etc/ssh/sshd_config
-sudo sed -i 's/Banner \/root\/banner.txt/#Banner none/g' /etc/ssh/sshd_config
-sudo sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
+sed -i 's/#Port 22/Port 22/' /etc/ssh/sshd_config
+sed -i 's/Banner \/root\/banner.txt/#Banner none/g' /etc/ssh/sshd_config
+sed -i 's/AcceptEnv/#AcceptEnv/g' /etc/ssh/sshd_config
 port=$(grep -oE 'Port [0-9]+' /etc/ssh/sshd_config | cut -d' ' -f2)
 
 # Check if MySQL is installed
@@ -73,11 +73,11 @@ fi
 
 folder_path_cp="/var/www/html/cp"
 if [ -d "$folder_path_cp" ]; then
-   sudo rm -rf /var/www/html/cp
+    rm -rf /var/www/html/cp
 fi
 folder_path_app="/var/www/html/app"
 if [ -d "$folder_path_app" ]; then
-    sudo rm -rf /var/www/html/app
+    rm -rf /var/www/html/app
 fi
 
 if [ -n "$ssh_tls_port" -a "$ssh_tls_port" != "NULL" ]
@@ -213,38 +213,38 @@ if command -v apt-get >/dev/null; then
 
 sudo NEETRESTART_MODE=a apt-get update --yes
 sudo apt-get -y install software-properties-common
-sudo apt-get install -y stunnel4 && apt-get install -y cmake && apt-get install -y screenfetch && apt-get install -y openssl
+apt-get install -y stunnel4 && apt-get install -y cmake && apt-get install -y screenfetch && apt-get install -y openssl
 sudo apt-get -y install software-properties-common
 sudo add-apt-repository ppa:ondrej/php -y
-sudo apt-get install apache2 zip unzip net-tools curl mariadb-server -y
-sudo apt-get install php php-cli php-mbstring php-dom php-pdo php-mysql -y
-sudo apt-get install npm -y
+apt-get install apache2 zip unzip net-tools curl mariadb-server -y
+apt-get install php php-cli php-mbstring php-dom php-pdo php-mysql -y
+apt-get install npm -y
 sudo apt-get install coreutils
 wait
 phpv=$(php -v)
 if [[ $phpv == *"8.1"* ]]; then
 
-sudo apt autoremove -y
+apt autoremove -y
   echo "PHP Is Installed :)"
 else
-sudo rm -fr /etc/php/7.4/apache2/conf.d/00-ioncube.ini
+rm -fr /etc/php/7.4/apache2/conf.d/00-ioncube.ini
 sudo apt-get purge '^php7.*' -y
-sudo apt remove php* -y
-sudo apt remove php -y
-sudo apt autoremove -y
-sudo apt install php8.1 php8.1-mysql php8.1-xml php8.1-curl cron -y
+apt remove php* -y
+apt remove php -y
+apt autoremove -y
+apt install php8.1 php8.1-mysql php8.1-xml php8.1-curl cron -y
 fi
-sudo curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
+curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
 echo "/bin/false" >> /etc/shells
 echo "/usr/sbin/nologin" >> /etc/shells
     
 #Banner 
-sudo cat << EOF > /root/banner.txt
+cat << EOF > /root/banner.txt
 Connect To Server
 EOF
 #Configuring stunnel
 sudo mkdir /etc/stunnel
-sudo cat << EOF > /etc/stunnel/stunnel.conf
+cat << EOF > /etc/stunnel/stunnel.conf
  cert = /etc/stunnel/stunnel.pem
  [openssh]
  accept = $sshtls_port
@@ -261,9 +261,9 @@ commonname=hidessh.com
 email=admin@hidessh.com
 openssl genrsa -out key.pem 2048
 openssl req -new -x509 -key key.pem -out cert.pem -days 1095 -subj "/C=$country/ST=$state/L=$locality/O=$organization/OU=$organizationalunit/CN=$commonname/emailAddress=$email"
-sudo cat key.pem cert.pem >> /etc/stunnel/stunnel.pem
-sudo sed -i 's/ENABLED=0/ENABLED=1/g' /etc/default/stunnel4
-sudo service stunnel4 restart
+cat key.pem cert.pem >> /etc/stunnel/stunnel.pem
+sed -i 's/ENABLED=0/ENABLED=1/g' /etc/default/stunnel4
+service stunnel4 restart
   
 if test -f "/var/www/xpanelport"; then
 echo "File exists xpanelport"
@@ -274,45 +274,45 @@ link=$(sudo curl -Ls "$linkd" | grep '"browser_download_url":' | sed -E 's/.*"([
 sudo wget -O /var/www/html/update.zip $link
 sudo unzip -o /var/www/html/update.zip -d /var/www/html/ &
 wait
-sudo echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/sbin/adduser' | sudo EDITOR='tee -a' visudo &
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/sbin/adduser' | sudo EDITOR='tee -a' visudo &
 wait
-sudo echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/sbin/userdel' | sudo EDITOR='tee -a' visudo &
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/sbin/userdel' | sudo EDITOR='tee -a' visudo &
 wait
-sudo echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/sed' | sudo EDITOR='tee -a' visudo &
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/sed' | sudo EDITOR='tee -a' visudo &
 wait
-sudo echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/passwd' | sudo EDITOR='tee -a' visudo &
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/passwd' | sudo EDITOR='tee -a' visudo &
 wait
-sudo echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/curl' | sudo EDITOR='tee -a' visudo &
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/curl' | sudo EDITOR='tee -a' visudo &
 wait
-sudo echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/kill' | sudo EDITOR='tee -a' visudo &
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/kill' | sudo EDITOR='tee -a' visudo &
 wait
-sudo echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/killall' | sudo EDITOR='tee -a' visudo &
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/killall' | sudo EDITOR='tee -a' visudo &
 wait
-sudo echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/lsof' | sudo EDITOR='tee -a' visudo &
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/lsof' | sudo EDITOR='tee -a' visudo &
 wait
-sudo echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/sbin/lsof' | sudo EDITOR='tee -a' visudo &
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/sbin/lsof' | sudo EDITOR='tee -a' visudo &
 wait
-sudo echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/sed' | sudo EDITOR='tee -a' visudo &
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/sed' | sudo EDITOR='tee -a' visudo &
 wait
-sudo echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/rm' | sudo EDITOR='tee -a' visudo &
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/rm' | sudo EDITOR='tee -a' visudo &
 wait
-sudo echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/crontab' | sudo EDITOR='tee -a' visudo &
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/crontab' | sudo EDITOR='tee -a' visudo &
 wait
-sudo echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/mysqldump' | sudo EDITOR='tee -a' visudo &
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/mysqldump' | sudo EDITOR='tee -a' visudo &
 wait
-sudo echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/pgrep' | sudo EDITOR='tee -a' visudo &
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/pgrep' | sudo EDITOR='tee -a' visudo &
 wait
-sudo echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/sbin/nethogs' | sudo EDITOR='tee -a' visudo &
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/sbin/nethogs' | sudo EDITOR='tee -a' visudo &
 wait
-sudo echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/nethogs' | sudo EDITOR='tee -a' visudo &
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/nethogs' | sudo EDITOR='tee -a' visudo &
 wait
-sudo echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/local/sbin/nethogs' | sudo EDITOR='tee -a' visudo &
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/local/sbin/nethogs' | sudo EDITOR='tee -a' visudo &
 wait
-sudo echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/netstat' | sudo EDITOR='tee -a' visudo &
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/netstat' | sudo EDITOR='tee -a' visudo &
 wait
-sudo echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/sbin/service' | sudo EDITOR='tee -a' visudo &
+echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/sbin/service' | sudo EDITOR='tee -a' visudo &
 wait
-sudo sudo a2enmod rewrite
+sudo a2enmod rewrite
 wait
 sudo service apache2 restart
 wait
@@ -367,7 +367,7 @@ fi
 serverPort=${serverPort##*=}
 ##Remove the "" marks from the variable as they will not be needed
 serverPort=${serverPort//'"'}
-sudo echo "<VirtualHost *:80>
+echo "<VirtualHost *:80>
     ServerAdmin webmaster@localhost
     DocumentRoot /var/www/html/example
     ErrorLog /error.log
@@ -415,7 +415,7 @@ sudo echo "<VirtualHost *:80>
 wait
 ##Replace 'Virtual Hosts' and 'List' entries with the new port number
 sudo  sed -i.bak 's/.*NameVirtualHost.*/NameVirtualHost *:'$serverPort'/' /etc/apache2/ports.conf
-sudo echo "Listen 80
+echo "Listen 80
 Listen $serverPort
 <IfModule ssl_module>
     Listen $serverPortssl
@@ -426,60 +426,59 @@ Listen $serverPort
     Listen $serverPortssl
     Listen 443
 </IfModule>" > /etc/apache2/ports.conf
-sudo echo '#Xpanel' > /var/www/xpanelport
+echo '#Xpanel' > /var/www/xpanelport
 sudo sed -i -e '$a\'$'\n''Xpanelport '$serverPort /var/www/xpanelport
 wait
 ##Restart the apache server to use new port
 sudo /etc/init.d/apache2 reload
 sudo service apache2 restart
-sudo chown www-data:www-data /var/www/html/cp/* &
+chown www-data:www-data /var/www/html/cp/* &
 wait
-sudo systemctl restart mariadb &
+systemctl restart mariadb &
 wait
-sudo systemctl enable mariadb &
+systemctl enable mariadb &
 wait
 sudo phpenmod curl
 PHP_INI=$(php -i | grep /.+/php.ini -oE)
-sudo sed -i 's/extension=intl/;extension=intl/' ${PHP_INI}
+sed -i 's/extension=intl/;extension=intl/' ${PHP_INI}
 wait
 po=$(cat /etc/ssh/sshd_config | grep "^Port")
 port=$(echo "$po" | sed "s/Port //g")
 
-sudo systemctl restart httpd
-sudo systemctl enable httpd
-sudo systemctl enable stunnel4
-sudo systemctl restart stunnel4
-wait
+systemctl restart httpd
+systemctl enable httpd
+systemctl enable stunnel4
+systemctl restart stunnel4wait
 fi
-sudo bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/Nethogs-Json-main/master/install.sh --ipv4)
-sudo mysql -e "create database XPanel_plus;" &
+bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/Nethogs-Json-main/master/install.sh --ipv4)
+mysql -e "create database XPanel_plus;" &
 wait
-sudo mysql -e "CREATE USER '${adminusername}'@'localhost' IDENTIFIED BY '${adminpassword}';" &
+mysql -e "CREATE USER '${adminusername}'@'localhost' IDENTIFIED BY '${adminpassword}';" &
 wait
-sudo mysql -e "GRANT ALL ON *.* TO '${adminusername}'@'localhost';" &
+mysql -e "GRANT ALL ON *.* TO '${adminusername}'@'localhost';" &
 wait
-sudo mysql -e "ALTER USER '${adminusername}'@'localhost' IDENTIFIED BY '${adminpassword}';" &
+mysql -e "ALTER USER '${adminusername}'@'localhost' IDENTIFIED BY '${adminpassword}';" &
 wait
-sudo sed -i "s/DB_USERNAME=.*/DB_USERNAME=$adminusername/g" /var/www/html/app/.env
-sudo sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$adminpassword/g" /var/www/html/app/.env
-sudo cd /var/www/html/app
-sudo php artisan migrate
+sed -i "s/DB_USERNAME=.*/DB_USERNAME=$adminusername/g" /var/www/html/app/.env
+sed -i "s/DB_PASSWORD=.*/DB_PASSWORD=$adminpassword/g" /var/www/html/app/.env
+cd /var/www/html/app
+php artisan migrate
 if [ -n "$adminuser" -a "$adminuser" != "NULL" ]
 then
- sudo mysql -e "USE XPanel_plus; UPDATE admins SET username = '${adminusername}' where permission='admin';"
- sudo mysql -e "USE XPanel_plus; UPDATE admins SET password = '${adminpassword}' where permission='admin';"
- sudo mysql -e "USE XPanel_plus; UPDATE settings SET ssh_port = '${port}' where id='1';"
+ mysql -e "USE XPanel_plus; UPDATE admins SET username = '${adminusername}' where permission='admin';"
+ mysql -e "USE XPanel_plus; UPDATE admins SET password = '${adminpassword}' where permission='admin';"
+ mysql -e "USE XPanel_plus; UPDATE settings SET ssh_port = '${port}' where id='1';"
 else
-sudo mysql -e "USE XPanel_plus; INSERT INTO admins (username, password, permission, credit, status) VALUES ('${adminusername}', '${adminpassword}', 'admin', '', 'active');"
-sudo home_url=$protcohttp://${defdomain}:$sshttp
-sudo mysql -e "USE XPanel_plus; INSERT INTO settings (ssh_port, tls_port, t_token, t_id, language, multiuser, ststus_multiuser, home_url) VALUES ('${port}', '444', '', '', '', 'active', '', '${home_url}');"
+mysql -e "USE XPanel_plus; INSERT INTO admins (username, password, permission, credit, status) VALUES ('${adminusername}', '${adminpassword}', 'admin', '', 'active');"
+home_url=$protcohttp://${defdomain}:$sshttp
+mysql -e "USE XPanel_plus; INSERT INTO settings (ssh_port, tls_port, t_token, t_id, language, multiuser, ststus_multiuser, home_url) VALUES ('${port}', '444', '', '', '', 'active', '', '${home_url}');"
 fi
-sudo sed -i "s/PORT_SSH=.*/PORT_SSH=$port/g" /var/www/html/app/.env
+sed -i "s/PORT_SSH=.*/PORT_SSH=$port/g" /var/www/html/app/.env
 sudo chown -R www-data:www-data /var/www/html/app
-sudo crontab -r
+crontab -r
 wait
 multiin=$(echo "$protcohttp://${defdomain}:$sshttp/fixer/multiuser")
-sudo cat > /var/www/html/kill.sh << ENDOFFILE
+cat > /var/www/html/kill.sh << ENDOFFILE
 #!/bin/bash
 #By Alireza
 i=0
@@ -499,10 +498,10 @@ sudo sed -i 's/1i/$i/' /var/www/html/kill.sh
 wait
 sudo sed -i 's/((/$((/' /var/www/html/kill.sh
 wait
-sudo chmod +x /var/www/html/kill.sh
-sudo mkdir /var/www/html/app/storage/banner
-sudo chmod 777 /etc/ssh/sshd_config
-sudo chmod 777 /var/www/html/app/storage/banner
+chmod +x /var/www/html/kill.sh
+mkdir /var/www/html/app/storage/banner
+chmod 777 /etc/ssh/sshd_config
+chmod 777 /var/www/html/app/storage/banner
 file="/etc/ssh/sshd_config"
 text_to_check="Match all"
 if grep -q "$text_to_check" "$file"; then
@@ -521,15 +520,15 @@ fi
 (crontab -l | grep . ; echo -e "* * * * * /var/www/html/kill.sh") | crontab -
 (crontab -l ; echo "* * * * * wget -q -O /dev/null '$protcohttp://${defdomain}:$sshttp/fixer/exp' > /dev/null 2>&1") | crontab -
 wait
-sudo systemctl enable stunnel4 &
+systemctl enable stunnel4 &
 wait
-sudo systemctl restart stunnel4 &
+systemctl restart stunnel4 &
 wait
-sudo curl -o /root/xpanel.sh https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/cli.sh
+curl -o /root/xpanel.sh https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/cli.sh
 sudo wget -4 -O /usr/local/bin/xpanel https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/cli.sh
-sudo chmod +x /usr/local/bin/xpanel 
-sudo chown www-data:www-data /var/www/html/example/index.php
-sudo sed -i "s/PORT_PANEL=.*/PORT_PANEL=$sshttp/g" /var/www/html/app/.env
+chmod +x /usr/local/bin/xpanel 
+chown www-data:www-data /var/www/html/example/index.php
+sed -i "s/PORT_PANEL=.*/PORT_PANEL=$sshttp/g" /var/www/html/app/.env
 DEFAULT_APP_LOCALE=en
 DEFAULT_APP_MODE=light
 DEFAULT_PANEL_DIRECT=cp
@@ -558,10 +557,10 @@ if [ -f /var/www/html/.env_copy ]; then
       PORT_DROPBEAR="$value"
     elif [ "$key" = "TRAFFIC_BASE" ]; then
       TRAFFIC_BASE="$value"
+    fi
     elif [ "$key" = "STATUS_LOG" ]; then
       STATUS_LOG="$value"
     fi
-   
   done < /var/www/html/.env_copy
 fi
 
@@ -574,14 +573,14 @@ PORT_DROPBEAR="${PORT_DROPBEAR:-$DEFAULT_PORT_DROPBEAR}"
 TRAFFIC_BASE="${TRAFFIC_BASE:-$DEFAULT_TRAFFIC_BASE}"
 STATUS_LOG="${STATUS_LOG:-$DEFAULT_STATUS_LOG}"
 
-sudo sed -i "s/APP_LOCALE=.*/APP_LOCALE=$APP_LOCALE/g" /var/www/html/app/.env
-sudo sed -i "s/APP_MODE=.*/APP_MODE=$APP_MODE/g" /var/www/html/app/.env
-sudo sed -i "s/PANEL_DIRECT=.*/PANEL_DIRECT=$PANEL_DIRECT/g" /var/www/html/app/.env
-sudo sed -i "s/CRON_TRAFFIC=.*/CRON_TRAFFIC=$CRON_TRAFFIC/g" /var/www/html/app/.env
-sudo sed -i "s/DAY=.*/DAY=$DAY/g" /var/www/html/app/.env
-sudo sed -i "s/PORT_DROPBEAR=.*/PORT_DROPBEAR=$PORT_DROPBEAR/g" /var/www/html/app/.env
-sudo sed -i "s/TRAFFIC_BASE=.*/TRAFFIC_BASE=$TRAFFIC_BASE/g" /var/www/html/app/.env
-sudo sed -i "s/STATUS_LOG=.*/STATUS_LOG=$STATUS_LOG/g" /var/www/html/app/.env
+sed -i "s/APP_LOCALE=.*/APP_LOCALE=$APP_LOCALE/g" /var/www/html/app/.env
+sed -i "s/APP_MODE=.*/APP_MODE=$APP_MODE/g" /var/www/html/app/.env
+sed -i "s/PANEL_DIRECT=.*/PANEL_DIRECT=$PANEL_DIRECT/g" /var/www/html/app/.env
+sed -i "s/CRON_TRAFFIC=.*/CRON_TRAFFIC=$CRON_TRAFFIC/g" /var/www/html/app/.env
+sed -i "s/DAY=.*/DAY=$DAY/g" /var/www/html/app/.env
+sed -i "s/PORT_DROPBEAR=.*/PORT_DROPBEAR=$PORT_DROPBEAR/g" /var/www/html/app/.env
+sed -i "s/TRAFFIC_BASE=.*/TRAFFIC_BASE=$TRAFFIC_BASE/g" /var/www/html/app/.env
+sed -i "s/STATUS_LOG=.*/STATUS_LOG=$STATUS_LOG/g" /var/www/html/app/.env
 
 clear
 
