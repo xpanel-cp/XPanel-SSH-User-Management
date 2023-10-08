@@ -210,13 +210,17 @@ wait
 if command -v apt-get >/dev/null; then
 
 sudo NEETRESTART_MODE=a apt-get update --yes
+sudo apt update -y
+sudo apt upgrade -y
 sudo apt-get -y install software-properties-common
 apt-get install -y stunnel4 && apt-get install -y cmake && apt-get install -y screenfetch && apt-get install -y openssl
 sudo apt-get -y install software-properties-common
 sudo add-apt-repository ppa:ondrej/php -y
-apt-get install nginx zip unzip net-tools curl mariadb-server -y
-apt-get install php php-cli php-mbstring php-dom php-pdo php-mysql -y
-apt-get install npm -y
+sudo apt-get install nginx zip unzip net-tools curl mariadb-server -y
+sudo apt-get install php php-cli php-mbstring php-dom php-pdo php-mysql -y
+sudo apt-get install npm -y
+sudo apt install python -y
+sudo apt install apt-transport-https -y
 sudo apt-get install coreutils
 wait
 phpv=$(php -v)
@@ -364,7 +368,7 @@ server {
     index index.php index.html;
 
     location / {
-        try_files \$uri \$uri/ /index.php?\$query_string;
+        try_files $uri $uri/ /index.php?$query_string;
     }
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
@@ -373,6 +377,58 @@ server {
     location ~ /\.ht {
         deny all;
     }
+    location /wsspath
+    {
+    proxy_pass http://127.0.0.1:8880/;
+    proxy_redirect off;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_read_timeout 52w;
+    }
+}
+server {
+    listen 443 ssl;
+    server_name example.com;
+
+    root /var/www/html/cp;
+    index index.php index.html;
+
+    ssl_certificate /root/cert.pem;
+    ssl_certificate_key /root/key.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACH>
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+
+    location /wsspath {
+        if ($http_upgrade != "websocket") {
+                return 404;
+        }
+        proxy_pass http://127.0.0.1:8880;
+        proxy_redirect off;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_read_timeout 52w;
+    }
 }
 server {
     listen $serverPort;
@@ -380,7 +436,7 @@ server {
     root /var/www/html/cp;
     index index.php index.html;
     location / {
-        try_files \$uri \$uri/ /index.php?\$query_string;
+        try_files $uri $uri/ /index.php?$query_string;
     }
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
@@ -416,7 +472,8 @@ port=$(echo "$po" | sed "s/Port //g")
 systemctl restart httpd
 systemctl enable httpd
 systemctl enable stunnel4
-systemctl restart stunnel4wait
+systemctl restart stunnel4
+wait
 fi
 bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/Nethogs-Json-main/master/install.sh --ipv4)
 mysql -e "create database XPanel_plus;" &
