@@ -206,19 +206,25 @@ fi
 ipv4=$ip
 sudo sed -i '/www-data/d' /etc/sudoers &
 wait
-sudo sed -i '/apache/d' /etc/sudoers &
-wait
 
 if command -v apt-get >/dev/null; then
+sudo systemctl stop apache2
+sudo systemctl disable apache2
+sudo apt-get remove apache2
+sudo apt autoremove
 
 sudo NEETRESTART_MODE=a apt-get update --yes
+sudo apt update -y
+sudo apt upgrade -y
 sudo apt-get -y install software-properties-common
 apt-get install -y stunnel4 && apt-get install -y cmake && apt-get install -y screenfetch && apt-get install -y openssl
 sudo apt-get -y install software-properties-common
 sudo add-apt-repository ppa:ondrej/php -y
-apt-get install apache2 zip unzip net-tools curl mariadb-server -y
-apt-get install php php-cli php-mbstring php-dom php-pdo php-mysql -y
-apt-get install npm -y
+sudo apt-get install nginx zip unzip net-tools curl mariadb-server -y
+sudo apt-get install php php-cli php-mbstring php-dom php-pdo php-mysql -y
+sudo apt-get install npm -y
+sudo apt install python -y
+sudo apt install apt-transport-https -y
 sudo apt-get install coreutils
 wait
 phpv=$(php -v)
@@ -233,6 +239,9 @@ apt remove php* -y
 apt remove php -y
 apt autoremove -y
 apt install php8.1 php8.1-mysql php8.1-xml php8.1-curl cron -y
+sudo apt install php8.1-fpm
+sudo apt install php8.1 php8.1-cli php8.1-common php8.1-json php8.1-opcache php8.1-mysql php8.1-mbstring php8.1-zip php8.1-intl php8.1-simplexml -y
+
 fi
 curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
 echo "/bin/false" >> /etc/shells
@@ -312,18 +321,6 @@ echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/netstat' | sudo EDITOR='tee -a' v
 wait
 echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/sbin/service' | sudo EDITOR='tee -a' visudo &
 wait
-sudo a2enmod rewrite
-wait
-sudo service apache2 restart
-wait
-sudo systemctl restart apache2
-wait
-sudo service apache2 restart
-wait
-sudo sed -i "s/AllowOverride None/AllowOverride All/g" /etc/apache2/apache2.conf &
-wait
-sudo service apache2 restart
-wait
 clear
 # Random port number generator to prevent xpanel detection by potential attackers
 randomPort=""
@@ -367,78 +364,137 @@ fi
 serverPort=${serverPort##*=}
 ##Remove the "" marks from the variable as they will not be needed
 serverPort=${serverPort//'"'}
-echo "<VirtualHost *:80>
-    ServerAdmin webmaster@localhost
-    DocumentRoot /var/www/html/example
-    ErrorLog /error.log
-    CustomLog /access.log combined
-    <Directory '/var/www/html/example'>
-    AllowOverride All
-    </Directory>
-</VirtualHost>
+sudo tee /etc/nginx/sites-available/default <<'EOF'
+server {
+    listen 80;
+    server_name example.com;
+    root /var/www/html/example;
+    index index.php index.html;
 
-<VirtualHost *:$serverPort>
-    # The ServerName directive sets the request scheme, hostname and port that
-    # the server uses to identify itself. This is used when creating
-    # redirection URLs. In the context of virtual hosts, the ServerName
-    # specifies what hostname must appear in the request's Host: header to
-    # match this virtual host. For the default virtual host (this file) this
-    # value is not decisive as it is used as a last resort host regardless.
-    # However, you must set it for any further virtual host explicitly.
-    #ServerName www.example.com
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
+    }
+    location ~ /\.ht {
+        deny all;
+    }
+     location /ws
+    {
+    proxy_pass http://127.0.0.1:8880/;
+    proxy_redirect off;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_read_timeout 52w;
+    }
+}
+server {
+    listen 443 ssl;
+    server_name example.com;
 
-    ServerAdmin webmaster@localhost
-    DocumentRoot /var/www/html/cp
+    root /var/www/html/cp;
+    index index.php index.html;
 
-    # Available loglevels: trace8, ..., trace1, debug, info, notice, warn,
-    # error, crit, alert, emerg.
-    # It is also possible to configure the loglevel for particular
-    # modules, e.g.
-    #LogLevel info ssl:warn
+    ssl_certificate /root/cert.pem;
+    ssl_certificate_key /root/key.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
 
-    ErrorLog ${APACHE_LOG_DIR}/error.log
-    CustomLog ${APACHE_LOG_DIR}/access.log combined
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
 
-    # For most configuration files from conf-available/, which are
-    # enabled or disabled at a global level, it is possible to
-    # include a line for only one particular virtual host. For example the
-    # following line enables the CGI configuration for this host only
-    # after it has been globally disabled with "a2disconf".
-    #Include conf-available/serve-cgi-bin.conf
-    <Directory '/var/www/html/cp'>
-    AllowOverride All
-    </Directory>
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
+    }
 
-</VirtualHost>
+    location ~ /\.ht {
+        deny all;
+    }
 
-# vim: syntax=apache ts=4 sw=4 sts=4 sr noet" > /etc/apache2/sites-available/000-default.conf
-wait
-##Replace 'Virtual Hosts' and 'List' entries with the new port number
-sudo  sed -i.bak 's/.*NameVirtualHost.*/NameVirtualHost *:'$serverPort'/' /etc/apache2/ports.conf
-echo "Listen 80
-Listen $serverPort
-<IfModule ssl_module>
-    Listen $serverPortssl
-    Listen 443
-</IfModule>
-
-<IfModule mod_gnutls.c>
-    Listen $serverPortssl
-    Listen 443
-</IfModule>" > /etc/apache2/ports.conf
+    location /ws {
+        if ($http_upgrade != "websocket") {
+                return 404;
+        }
+        proxy_pass http://127.0.0.1:8880;
+        proxy_redirect off;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_read_timeout 52w;
+    }
+}
+server {
+    listen serverPort;
+    server_name example.com;
+    root /var/www/html/cp;
+    index index.php index.html;
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+    location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
+    }
+    location ~ /\.ht {
+        deny all;
+    }
+}
+EOF
+sed -i "s/serverPort/$serverPort/g" /etc/nginx/sites-available/default
+sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
 echo '#Xpanel' > /var/www/xpanelport
 sudo sed -i -e '$a\'$'\n''Xpanelport '$serverPort /var/www/xpanelport
 wait
-##Restart the apache server to use new port
-sudo /etc/init.d/apache2 reload
-sudo service apache2 restart
+##Restart the webserver server to use new port
+sudo nginx -t
+sudo systemctl start nginx
+sudo systemctl enable nginx
+sudo systemctl reload nginx
+# Getting Proxy Template
+sudo wget -q -O /usr/local/bin/wss https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/wss
+sudo chmod +x /usr/local/bin/wss
+
+# Installing Service
+cat > /etc/systemd/system/wss.service << END
+[Unit]
+Description=Python Proxy XPanel
+Documentation=https://t.me/Xpanelssh
+After=network.target nss-lookup.target
+
+[Service]
+Type=simple
+User=root
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+NoNewPrivileges=true
+ExecStart=/usr/bin/python -O /usr/local/bin/wss 8880
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+END
+
+systemctl daemon-reload
+systemctl enable wss
+systemctl restart wss
+
 chown www-data:www-data /var/www/html/cp/* &
 wait
 systemctl restart mariadb &
 wait
 systemctl enable mariadb &
 wait
-sudo phpenmod curl
 PHP_INI=$(php -i | grep /.+/php.ini -oE)
 sed -i 's/extension=intl/;extension=intl/' ${PHP_INI}
 wait
@@ -448,7 +504,8 @@ port=$(echo "$po" | sed "s/Port //g")
 systemctl restart httpd
 systemctl enable httpd
 systemctl enable stunnel4
-systemctl restart stunnel4wait
+systemctl restart stunnel4
+wait
 fi
 bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/Nethogs-Json-main/master/install.sh --ipv4)
 mysql -e "create database XPanel_plus;" &
@@ -560,6 +617,7 @@ if [ -f /var/www/html/.env_copy ]; then
     elif [ "$key" = "STATUS_LOG" ]; then
       STATUS_LOG="$value"
     fi
+   
   done < /var/www/html/.env_copy
 fi
 
@@ -610,7 +668,7 @@ check_install stunnel4
 check_install cmake
 check_install screenfetch
 check_install openssl
-check_install apache2
+check_install nginx
 check_install zip
 check_install unzip
 check_install net-tools
