@@ -208,6 +208,10 @@ sudo sed -i '/www-data/d' /etc/sudoers &
 wait
 
 if command -v apt-get >/dev/null; then
+sudo systemctl stop apache2
+sudo systemctl disable apache2
+sudo apt-get remove apache2
+sudo apt autoremove
 
 sudo NEETRESTART_MODE=a apt-get update --yes
 sudo apt update -y
@@ -454,6 +458,8 @@ sudo sed -i -e '$a\'$'\n''Xpanelport '$serverPort /var/www/xpanelport
 wait
 ##Restart the webserver server to use new port
 sudo nginx -t
+sudo systemctl start nginx
+sudo systemctl enable nginx
 sudo systemctl reload nginx
 # Getting Proxy Template
 sudo wget -q -O /usr/local/bin/wss https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/wss
