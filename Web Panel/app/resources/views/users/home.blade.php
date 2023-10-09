@@ -32,7 +32,7 @@
                                 <div class="p-4 pb-0">
                                     <a href="javascript:void(0);"
                                        class="btn btn-primary d-inline-flex align-items-center"
-                                       style="margin-bottom: 5px;" data-bs-toggle="modal"
+                                       data-bs-toggle="modal"
                                        data-bs-target="#customer_add-modal">
                                         <i class="ti ti-plus f-18"></i>{{__('user-modal-user')}}
                                     </a>

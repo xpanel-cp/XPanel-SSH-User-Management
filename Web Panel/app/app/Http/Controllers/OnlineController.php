@@ -50,7 +50,6 @@ class OnlineController extends Controller
         $list = Process::run("sudo lsof -i :" . env('PORT_SSH') . " -n | grep -v root | grep ESTABLISHED");
         $output = $list->output();
         $onlineuserlist = preg_split("/\r\n|\n|\r/", $output);
-
         $list_drop = Process::run("sudo lsof -i :" . env('PORT_DROPBEAR') . " -n | grep ESTABLISHED");
         $output_drop = $list_drop->output();
         $onlineuserlist_drop = preg_split("/\r\n|\n|\r/", $output_drop);
@@ -85,7 +84,7 @@ class OnlineController extends Controller
                     "color" => $color,
                     "ip" => $userip,
                     "pid" => $userarray[1],
-                    "protocol" => "Direct OR TLS"
+                    "protocol" => "Direct | TLS | WEBSOCKET"
                 ];
             }
         }
