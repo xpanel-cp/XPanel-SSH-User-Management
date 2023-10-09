@@ -33,8 +33,8 @@ fi
 if [ "$ssh_tls_port" == "NULL" ]; then
 ssh_tls_port=444
 fi
-def_po=$(cat /etc/ssh/sshd_config | grep "^Port")
-def_port=$(echo "$def_po" | sed "s/Port //g")
+
+def_port=$(grep "PORT_PANEL=" /var/www/html/app/.env | awk -F "=" '{print $2}')
 def_cp=$(grep "PANEL_DIRECT=" /var/www/html/app/.env | awk -F "=" '{print $2}')
 def_pw=$(grep "DB_PASSWORD=" /var/www/html/app/.env | awk -F "=" '{print $2}')
 function show_menu() {
@@ -45,7 +45,7 @@ function show_menu() {
     echo "Password: $def_pw"
     echo "SSH PORT: $sshport"
     echo "SSH PORT TLS: $ssh_tls_port"
-    echo "XPanel Link: اhttp://$domain:$def_port/$def_cp/login"
+    echo "XPanel Link: http://$domain:$def_port/$def_cp/login"
     echo ""
     echo "XPanel CLI Menu"
     echo "------------------"
