@@ -33,6 +33,9 @@ fi
 if [ "$ssh_tls_port" == "NULL" ]; then
 ssh_tls_port=444
 fi
+def_po=$(cat /etc/ssh/sshd_config | grep "^Port")
+def_port=$(echo "$def_po" | sed "s/Port //g")
+def_cp=$(grep "PANEL_DIRECT=" /var/www/html/app/.env | awk -F "=" '{print $2}')
 function show_menu() {
     clear
     echo "Detail XPanel"
@@ -40,6 +43,7 @@ function show_menu() {
     echo "Username: $adminuser"
     echo "SSH PORT: $sshport"
     echo "SSH PORT TLS: $ssh_tls_port"
+    echo "XPanel Link: اhttp://$domain:$def_port/$def_cp/login"
     echo ""
     echo "XPanel CLI Menu"
     echo "------------------"
@@ -86,6 +90,10 @@ function select_option() {
             read port
             sed -i "s/Port $sshport/Port $port/" /etc/ssh/sshd_config
             sed -i "s/PORT_SSH=$sshport/PORT_SSH=$port/" /var/www/html/app/.env
+            sed -i "s/DEFAULT_HOST =.*/DEFAULT_HOST = '127.0.0.1:${port}'/g" /usr/local/bin/wss
+            systemctl daemon-reload
+            systemctl enable wss
+            systemctl restart wss
             mysql -e "USE XPanel_plus; UPDATE settings SET ssh_port = '${port}' where id='1';"
             reboot
             ;;
