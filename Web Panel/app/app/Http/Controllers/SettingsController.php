@@ -229,16 +229,21 @@ class SettingsController extends Controller
         if (!is_string($name)) {
             abort(400, 'Not Valid Username');
         }
-        Process::run("mysql -u '" .env('DB_USERNAME'). "' --password='" .env('DB_PASSWORD'). "' XPanel_plus < /var/www/html/app/storage/backup/".$name);
-        $users =Users::all();
-        foreach ($users as $user) {
-            if($user->status=='active') {
-                Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$user->username}");
-                Process::input($user->password . "\n" . $user->password . "\n")->timeout(120)->run("sudo passwd {$user->username}");
-                $check_traffic = Traffic::where('username', $user->username)->count();
+        Process::run("mysql -u '" . env('DB_USERNAME') . "' --password='" . env('DB_PASSWORD') . "' XPanel_plus < /var/www/html/app/storage/backup/" . $name);
+        $users = Users::where('status', 'active')->get();
+        $batchSize = 10;
+        $userBatches = array_chunk($users->toArray(), $batchSize);
+
+        foreach ($userBatches as $userBatch) {
+            foreach ($userBatch as $user) {
+                $username=$user['username'];
+                $password=$user['password'];
+                Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$username}");
+                Process::input($password. "\n" .$password. "\n")->timeout(120)->run("sudo passwd {$username}");
+                $check_traffic = Traffic::where('username', $username)->count();
                 if ($check_traffic < 1) {
                     Traffic::create([
-                        'username' => $user->username,
+                        'username' => $username,
                         'download' => '0',
                         'upload' => '0',
                         'total' => '0'
