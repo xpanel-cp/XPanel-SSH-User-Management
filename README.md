@@ -114,3 +114,10 @@ bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Mana
 4- دستور بالا را در ترمینال وارد کنید و مراحل نصب را پیش بروید<br>
 SSL بر روی پورتی که روی پنل تعریف کرده اید نصب فعال شد. <br>
 
+
+
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/xpanel-cp/XPanel-SSH-User-Management.svg)](https://starchart.cc/xpanel-cp/XPanel-SSH-User-Management)
+
+
