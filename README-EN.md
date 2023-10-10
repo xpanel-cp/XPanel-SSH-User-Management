@@ -35,6 +35,16 @@
 ## X-PANEL Introduction
 X-Panel is a lightweight web application for SSH accounts management. With the help of X-Panel, you can manage users and apply restrictions.	
 
+## Protocol
+XPanel supports protocols based on SSH connections.<br>
+**SSH-DIRECT | SSH-TLS | SSH-DROPBEAR | SSH-DROPBEAR-TLS | SSH-WEBSOCKET | SSH-WEBSOCKET-TLS** <br><br>
+
+Ports 443, 80, and 8880 are reserved by default for the web server. <br>
+Websocket HTTP Payload<br>
+`GET /ws HTTP/1.1[crlf]Host: sni.domain.com[crlf]Upgrade: websocket[crlf][crlf]` <br>
+Websocket SSL Payload<br>
+`GET wss://sni.domain.com/ws HTTP/1.1[crlf]Host: sni.domain.com[crlf]Upgrade: websocket[crlf][crlf]` <br>
+
 ### Features and Capabilities
 :green_circle: Ability to create multiple users (unlimited)<br>
 :green_circle: Restrictions on users’ traffic consumption and expiration date<br>
