@@ -26,6 +26,7 @@
 
 ### فهرست
 - [معرفی](#معرفی)<br>
+- [پرتکل](#پرتکل)<br>
 - [امکانات](#امکانات)<br>
 - [نصب](#نصب) <br>
   - [بهینه سازی سرور](#بهینه-سازی-سرور)<br>
@@ -35,6 +36,14 @@
 ## معرفی <br>
 ایکس پنل یک نرم افزار تحت وب جهت مدیریت اکانت SSH می باشد. با کمک پنل تحت وب ایکس پنل می توانید کاربران را مدیریت کرده و محدودیت اعمال کنید.
 
+## پرتکل <br>
+پرتکل هایی که ایکس پنل پشتیبانی می کند برپایه اتصال SSH  هستند.<br>
+**SSH-DIRCT | SSH-TLS | SSH-DROPBEAR | SSH-DROPBEAR-TLS | SSH-WEBSOCKET | SSH-WEBSOCKET-TLS** <br><br>
+پورت های 443 و 80 و 8880 بصورت پیش فرض برای وب سرور رزور شده است. <br>
+Websocket HTTP Payload<br>
+`GET /ws HTTP/1.1[crlf]Host: sni.domain.com[crlf]Upgrade: websocket[crlf][crlf]` <br>
+Websocket SSL Payload<br>
+`GET wss://sni.domain.com/ws HTTP/1.1[crlf]Host: sni.domain.com[crlf]Upgrade: websocket[crlf][crlf]` <br>
 
 ## امکانات <br>
 :green_circle: ایجاد کاربر بدون محدودیت <br>
