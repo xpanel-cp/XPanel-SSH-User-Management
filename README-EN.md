@@ -25,6 +25,7 @@
 
 ## Contents
 - [Introduction](#x-panel-introduction)<br>
+- [Protocol](#protocol)<br>
 - [Features](#features)<br>
 - [Installation guide](#installation-guide) <br>
   - [Server optimization](#server-optimization)<br>
