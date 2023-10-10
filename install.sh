@@ -224,12 +224,13 @@ sudo apt-get -y install software-properties-common
 apt-get install -y stunnel4 && apt-get install -y cmake && apt-get install -y screenfetch && apt-get install -y openssl
 sudo apt-get -y install software-properties-common
 sudo add-apt-repository ppa:ondrej/php -y
-sudo apt-get install nginx zip unzip net-tools curl mariadb-server -y
+sudo apt-get install nginx zip unzip net-tools mariadb-server -y
 sudo apt-get install php php-cli php-mbstring php-dom php-pdo php-mysql -y
 sudo apt-get install npm -y
 sudo apt install python -y
 sudo apt install apt-transport-https -y
 sudo apt-get install coreutils
+apt install curl -y
 wait
 phpv=$(php -v)
 if [[ $phpv == *"8.1"* ]]; then
