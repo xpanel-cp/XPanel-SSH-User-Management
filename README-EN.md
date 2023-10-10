@@ -114,3 +114,7 @@ If X-Panel has been useful to you with supporting us you can help developing thi
 	
 
 
+## Stargazers over time
+
+[![Stargazers over time](https://starchart.cc/xpanel-cp/XPanel-SSH-User-Management.svg)](https://starchart.cc/xpanel-cp/XPanel-SSH-User-Management)
+
