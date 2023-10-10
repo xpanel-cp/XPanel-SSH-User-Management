@@ -500,9 +500,10 @@ sed -i 's/extension=intl/;extension=intl/' ${PHP_INI}
 wait
 po=$(cat /etc/ssh/sshd_config | grep "^Port")
 port=$(echo "$po" | sed "s/Port //g")
-
-systemctl restart httpd
-systemctl enable httpd
+sed -i "s/DEFAULT_HOST =.*/DEFAULT_HOST = '127.0.0.1:${port}'/g" /usr/local/bin/wss
+systemctl daemon-reload
+systemctl enable wss
+systemctl restart wss
 systemctl enable stunnel4
 systemctl restart stunnel4
 wait
