@@ -38,7 +38,7 @@
 
 ## پرتکل <br>
 پرتکل هایی که ایکس پنل پشتیبانی می کند برپایه اتصال SSH  هستند.<br>
-**SSH-DIRCT | SSH-TLS | SSH-DROPBEAR | SSH-DROPBEAR-TLS | SSH-WEBSOCKET | SSH-WEBSOCKET-TLS** <br><br>
+**SSH-DIRECT | SSH-TLS | SSH-DROPBEAR | SSH-DROPBEAR-TLS | SSH-WEBSOCKET | SSH-WEBSOCKET-TLS** <br><br>
 پورت های 443 و 80 و 8880 بصورت پیش فرض برای وب سرور رزور شده است. <br>
 Websocket HTTP Payload<br>
 `GET /ws HTTP/1.1[crlf]Host: sni.domain.com[crlf]Upgrade: websocket[crlf][crlf]` <br>
