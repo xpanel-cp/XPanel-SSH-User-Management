@@ -41,8 +41,8 @@ server {
     root /var/www/html/example;
     index index.php index.html;
 
-    ssl_certificate /etc/letsencrypt/live/f.xpanel.pro/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/f.xpanel.pro/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/domin/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/domin/privkey.pem;
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
 
@@ -80,8 +80,8 @@ server {
     root /var/www/html/cp;
     index index.php index.html;
 
-    ssl_certificate /etc/letsencrypt/live/f.xpanel.pro/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/f.xpanel.pro/privkey.pem;
+    ssl_certificate /etc/letsencrypt/live/domin/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/domin/privkey.pem;
     
     location / {
         try_files $uri $uri/ /index.php?$query_string;
@@ -96,6 +96,7 @@ server {
 }
 EOF
 sed -i "s/serverPort/$def_port/g" /etc/nginx/sites-available/default
+sed -i "s/domin/$domain/g" /etc/nginx/sites-available/default
 sudo ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
 
 sudo systemctl start nginx
