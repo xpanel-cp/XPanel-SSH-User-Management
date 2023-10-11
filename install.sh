@@ -406,7 +406,7 @@ server {
     listen 443 ssl;
     server_name example.com;
 
-    root /var/www/html/cp;
+    root /var/www/html/example;
     index index.php index.html;
 
     ssl_certificate /root/cert.pem;
