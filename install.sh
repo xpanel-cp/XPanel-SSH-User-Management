@@ -214,8 +214,8 @@ wait
 if command -v apt-get >/dev/null; then
 sudo systemctl stop apache2
 sudo systemctl disable apache2
-sudo apt-get remove apache2
-sudo apt autoremove
+sudo apt-get remove apache2 -y
+sudo apt autoremove -y
 
 sudo NEETRESTART_MODE=a apt-get update --yes
 sudo apt update -y
