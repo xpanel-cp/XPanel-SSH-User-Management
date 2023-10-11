@@ -228,9 +228,13 @@ sudo apt-get install nginx zip unzip net-tools mariadb-server -y
 sudo apt-get install php php-cli php-mbstring php-dom php-pdo php-mysql -y
 sudo apt-get install npm -y
 sudo apt install python -y
+sudo apt install php8.1-fpm -y
 sudo apt install apt-transport-https -y
 sudo apt-get install coreutils
 apt install curl -y
+apt install php8.1 php8.1-mysql php8.1-xml php8.1-curl cron -y
+sudo apt install php8.1-fpm
+sudo apt install php8.1 php8.1-cli php8.1-common php8.1-json php8.1-opcache php8.1-mysql php8.1-mbstring php8.1-zip php8.1-intl php8.1-simplexml -y
 wait
 phpv=$(php -v)
 if [[ $phpv == *"8.1"* ]]; then
