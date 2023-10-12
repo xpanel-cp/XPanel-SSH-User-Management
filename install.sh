@@ -498,7 +498,7 @@ sudo systemctl reload nginx
 # Getting Proxy Template
 sudo wget -q -O /usr/local/bin/wss https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/wss
 sudo chmod +x /usr/local/bin/wss
-sudo wget -q -O /usr/local/bin/wss https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/wssd
+sudo wget -q -O /usr/local/bin/wssd https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/wssd
 sudo chmod +x /usr/local/bin/wssd
 
 # Installing Service
