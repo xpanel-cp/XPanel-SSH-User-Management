@@ -165,7 +165,7 @@
     "setting-api-ip": "IP",
     "setting-api-renew": "Renew",
     "setting-api-delete": "Delete",
-    "setting-api-sumbit": "Add",
+    "setting-api-submit": "Add",
     "setting-blockip-title": "Settings - Block IP Iran",
     "setting-blockip-menu": "Block IP",
     "setting-blockip-desc1": "To block Iranian IP addresses (ports 80 and 443), execute the following command in the terminal:",
