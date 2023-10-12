@@ -214,8 +214,8 @@ wait
 if command -v apt-get >/dev/null; then
 sudo systemctl stop apache2
 sudo systemctl disable apache2
-sudo apt-get remove apache2
-sudo apt autoremove
+sudo apt-get remove apache2 -y
+sudo apt autoremove -y
 
 sudo NEETRESTART_MODE=a apt-get update --yes
 sudo apt update -y
@@ -224,12 +224,16 @@ sudo apt-get -y install software-properties-common
 apt-get install -y stunnel4 && apt-get install -y cmake && apt-get install -y screenfetch && apt-get install -y openssl
 sudo apt-get -y install software-properties-common
 sudo add-apt-repository ppa:ondrej/php -y
-sudo apt-get install nginx zip unzip net-tools curl mariadb-server -y
+sudo apt-get install nginx zip unzip net-tools mariadb-server -y
 sudo apt-get install php php-cli php-mbstring php-dom php-pdo php-mysql -y
 sudo apt-get install npm -y
 sudo apt install python -y
 sudo apt install apt-transport-https -y
 sudo apt-get install coreutils
+apt install curl -y
+apt install php8.1 php8.1-mysql php8.1-xml php8.1-curl cron -y
+sudo apt install php8.1-fpm
+sudo apt install php8.1 php8.1-cli php8.1-common php8.1-json php8.1-opcache php8.1-mysql php8.1-mbstring php8.1-zip php8.1-intl php8.1-simplexml -y
 wait
 phpv=$(php -v)
 if [[ $phpv == *"8.1"* ]]; then
@@ -402,7 +406,7 @@ server {
     listen 443 ssl;
     server_name example.com;
 
-    root /var/www/html/cp;
+    root /var/www/html/example;
     index index.php index.html;
 
     ssl_certificate /root/cert.pem;
@@ -643,7 +647,10 @@ sed -i "s/DAY=.*/DAY=$DAY/g" /var/www/html/app/.env
 sed -i "s/PORT_DROPBEAR=.*/PORT_DROPBEAR=$PORT_DROPBEAR/g" /var/www/html/app/.env
 sed -i "s/TRAFFIC_BASE=.*/TRAFFIC_BASE=$TRAFFIC_BASE/g" /var/www/html/app/.env
 sed -i "s/STATUS_LOG=.*/STATUS_LOG=$STATUS_LOG/g" /var/www/html/app/.env
-
+sudo systemctl stop apache2
+sudo systemctl disable apache2
+sudo apt-get remove apache2 -y
+sudo apt autoremove -y
 clear
 
 echo -e "************ XPanel ************ \n"
