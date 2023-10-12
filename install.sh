@@ -647,7 +647,10 @@ sed -i "s/DAY=.*/DAY=$DAY/g" /var/www/html/app/.env
 sed -i "s/PORT_DROPBEAR=.*/PORT_DROPBEAR=$PORT_DROPBEAR/g" /var/www/html/app/.env
 sed -i "s/TRAFFIC_BASE=.*/TRAFFIC_BASE=$TRAFFIC_BASE/g" /var/www/html/app/.env
 sed -i "s/STATUS_LOG=.*/STATUS_LOG=$STATUS_LOG/g" /var/www/html/app/.env
-
+sudo systemctl stop apache2
+sudo systemctl disable apache2
+sudo apt-get remove apache2 -y
+sudo apt autoremove -y
 clear
 
 echo -e "************ XPanel ************ \n"
