@@ -19,6 +19,9 @@ class UserController extends Controller
     }
     public function index()
     {
+        $websiteAddress = $_SERVER['HTTP_HOST'];
+        $websiteAddress = parse_url($websiteAddress, PHP_URL_HOST);
+
         $user = Auth::user();
         $password_auto = Str::random(8);
         if($user->permission=='admin')
@@ -30,7 +33,7 @@ class UserController extends Controller
         }
         $settings = Settings::all();
 
-        return view('users.home', compact('users', 'settings','password_auto'));
+        return view('users.home', compact('users', 'settings','password_auto','websiteAddress'));
     }
     public function create()
     {

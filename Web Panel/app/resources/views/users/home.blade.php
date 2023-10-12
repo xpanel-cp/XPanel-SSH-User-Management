@@ -188,18 +188,18 @@
                                                         <small>
                                                             @if(env('APP_LOCALE', 'en')=='fa')
                                                                 {{__('user-table-date-start')}}: @if(!empty($startdate))
-                                                                    <span
-                                                                        style="display: inline-block;">{{Verta::instance($startdate)->format('Y-m-d')}}</span>@endif
+ <span
+     style="display: inline-block;">{{Verta::instance($startdate)->format('Y-m-d')}}</span>@endif
                                                                 <br>
                                                                 {{__('user-table-date-end')}}: @if(!empty($finishdate))
-                                                                    <span
-                                                                        style="display: inline-block;">{{Verta::instance($finishdate)->format('Y-m-d')}}</span>@endif
+ <span
+     style="display: inline-block;">{{Verta::instance($finishdate)->format('Y-m-d')}}</span>@endif
                                                             @else
                                                                 {{__('user-table-date-start')}}: <span
-                                                                    style="display: inline-block;">{{$startdate}}</span>
+ style="display: inline-block;">{{$startdate}}</span>
                                                                 <br>
                                                                 {{__('user-table-date-end')}}: <span
-                                                                    style="display: inline-block;">{{$finishdate}}</span>
+ style="display: inline-block;">{{$finishdate}}</span>
                                                             @endif
                                                         </small>
                                                     @endif
@@ -216,16 +216,16 @@
                                                                 style="border:none" type="button"
                                                                 data-bs-toggle="dropdown" aria-haspopup="true"
                                                                 aria-expanded="false"><i
-                                                                    class="ti ti-adjustments f-18"></i></button>
+ class="ti ti-adjustments f-18"></i></button>
                                                             <div class="dropdown-menu">
                                                                 <a class="dropdown-item"
-                                                                   href="{{ route('user.active', ['username' => $user->username]) }}">{{__('user-table-active')}}</a>
+href="{{ route('user.active', ['username' => $user->username]) }}">{{__('user-table-active')}}</a>
                                                                 <a class="dropdown-item"
-                                                                   href="{{ route('user.deactive', ['username' => $user->username]) }}">{{__('user-table-deactive')}}</a>
+href="{{ route('user.deactive', ['username' => $user->username]) }}">{{__('user-table-deactive')}}</a>
                                                                 <a class="dropdown-item"
-                                                                   href="{{ route('user.reset', ['username' => $user->username]) }}">{{__('user-table-reset')}}</a>
+href="{{ route('user.reset', ['username' => $user->username]) }}">{{__('user-table-reset')}}</a>
                                                                 <a class="dropdown-item"
-                                                                   href="{{ route('user.delete', ['username' => $user->username]) }}">{{__('user-table-delete')}}</a>
+href="{{ route('user.delete', ['username' => $user->username]) }}">{{__('user-table-delete')}}</a>
                                                             </div>
                                                         </li>
                                                         <li class="list-inline-item align-bottom"
@@ -256,96 +256,96 @@
 
                                                             <div class="dropdown-menu">
                                                                 <a href="javascript:void(0);" class="dropdown-item"
-                                                                   style="border:none"
-                                                                   data-clipboard="true"
-                                                                   data-clipboard-text="Host:{{$_SERVER["SERVER_NAME"]}}&nbsp;
+style="border:none"
+data-clipboard="true"
+data-clipboard-text="Host:{{$websiteAddress}}&nbsp;
 Port:{{env('PORT_SSH')}}&nbsp;
 Username:{{$user->username}}&nbsp;
 Password:{{$user->password}}&nbsp;
 @if (!empty($startdate))
-                                                                   @if(env('APP_LOCALE', 'en')=='fa')
-                                                                       StartTime:{{Verta::instance($startdate)->format('Y/m/d')}}
-                                                                   @else
-                                                                       StartTime:{{$startdate}}&nbsp;
+@if(env('APP_LOCALE', 'en')=='fa')
+StartTime:{{Verta::instance($startdate)->format('Y/m/d')}}
+@else
+StartTime:{{$startdate}}&nbsp;
 @endif
-                                                                   @endif
-                                                                   @if (!empty($finishdate))
-                                                                   @if(env('APP_LOCALE', 'en')=='fa')
-                                                                       EndTime:{{Verta::instance($finishdate)->format('Y/m/d')}}
-                                                                   @else
-                                                                       EndTime:{{$finishdate}}
-                                                                   @endif  @endif">{{__('user-table-copy')}}
-                                                                    (Direct)</a>
+@endif
+@if (!empty($finishdate))
+@if(env('APP_LOCALE', 'en')=='fa')
+EndTime:{{Verta::instance($finishdate)->format('Y/m/d')}}
+@else
+EndTime:{{$finishdate}}
+@endif  @endif">{{__('user-table-copy')}}
+ (Direct)</a>
                                                                 <a href="javascript:void(0);" class="dropdown-item"
-                                                                   style="border:none"
-                                                                   data-clipboard="true"
-                                                                   data-clipboard-text="Host:{{$_SERVER["SERVER_NAME"]}}&nbsp;
+style="border:none"
+data-clipboard="true"
+data-clipboard-text="Host:{{$websiteAddress}}&nbsp;
 TLS Port:{{$tls_port}}&nbsp;
 Username:{{$user->username}}&nbsp;
 Password:{{$user->password}}&nbsp;
 @if (!empty($startdate))
-                                                                   @if(env('APP_LOCALE', 'en')=='fa')
-                                                                       StartTime:{{Verta::instance($startdate)->format('Y/m/d')}}
-                                                                   @else
-                                                                       StartTime:{{$startdate}}&nbsp;
+@if(env('APP_LOCALE', 'en')=='fa')
+StartTime:{{Verta::instance($startdate)->format('Y/m/d')}}
+@else
+StartTime:{{$startdate}}&nbsp;
 @endif
-                                                                   @endif
-                                                                   @if (!empty($finishdate))
-                                                                   @if(env('APP_LOCALE', 'en')=='fa')
-                                                                       EndTime:{{Verta::instance($finishdate)->format('Y/m/d')}}
-                                                                   @else
-                                                                       EndTime:{{$finishdate}}
-                                                                   @endif  @endif">{{__('user-table-copy')}} (TLS)</a>
+@endif
+@if (!empty($finishdate))
+@if(env('APP_LOCALE', 'en')=='fa')
+EndTime:{{Verta::instance($finishdate)->format('Y/m/d')}}
+@else
+EndTime:{{$finishdate}}
+@endif  @endif">{{__('user-table-copy')}} (TLS)</a>
                                                                 <a href="javascript:void(0);" class="dropdown-item"
-                                                                   style="border:none"
-                                                                   data-clipboard="true"
-                                                                   data-clipboard-text="Host:{{$_SERVER["SERVER_NAME"]}}&nbsp;
+style="border:none"
+data-clipboard="true"
+data-clipboard-text="Host:{{$websiteAddress}}&nbsp;
 Port:{{env('PORT_DROPBEAR')}}&nbsp;
 Username:{{$user->username}}&nbsp;
 Password:{{$user->password}}&nbsp;
 @if (!empty($startdate))
-                                                                   @if(env('APP_LOCALE', 'en')=='fa')
-                                                                       StartTime:{{Verta::instance($startdate)->format('Y/m/d')}}
-                                                                   @else
-                                                                       StartTime:{{$startdate}}&nbsp;
+@if(env('APP_LOCALE', 'en')=='fa')
+StartTime:{{Verta::instance($startdate)->format('Y/m/d')}}
+@else
+StartTime:{{$startdate}}&nbsp;
 @endif
-                                                                   @endif
-                                                                   @if (!empty($finishdate))
-                                                                   @if(env('APP_LOCALE', 'en')=='fa')
-                                                                       EndTime:{{Verta::instance($finishdate)->format('Y/m/d')}}
-                                                                   @else
-                                                                       EndTime:{{$finishdate}}
-                                                                   @endif  @endif">{{__('user-table-copy')}}
-                                                                    (Dropbear)</a>
+@endif
+@if (!empty($finishdate))
+@if(env('APP_LOCALE', 'en')=='fa')
+EndTime:{{Verta::instance($finishdate)->format('Y/m/d')}}
+@else
+EndTime:{{$finishdate}}
+@endif  @endif">{{__('user-table-copy')}}
+ (Dropbear)</a>
                                                                 @php
-                                                                    $at="@";
+ $at="@";
                                                                 @endphp
 
                                                                 <a href="javascript:void(0);" class="dropdown-item"
-                                                                   style="border:none"
-                                                                   data-clipboard="true"
-                                                                   data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$_SERVER["SERVER_NAME"]}}:{{env('PORT_SSH')}}/#{{$user->username}}">{{__('user-table-link')}}
-                                                                    SSH
+style="border:none"
+data-clipboard="true"
+data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{env('PORT_SSH')}}/#{{$user->username}}">{{__('user-table-link')}}
+ SSH
                                                                 </a>
                                                                 <a href="javascript:void(0);" class="dropdown-item"
-                                                                   style="border:none"
-                                                                   data-clipboard="true"
-                                                                   data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$_SERVER["SERVER_NAME"]}}:{{$tls_port}}/#{{$user->username}}">{{__('user-table-link')}}
-                                                                    SSH TLS
+style="border:none"
+data-clipboard="true"
+data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{$tls_port}}/#{{$user->username}}">{{__('user-table-link')}}
+ SSH TLS
                                                                 </a>
                                                                 <a href="javascript:void(0);" class="dropdown-item"
-                                                                   style="border:none"
-                                                                   data-clipboard="true"
-                                                                   data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$_SERVER["SERVER_NAME"]}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}">{{__('user-table-link')}}
-                                                                    SSH Dropbear
+style="border:none"
+data-clipboard="true"
+data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}">{{__('user-table-link')}}
+ SSH Dropbear
                                                                 </a>
                                                                 <a href="javascript:void(0);" class="qrs dropdown-item"
-                                                                   data-tls="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$_SERVER["SERVER_NAME"]}}:{{$tls_port}}/#{{$user->username}}"
-                                                                   data-id="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$_SERVER["SERVER_NAME"]}}:{{env('PORT_SSH')}}/#{{$user->username}}"
-                                                                   data-drop="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$_SERVER["SERVER_NAME"]}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}"
-                                                                   data-bs-toggle="modal"
-                                                                   data-bs-target="#qr-modal">
-                                                                    QR
+data-tls="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{$tls_port}}/#{{$user->username}}"
+data-id="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{env('PORT_SSH')}}/#{{$user->username}}"
+data-drop="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}"
+data-bs-toggle="modal"
+data-bs-target="#qr-modal">
+ QR
                                                                 </a>
 
                                                             </div>
