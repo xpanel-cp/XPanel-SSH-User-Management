@@ -344,6 +344,7 @@ class UserController extends Controller
             $check_user = Users::where('username',$username)->count();
             if ($check_user > 0) {
                 Traffic::where('username', $username)->update(['download' => '0', 'upload' => '0', 'total' => '0']);
+                Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$username}-detail");
             }
         }
         else
@@ -351,6 +352,7 @@ class UserController extends Controller
             $check_user = Users::where('username', $username)->where('customer_user', $user->username)->count();
             if ($check_user > 0) {
                 Traffic::where('username', $username)->update(['download' => '0', 'upload' => '0', 'total' => '0']);
+                Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$username}-detail");
             }
         }
         return redirect()->back()->with('success', 'Reset Traffic');
