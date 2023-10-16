@@ -401,6 +401,18 @@ server {
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
     proxy_read_timeout 52w;
     }
+    location /drp
+    {
+    proxy_pass http://127.0.0.1:9990/;
+    proxy_redirect off;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_read_timeout 52w;
+    }
 }
 server {
     listen 443 ssl;
@@ -441,6 +453,20 @@ server {
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_read_timeout 52w;
     }
+    location /drp {
+        if ($http_upgrade != "websocket") {
+                return 404;
+        }
+        proxy_pass http://127.0.0.1:9990;
+        proxy_redirect off;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_read_timeout 52w;
+    }
 }
 server {
     listen serverPort;
@@ -472,6 +498,8 @@ sudo systemctl reload nginx
 # Getting Proxy Template
 sudo wget -q -O /usr/local/bin/wss https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/wss
 sudo chmod +x /usr/local/bin/wss
+sudo wget -q -O /usr/local/bin/wssd https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/wssd
+sudo chmod +x /usr/local/bin/wssd
 
 # Installing Service
 cat > /etc/systemd/system/wss.service << END
@@ -496,6 +524,29 @@ END
 systemctl daemon-reload
 systemctl enable wss
 systemctl restart wss
+
+cat > /etc/systemd/system/wssd.service << END
+[Unit]
+Description=Python Proxy XPanel
+Documentation=https://t.me/Xpanelssh
+After=network.target nss-lookup.target
+
+[Service]
+Type=simple
+User=root
+CapabilityBoundingSet=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+AmbientCapabilities=CAP_NET_ADMIN CAP_NET_BIND_SERVICE
+NoNewPrivileges=true
+ExecStart=/usr/bin/python -O /usr/local/bin/wssd 9990
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+END
+
+systemctl daemon-reload
+systemctl enable wssd
+systemctl restart wssd
 
 chown www-data:www-data /var/www/html/cp/* &
 wait
