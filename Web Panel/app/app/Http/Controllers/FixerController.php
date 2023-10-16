@@ -44,10 +44,21 @@ class FixerController extends Controller
                     Process::run("sudo timeout 10 killall -u {$username}");
                     $userdelProcess =Process::run("sudo userdel -r {$username}");
                     if ($userdelProcess->successful()) {
+                        $linesToDelete = [
+                            "Match User {$username}",
+                            "Banner /var/www/html/app/storage/banner/{$username}-detail",
+                        ];
                         $fileContent = file_get_contents("/etc/ssh/sshd_config");
-                        $modifiedContent = str_replace("Match User {$username}", "", $fileContent);
-                        $modifiedContent = str_replace("Banner /var/www/html/app/storage/banner/{$username}-detail", "", $modifiedContent);
-                        $modifiedContent = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $modifiedContent);
+                        $lines = explode("\n", $fileContent);
+                        $modifiedLines = [];
+                        $deleteMode = false;
+                        foreach ($lines as $line) {
+                            if (in_array($line, $linesToDelete)) {
+                                continue;
+                            }
+                            $modifiedLines[] = $line;
+                        }
+                        $modifiedContent = implode("\n", $modifiedLines);
                         file_put_contents("/etc/ssh/sshd_config", $modifiedContent);
                         Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$username}-detail");
                         Process::run("sudo service ssh restart");
@@ -73,10 +84,21 @@ class FixerController extends Controller
                     Process::run("sudo timeout 10 killall -u {$username}");
                     $userdelProcess =Process::run("sudo userdel -r {$username}");
                     if ($userdelProcess->successful()) {
+                        $linesToDelete = [
+                            "Match User {$username}",
+                            "Banner /var/www/html/app/storage/banner/{$username}-detail",
+                        ];
                         $fileContent = file_get_contents("/etc/ssh/sshd_config");
-                        $modifiedContent = str_replace("Match User {$username}", "", $fileContent);
-                        $modifiedContent = str_replace("Banner /var/www/html/app/storage/banner/{$username}-detail", "", $modifiedContent);
-                        $modifiedContent = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $modifiedContent);
+                        $lines = explode("\n", $fileContent);
+                        $modifiedLines = [];
+                        $deleteMode = false;
+                        foreach ($lines as $line) {
+                            if (in_array($line, $linesToDelete)) {
+                                continue;
+                            }
+                            $modifiedLines[] = $line;
+                        }
+                        $modifiedContent = implode("\n", $modifiedLines);
                         file_put_contents("/etc/ssh/sshd_config", $modifiedContent);
                         Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$username}-detail");
                         Process::run("sudo service ssh restart");
@@ -194,6 +216,17 @@ class FixerController extends Controller
                     }
                 }
                 //traffic log html
+                $replacement = "Match User {$us->username}\nBanner /var/www/html/app/storage/banner/{$us->username}-detail\nMatch all";
+                $file = fopen("/etc/ssh/sshd_config", "r+");
+                $fileContent = fread($file, filesize("/etc/ssh/sshd_config"));
+                if (strpos($fileContent, "Match User {$us->username}\n") === false)
+                {
+                    $modifiedContent = str_replace("Match all", $replacement, $fileContent);
+                    rewind($file);
+                    fwrite($file, $modifiedContent);
+                }
+                fclose($file);
+                Process::run("sudo service ssh restart");
                 if(env('STATUS_LOG', 'deactive')=='active') {
                     if (!empty($us->end_date)) {
                         $start_inp = date("Y-m-d");
