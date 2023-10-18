@@ -33,6 +33,7 @@ class FixerController extends Controller
         }
 
         $users = Users::where('status', 'active')->get();
+        $activeUserCount = Users::where('status', 'active')->count();
         foreach ($users as $us) {
             if (!empty($us->end_date)) {
                 $expiredate = strtotime(date("Y-m-d", strtotime($us->end_date)));
@@ -44,22 +45,16 @@ class FixerController extends Controller
                     Process::run("sudo timeout 10 killall -u {$username}");
                     $userdelProcess =Process::run("sudo userdel -r {$username}");
                     if ($userdelProcess->successful()) {
-                        $linesToDelete = [
-                            "Match User {$username}",
-                            "Banner /var/www/html/app/storage/banner/{$username}-detail",
-                        ];
-                        $fileContent = file_get_contents("/etc/ssh/sshd_config");
-                        $lines = explode("\n", $fileContent);
-                        $modifiedLines = [];
-                        $deleteMode = false;
-                        foreach ($lines as $line) {
-                            if (in_array($line, $linesToDelete)) {
-                                continue;
+                        $linesToRemove = ["Match User {$username}", "Banner /var/www/html/app/storage/banner/{$username}-detail"];
+                        $filename = "/etc/ssh/sshd_config";
+                        $fileContent = file($filename);
+                        $newFileContent = [];
+                        foreach ($fileContent as $line) {
+                            if (!in_array(trim($line), $linesToRemove) && trim($line) !== '') {
+                                $newFileContent[] = $line;
                             }
-                            $modifiedLines[] = $line;
                         }
-                        $modifiedContent = implode("\n", $modifiedLines);
-                        file_put_contents("/etc/ssh/sshd_config", $modifiedContent);
+                        file_put_contents($filename, implode('', $newFileContent));
                         Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$username}-detail");
                         Process::run("sudo service ssh restart");
                         Users::where('username', $us->username)
@@ -69,7 +64,6 @@ class FixerController extends Controller
             }
         }
 
-        $users = Users::all();
         foreach ($users as $us) {
             $traffic = Traffic::where('username', $us->username)->get();
             foreach ($traffic as $usernamet)
@@ -84,22 +78,16 @@ class FixerController extends Controller
                     Process::run("sudo timeout 10 killall -u {$username}");
                     $userdelProcess =Process::run("sudo userdel -r {$username}");
                     if ($userdelProcess->successful()) {
-                        $linesToDelete = [
-                            "Match User {$username}",
-                            "Banner /var/www/html/app/storage/banner/{$username}-detail",
-                        ];
-                        $fileContent = file_get_contents("/etc/ssh/sshd_config");
-                        $lines = explode("\n", $fileContent);
-                        $modifiedLines = [];
-                        $deleteMode = false;
-                        foreach ($lines as $line) {
-                            if (in_array($line, $linesToDelete)) {
-                                continue;
+                        $linesToRemove = ["Match User {$username}", "Banner /var/www/html/app/storage/banner/{$username}-detail"];
+                        $filename = "/etc/ssh/sshd_config";
+                        $fileContent = file($filename);
+                        $newFileContent = [];
+                        foreach ($fileContent as $line) {
+                            if (!in_array(trim($line), $linesToRemove) && trim($line) !== '') {
+                                $newFileContent[] = $line;
                             }
-                            $modifiedLines[] = $line;
                         }
-                        $modifiedContent = implode("\n", $modifiedLines);
-                        file_put_contents("/etc/ssh/sshd_config", $modifiedContent);
+                        file_put_contents($filename, implode('', $newFileContent));
                         Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$username}-detail");
                         Process::run("sudo service ssh restart");
                         Users::where('username', $us->username)
@@ -197,8 +185,12 @@ class FixerController extends Controller
 
     public function cronexp_traffic()
     {
+        $inactiveUsers = Users::where('status', '!=', 'active')->get();
         $users = Users::where('status', 'active')->get();
+        $activeUserCount = Users::where('status', 'active')->count();
+        $targetActiveUserCount=0;
         foreach ($users as $us) {
+            $targetActiveUserCount++;
             $traffic = Traffic::where('username', $us->username)->get();
             foreach ($traffic as $usernamet) {
                 $total = $usernamet->total;
@@ -216,17 +208,6 @@ class FixerController extends Controller
                     }
                 }
                 //traffic log html
-                $replacement = "Match User {$us->username}\nBanner /var/www/html/app/storage/banner/{$us->username}-detail\nMatch all";
-                $file = fopen("/etc/ssh/sshd_config", "r+");
-                $fileContent = fread($file, filesize("/etc/ssh/sshd_config"));
-                if (strpos($fileContent, "Match User {$us->username}\n") === false)
-                {
-                    $modifiedContent = str_replace("Match all", $replacement, $fileContent);
-                    rewind($file);
-                    fwrite($file, $modifiedContent);
-                }
-                fclose($file);
-                Process::run("sudo service ssh restart");
                 if(env('STATUS_LOG', 'deactive')=='active') {
                     if (!empty($us->end_date)) {
                         $start_inp = date("Y-m-d");
@@ -347,26 +328,47 @@ $day
 </div>
 ";
                     }
-                    $replacement = "Match User {$us->username}\nBanner /var/www/html/app/storage/banner/{$us->username}-detail\nMatch all";
-                    $file = fopen("/etc/ssh/sshd_config", "r+");
-                    $fileContent = fread($file, filesize("/etc/ssh/sshd_config"));
-                    if (strpos($fileContent, "Match User {$us->username}") === false) {
-                        $modifiedContent = str_replace("Match all", $replacement, $fileContent);
-                        rewind($file);
-                        fwrite($file, $modifiedContent);
-                    }
-                    fclose($file);
                     $filePath = "/var/www/html/app/storage/banner/$us->username-detail";
                     $command = "echo \"$traffic_log\" > $filePath";
                     exec($command, $output, $returnCode);
 
                     if ($returnCode === 0) {
                         echo "";
-                    } else {
-                        echo "";
+                    }
+                    $replacement = "Match User {$us->username}\nBanner /var/www/html/app/storage/banner/{$us->username}-detail\nMatch all";
+                    $file = fopen("/etc/ssh/sshd_config", "r+");
+                    $fileContent = fread($file, filesize("/etc/ssh/sshd_config"));
+                    if (strpos($fileContent, "#Match all") !== false)
+                    {
+                        $modifiedContent = str_replace("#Match all", $replacement, $fileContent);
+                        rewind($file);
+                        fwrite($file, $modifiedContent);
+                    }
+                    elseif (strpos($fileContent, "Match User {$us->username}\n") === false and strpos($fileContent, "#Match all\n") === false)
+                    {
+                        $modifiedContent = str_replace("Match all", $replacement, $fileContent);
+                        rewind($file);
+                        fwrite($file, $modifiedContent);
+                    }
+                    fclose($file);
+                    if ($activeUserCount == $targetActiveUserCount) {
+                        Process::run("sudo service ssh restart");
                     }
                 }
             }
+        }
+        foreach ($inactiveUsers as $user)
+        {
+            $linesToRemove = ["Match User {$user->username}", "Banner /var/www/html/app/storage/banner/{$user->username}-detail"];
+            $filename = "/etc/ssh/sshd_config";
+            $fileContent = file($filename);
+            $newFileContent = [];
+            foreach ($fileContent as $line) {
+                if (!in_array(trim($line), $linesToRemove) && trim($line) !== '') {
+                    $newFileContent[] = $line;
+                }
+            }
+            file_put_contents($filename, implode('', $newFileContent));
         }
     }
     public function synstraffics_drop()
