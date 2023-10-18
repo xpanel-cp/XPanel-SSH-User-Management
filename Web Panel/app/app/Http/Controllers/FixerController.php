@@ -355,6 +355,23 @@ $day
                         Process::run("sudo service ssh restart");
                     }
                 }
+                else
+                {
+                    $linesToRemove = ["Match User {$us->username}", "Banner /var/www/html/app/storage/banner/{$us->username}-detail"];
+                    $filename = "/etc/ssh/sshd_config";
+                    $fileContent = file($filename);
+                    $newFileContent = [];
+                    foreach ($fileContent as $line) {
+                        if (!in_array(trim($line), $linesToRemove) && trim($line) !== '') {
+                            $newFileContent[] = $line;
+                        }
+                    }
+                    file_put_contents($filename, implode('', $newFileContent));
+                    Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$us->username}-detail");
+                    if ($activeUserCount == $targetActiveUserCount) {
+                        Process::run("sudo service ssh restart");
+                    }
+                }
             }
         }
         foreach ($inactiveUsers as $user)

@@ -472,7 +472,7 @@ class UserController extends Controller
                     }
                     file_put_contents($filename, implode('', $newFileContent));
                     Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$username}-detail");
-                    Process::run("sudo service ssh restart");
+
                     if ($status_user[0]->status == 'active') {
                         Process::run("sudo killall -u {$username}");
                         Process::run("sudo pkill -u {$username}");
@@ -525,7 +525,7 @@ class UserController extends Controller
                 }
             }
         }
-
+        Process::run("sudo service ssh restart");
         return redirect()->back()->with('success', 'Deleted');
     }
 
