@@ -611,16 +611,9 @@ chmod +x /var/www/html/kill.sh
 mkdir /var/www/html/app/storage/banner
 chmod 777 /etc/ssh/sshd_config
 chmod 777 /var/www/html/app/storage/banner
-file="/etc/ssh/sshd_config"
-text_to_check="Match all"
-if grep -q "$text_to_check" "$file"; then
-  echo "$text_to_check exists in $file"
-else
-  echo "$text_to_check does not exist in $file"
-  echo "Appending the text to $file"
-  echo "Match User not-delete" >> "$file"
-  echo "Banner /var/www/html/app/storage/banner/not-delete" >> "$file"
-  echo "Match all" >> "$file"
+if ! grep -q -E "#?Match all" /etc/ssh/sshd_config; then
+    echo "#Match all" | sudo tee -a /etc/ssh/sshd_config
+    sudo systemctl restart ssh
 fi
 wait
 if [ "$xport" != "" ]; then
