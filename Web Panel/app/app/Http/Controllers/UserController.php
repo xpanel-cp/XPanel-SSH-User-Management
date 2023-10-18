@@ -19,8 +19,6 @@ class UserController extends Controller
     }
     public function index()
     {
-        $activeUserCount = Users::where('status', 'active')->count();
-        echo $activeUserCount;
         $websiteAddress = $_SERVER['HTTP_HOST'];
         $websiteAddress = parse_url($websiteAddress, PHP_URL_HOST);
 

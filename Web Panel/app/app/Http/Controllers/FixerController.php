@@ -357,6 +357,7 @@ $day
                 }
                 else
                 {
+
                     $linesToRemove = ["Match User {$us->username}", "Banner /var/www/html/app/storage/banner/{$us->username}-detail"];
                     $filename = "/etc/ssh/sshd_config";
                     $fileContent = file($filename);
@@ -374,21 +375,24 @@ $day
                 }
             }
         }
-        foreach ($inactiveUsers as $user)
-        {
-            $linesToRemove = ["Match User {$user->username}", "Banner /var/www/html/app/storage/banner/{$user->username}-detail"];
-            $filename = "/etc/ssh/sshd_config";
-            $fileContent = file($filename);
-            $newFileContent = [];
-            foreach ($fileContent as $line) {
-                if (!in_array(trim($line), $linesToRemove) && trim($line) !== '') {
-                    $newFileContent[] = $line;
+        foreach ($inactiveUsers as $user) {
+            $file = fopen("/etc/ssh/sshd_config", "r+");
+            $fileContent = fread($file, filesize("/etc/ssh/sshd_config"));
+            if (strpos($fileContent, "Match User {$user->username}\n") !== false) {
+                $linesToRemove = ["Match User {$user->username}", "Banner /var/www/html/app/storage/banner/{$user->username}-detail"];
+                $filename = "/etc/ssh/sshd_config";
+                $fileContent = file($filename);
+                $newFileContent = [];
+                foreach ($fileContent as $line) {
+                    if (!in_array(trim($line), $linesToRemove) && trim($line) !== '') {
+                        $newFileContent[] = $line;
+                    }
                 }
-            }
-            file_put_contents($filename, implode('', $newFileContent));
-            Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$us->username}-detail");
-            if ($activeUserCount == $targetActiveUserCount) {
-                Process::run("sudo service ssh restart");
+                file_put_contents($filename, implode('', $newFileContent));
+                Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$us->username}-detail");
+                if ($activeUserCount == $targetActiveUserCount) {
+                    Process::run("sudo service ssh restart");
+                }
             }
         }
     }
