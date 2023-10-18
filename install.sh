@@ -212,7 +212,9 @@ sudo apt autoremove -y
 sudo NEETRESTART_MODE=a apt-get update --yes
 sudo apt update -y
 sudo apt upgrade -y
-sudo apt-get -y install software-properties-common
+sudo apt install composer -y
+composer require php-json
+sudo apt install php8.1-json
 apt-get install -y stunnel4 && apt-get install -y cmake && apt-get install -y screenfetch && apt-get install -y openssl
 sudo apt-get -y install software-properties-common
 sudo add-apt-repository ppa:ondrej/php -y
