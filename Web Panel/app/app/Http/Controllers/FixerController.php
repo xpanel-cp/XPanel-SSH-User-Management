@@ -386,6 +386,10 @@ $day
                 }
             }
             file_put_contents($filename, implode('', $newFileContent));
+            Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$us->username}-detail");
+            if ($activeUserCount == $targetActiveUserCount) {
+                Process::run("sudo service ssh restart");
+            }
         }
     }
     public function synstraffics_drop()
