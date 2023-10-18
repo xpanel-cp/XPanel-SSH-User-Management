@@ -618,9 +618,7 @@ if grep -q "$text_to_check" "$file"; then
 else
   echo "$text_to_check does not exist in $file"
   echo "Appending the text to $file"
-  echo "Match User not-delete" >> "$file"
-  echo "Banner /var/www/html/app/storage/banner/not-delete" >> "$file"
-  echo "Match all" >> "$file"
+  echo "#Match all" >> "$file"
 fi
 wait
 if [ "$xport" != "" ]; then
