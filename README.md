@@ -85,6 +85,7 @@ Ubuntu 18+ (پیشنهادی :Ubuntu 20)<br>
 bash /root/xpanel.sh OR bash xpanel.sh  OR xpanel
 ```
 برای نصب کافیست دستور زیر را وارد کنید<br>
+
 **Nginx Web Server**
 
 ```
