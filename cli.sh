@@ -52,7 +52,7 @@ function show_menu() {
     echo "1. Change Username AND Password"
     echo "2. Change Port SSH"
     echo "3. Change Port SSH TLS"
-    echo "4. Update XPanel"
+    echo "4. Update XPanel Nginx Web Server"
     echo "5. Remove XPanel"
     echo "6. Remove All Admin XPanel"
     echo "7. Change Banner Text"
@@ -61,7 +61,8 @@ function show_menu() {
     echo "10. Install Dropbear"
     echo "11. Install WordPress"
     echo "12. Fix Call (UDPGW)"
-    echo "13. Exit"
+    echo "13. Update XPanel Apache Web Server"
+    echo "14. Exit"
 }
 
 # Function to select an option
@@ -154,7 +155,10 @@ EOF
             12)
             bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/fix-call.sh --ipv4)
             ;;
-        13)
+            13)
+            bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/apache.sh --ipv4)
+            ;;
+        14)
             echo "Exiting the menu."
             exit 0
             ;;
