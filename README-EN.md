@@ -71,8 +71,18 @@ bash /root/xpanel.sh OR bash xpanel.sh OR xpanel
 ```
 
 To install the X-Panel simply input the following command in the terminal:<br>
+
+**Nginx Web Server**
+
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/install.sh --ipv4)
+```
+<br>
+
+**Apache Web Server**
+
+```
+bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/apache.sh --ipv4)
 ```
 
 To resolve audio and video call issues use this command:<br>
