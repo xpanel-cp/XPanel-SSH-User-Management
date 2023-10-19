@@ -99,7 +99,7 @@ dmp=""
 dmssl=""
 fi
 
-echo -e "${YELLOW}************ Select XPanel Version ************"
+echo -e "${YELLOW}************ Select XPanel Version Apache Web Server************"
 echo -e "${GREEN}  1)XPanel v3.8.2"
 echo -e "${GREEN}  2)XPanel v3.8.1"
 echo -e "${GREEN}  3)XPanel v3.8.0"
