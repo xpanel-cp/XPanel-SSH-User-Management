@@ -62,7 +62,7 @@ function show_menu() {
     echo "11. Install WordPress"
     echo "12. Fix Call (UDPGW)"
     echo "13. Update XPanel Apache Web Server"
-    echo "14. Exit"
+    echo "0. Exit"
 }
 
 # Function to select an option
@@ -158,7 +158,7 @@ EOF
             13)
             bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/apache.sh --ipv4)
             ;;
-        14)
+        0)
             echo "Exiting the menu."
             exit 0
             ;;
