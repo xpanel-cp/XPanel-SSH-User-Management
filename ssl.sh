@@ -128,6 +128,7 @@ sudo sed -i 's/((/$((/' /var/www/html/kill.sh
 (crontab -l ; echo "* * * * * wget -q -O /dev/null 'https://${domain}:$def_port/fixer/exp' > /dev/null 2>&1") | crontab -
 if dpkg -l | grep -q dropbear; then
 (crontab -l | grep . ; echo -e "* * * * * /var/www/html/dropbear.sh") | crontab -
+(crontab -l | grep . ; echo -e "30 4 * * * systemctl restart dropbear.service") | crontab -
 fi
 clear
 printf "\nHTTPS Address : https://${domain}:$def_port/login \n"
