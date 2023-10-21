@@ -5,7 +5,7 @@ echo -e "\nPlease input UDPGW Port ."
 printf "Default Port is \e[33m${udpport}\e[0m, let it blank to use this Port: "
 read udpport
 
-sudo wget -4 -O /usr/local/bin https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/badvpn-udpgw
+sudo wget -4 -P /usr/local/bin https://raw.githubusercontent.com/XPanel-SSH-User-Management/master/badvpn-udpgw
 cat >  /etc/systemd/system/videocall.service << ENDOFFILE
 [Unit]
 Description=UDP forwarding for badvpn-tun2socks
