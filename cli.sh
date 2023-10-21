@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Function to display the menu
-adminuser=$(mysql -N -e "use XPanel_plus; select username from admins where id='1';")
-adminpass=$(mysql -N -e "use XPanel_plus; select password from admins where id='1';")
+adminuser=$(grep "DB_USERNAME=" /var/www/html/app/.env | awk -F "=" '{print $2}')
+adminpass=$(grep "DB_PASSWORD=" /var/www/html/app/.env | awk -F "=" '{print $2}')
 sshport=$(mysql -N -e "use XPanel_plus; select ssh_port from settings where id='1';")
 ssh_tls_port=$(mysql -N -e "use XPanel_plus; select tls_port from settings where id='1';")
 if [ -f "/var/www/xpanelport" ]; then
