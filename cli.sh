@@ -91,8 +91,8 @@ function select_option() {
         2)
             echo "Please enter a SSH port:"
             read port
-            sed -i "s/Port $sshport/Port $port/" /etc/ssh/sshd_config
-            sed -i "s/PORT_SSH=$sshport/PORT_SSH=$port/" /var/www/html/app/.env
+            sed -i "s/Port.*/Port $port/" /etc/ssh/sshd_config
+            sed -i "s/PORT_SSH=.*/PORT_SSH=$port/g" /var/www/html/app/.env
             sed -i "s/DEFAULT_HOST =.*/DEFAULT_HOST = '127.0.0.1:${port}'/g" /usr/local/bin/wss
             systemctl daemon-reload
             systemctl enable wss
