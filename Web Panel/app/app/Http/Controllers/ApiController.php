@@ -351,7 +351,8 @@ class ApiController extends Controller
             } else {
                 $traffic = $request->traffic;
             }
-            Users::where('username', $request->username)->increment('traffic', $traffic)->update(['status' => 'active']);
+            Users::where('username', $request->username)->increment('traffic', $traffic);
+            Users::where('username', $request->username)->update(['status' => 'active']);
             $user = Users::where('username', $request->username)->get();
             Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$user[0]->username}");
             Process::input($user[0]->password."\n".$user[0]->password."\n")->timeout(120)->run("sudo passwd {$request->username}");

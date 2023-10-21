@@ -90,7 +90,7 @@ class OnlineController extends Controller
         }
 
         //Dropbear
-
+if (file_exists("/var/www/html/app/storage/dropbear.json")) {
         foreach ($onlineuserlist_drop as $user_drop) {
             $user_drop = preg_replace("/\\s+/", " ", $user_drop);
 
@@ -130,7 +130,7 @@ class OnlineController extends Controller
 
         }
 
-
+}
         $data = json_decode(json_encode($data), true);
         //dd($data);
         $uniqueUsernames = array();
