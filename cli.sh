@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Function to display the menu
-adminuser=$(mysql -N -e "use XPanel_plus; select username from admins where id='1';")
-adminpass=$(mysql -N -e "use XPanel_plus; select password from admins where id='1';")
+adminuser=$(grep "DB_USERNAME=" /var/www/html/app/.env | awk -F "=" '{print $2}')
+adminpass=$(grep "DB_PASSWORD=" /var/www/html/app/.env | awk -F "=" '{print $2}')
 sshport=$(mysql -N -e "use XPanel_plus; select ssh_port from settings where id='1';")
 ssh_tls_port=$(mysql -N -e "use XPanel_plus; select tls_port from settings where id='1';")
 if [ -f "/var/www/xpanelport" ]; then
@@ -52,7 +52,7 @@ function show_menu() {
     echo "1. Change Username AND Password"
     echo "2. Change Port SSH"
     echo "3. Change Port SSH TLS"
-    echo "4. Update XPanel"
+    echo "4. Update XPanel Nginx Web Server"
     echo "5. Remove XPanel"
     echo "6. Remove All Admin XPanel"
     echo "7. Change Banner Text"
@@ -61,7 +61,8 @@ function show_menu() {
     echo "10. Install Dropbear"
     echo "11. Install WordPress"
     echo "12. Fix Call (UDPGW)"
-    echo "13. Exit"
+    echo "13. Update XPanel Apache Web Server"
+    echo "0. Exit"
 }
 
 # Function to select an option
@@ -90,8 +91,8 @@ function select_option() {
         2)
             echo "Please enter a SSH port:"
             read port
-            sed -i "s/Port $sshport/Port $port/" /etc/ssh/sshd_config
-            sed -i "s/PORT_SSH=$sshport/PORT_SSH=$port/" /var/www/html/app/.env
+            sed -i "s/Port.*/Port $port/" /etc/ssh/sshd_config
+            sed -i "s/PORT_SSH=.*/PORT_SSH=$port/g" /var/www/html/app/.env
             sed -i "s/DEFAULT_HOST =.*/DEFAULT_HOST = '127.0.0.1:${port}'/g" /usr/local/bin/wss
             systemctl daemon-reload
             systemctl enable wss
@@ -154,7 +155,10 @@ EOF
             12)
             bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/fix-call.sh --ipv4)
             ;;
-        13)
+            13)
+            bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/apache.sh --ipv4)
+            ;;
+        0)
             echo "Exiting the menu."
             exit 0
             ;;
