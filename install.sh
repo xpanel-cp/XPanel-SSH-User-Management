@@ -100,34 +100,38 @@ dmssl=""
 fi
 
 echo -e "${YELLOW}************ Select XPanel Version Nginx Web Server************"
-echo -e "${GREEN}  1)XPanel v3.8.4"
-echo -e "${GREEN}  2)XPanel v3.8.3"
-echo -e "${GREEN}  3)XPanel v3.8.2"
-echo -e "${GREEN}  4)XPanel v3.8.1"
-echo -e "${GREEN}  5)XPanel v3.8.0"
-echo -e "${GREEN}  6)XPanel v3.7.9"
+echo -e "${GREEN}  1)XPanel v3.8.5"
+echo -e "${GREEN}  2)XPanel v3.8.4"
+echo -e "${GREEN}  3)XPanel v3.8.3"
+echo -e "${GREEN}  4)XPanel v3.8.2"
+echo -e "${GREEN}  5)XPanel v3.8.1"
+echo -e "${GREEN}  6)XPanel v3.8.0"
+echo -e "${GREEN}  7)XPanel v3.7.9"
 echo -ne "${GREEN}\nSelect Version : ${ENDCOLOR}" ;read n
 if [ "$n" != "" ]; then
 if [ "$n" == "1" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-4
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-5
 fi
 if [ "$n" == "2" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-3
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-4
 fi
 if [ "$n" == "3" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-2
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-3
 fi
 if [ "$n" == "4" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-1
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-2
 fi
 if [ "$n" == "5" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-0
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-1
 fi
 if [ "$n" == "6" ]; then
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-0
+fi
+if [ "$n" == "7" ]; then
 linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-9
 fi
 else
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-4
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-5
 fi
 
 echo -e "\nPlease input IP Server"
