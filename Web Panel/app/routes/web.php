@@ -78,6 +78,7 @@ Route::prefix("$panel")->group(function()
     Route::post('/manager/update',[AdminsController::class,'update'])->name('admin.update');
     Route::get('/documents',[DocumentController::class,'index'])->name('document');
     Route::get('/logout',[LoginController::class,'logout'])->name('user.logout');
+    Route::get('/reboot',[DahboardController::class,'reboot'])->name('server.reboot');
 
 
 });

@@ -25,6 +25,11 @@ class DahboardController extends Controller
             exit(redirect()->intended(route('users')));
         }
     }
+    public function reboot()
+    {
+        $this->check();
+        Process::run("sudo reboot");
+    }
     public function index()
     {
         $this->check();
