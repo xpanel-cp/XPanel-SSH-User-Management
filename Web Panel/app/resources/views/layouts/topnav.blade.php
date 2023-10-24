@@ -112,7 +112,7 @@
             <ul class="list-unstyled">
                 <li class="dropdown pc-h-item">
                     <a href="https://github.com/xpanel-cp/XPanel-SSH-User-Management" target="_blank">
-                    <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/xpanel-cp/XPanel-SSH-User-Management?style=social&link=left">
+                        <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/xpanel-cp/XPanel-SSH-User-Management?style=social&link=left">
                     </a>
                 </li>
                 <li class="dropdown pc-h-item">
@@ -157,7 +157,7 @@
                 </li>
 
                 <li class="dropdown pc-h-item">
-                    <a class="pc-head-link dropdown-toggle arrow-none me-0" data-bs-toggle="dropdown" href="{{route('server.reboot')}}" role="button" aria-haspopup="false" aria-expanded="false">
+                    <a class="pc-head-link dropdown-toggle arrow-none me-0" href="{{route('server.reboot')}}">
                         <i class="ti ti-refresh-alert"></i>
                     </a>
                 </li>
