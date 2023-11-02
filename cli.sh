@@ -37,7 +37,7 @@ fi
 def_port=$(grep "PORT_PANEL=" /var/www/html/app/.env | awk -F "=" '{print $2}')
 def_cp=$(grep "PANEL_DIRECT=" /var/www/html/app/.env | awk -F "=" '{print $2}')
 def_pw=$(grep "DB_PASSWORD=" /var/www/html/app/.env | awk -F "=" '{print $2}')
-BLUE=$(tput setaf 4)
+BLUE=$(tput setaf 12)
 RED=$(tput setaf 1)
 RESET=$(tput sgr0)
 function show_menu() {
