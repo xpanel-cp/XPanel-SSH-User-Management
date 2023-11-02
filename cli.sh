@@ -48,7 +48,7 @@ function show_menu() {
     echo "Password: $def_pw"
     echo "SSH PORT: $sshport"
     echo "SSH PORT TLS: $ssh_tls_port"
-    echo "XPanel Link: http://$domain:$def_port/$def_cp/login"
+    echo "XPanel Link: \"http://$domain:$def_port/$def_cp/login\""
     echo ""
     echo "XPanel CLI Menu"
     echo "------------------"
