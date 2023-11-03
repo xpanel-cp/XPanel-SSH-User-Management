@@ -651,6 +651,30 @@ ENDOFFILE
   sudo sed -i 's/((/$((/' /var/www/html/kill.sh
   wait
   chmod +x /var/www/html/kill.sh
+
+  othercron=$(echo "$protcohttp://${defdomain}:$sshttp/fixer/other")
+  cat >/var/www/html/other.sh <<ENDOFFILE
+#!/bin/bash
+#By Alireza
+i=0
+while [ 1i -lt 10 ]; do
+cmd=(bbh '$othercron')
+echo cmd &
+sleep 6
+i=(( i + 1 ))
+done
+ENDOFFILE
+  wait
+  sudo sed -i 's/(bbh/$(curl -v -H "A: B"/' /var/www/html/other.sh
+  wait
+  sudo sed -i 's/cmd/$cmd/' /var/www/html/other.sh
+  wait
+  sudo sed -i 's/1i/$i/' /var/www/html/other.sh
+  wait
+  sudo sed -i 's/((/$((/' /var/www/html/other.sh
+  wait
+  chmod +x /var/www/html/other.sh
+  
   mkdir /var/www/html/app/storage/banner
   chmod 777 /etc/ssh/sshd_config
   chmod 777 /var/www/html/app/storage/banner
@@ -662,18 +686,10 @@ ENDOFFILE
   if [ "$xport" != "" ]; then
     pssl=$((xport + 1))
   fi
-  (
-    crontab -l | grep .
-    echo -e "* * * * * /var/www/html/kill.sh"
-  ) | crontab -
-  (
-    crontab -l | grep .
-    echo -e "0 */1 * * * /var/www/html/killlog.sh"
-  ) | crontab -
-  (
-    crontab -l
-    echo "* * * * * wget -q -O /dev/null '$protcohttp://${defdomain}:$sshttp/fixer/exp' > /dev/null 2>&1"
-  ) | crontab -
+  (crontab -l | grep . ; echo -e "* * * * * /var/www/html/kill.sh") | crontab -
+  (crontab -l | grep . ; echo -e "* * * * * /var/www/html/other.sh") | crontab -
+  (crontab -l | grep . ; echo -e "0 */1 * * * /var/www/html/killlog.sh") | crontab -
+  (crontab -l ; echo "* * * * * wget -q -O /dev/null '$protcohttp://${defdomain}:$sshttp/fixer/exp' > /dev/null 2>&1") | crontab -
   wait
   systemctl enable stunnel4 &
   wait
