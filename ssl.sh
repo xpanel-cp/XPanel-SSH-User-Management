@@ -123,8 +123,33 @@ wait
 sudo sed -i 's/1i/$i/' /var/www/html/kill.sh
 wait
 sudo sed -i 's/((/$((/' /var/www/html/kill.sh
-
+chmod +x /var/www/html/kill.sh
+wait
+othercron=$(echo "https://${domain}:$def_port/fixer/other")
+  cat >/var/www/html/other.sh <<ENDOFFILE
+#!/bin/bash
+#By Alireza
+i=0
+while [ 1i -lt 3 ]; do
+cmd=(bbh '$othercron')
+echo cmd &
+sleep 17
+i=(( i + 1 ))
+done
+ENDOFFILE
+  wait
+  sudo sed -i 's/(bbh/$(curl -v -H "A: B"/' /var/www/html/other.sh
+  wait
+  sudo sed -i 's/cmd/$cmd/' /var/www/html/other.sh
+  wait
+  sudo sed -i 's/1i/$i/' /var/www/html/other.sh
+  wait
+  sudo sed -i 's/((/$((/' /var/www/html/other.sh
+  wait
+  chmod +x /var/www/html/other.sh
 (crontab -l | grep . ; echo -e "* * * * * /var/www/html/kill.sh") | crontab -
+(crontab -l | grep . ; echo -e "* * * * * /var/www/html/other.sh") | crontab -
+(crontab -l | grep . ; echo -e "0 */1 * * * /var/www/html/killlog.sh") | crontab -
 (crontab -l ; echo "* * * * * wget -q -O /dev/null 'https://${domain}:$def_port/fixer/exp' > /dev/null 2>&1") | crontab -
 if dpkg -l | grep -q dropbear; then
 (crontab -l | grep . ; echo -e "* * * * * /var/www/html/dropbear.sh") | crontab -
