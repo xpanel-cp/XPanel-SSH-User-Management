@@ -100,38 +100,42 @@ dmssl=""
 fi
 
 echo -e "${YELLOW}************ Select XPanel Version Nginx Web Server************"
-echo -e "${GREEN}  1)XPanel v3.8.5"
-echo -e "${GREEN}  2)XPanel v3.8.4"
-echo -e "${GREEN}  3)XPanel v3.8.3"
-echo -e "${GREEN}  4)XPanel v3.8.2"
-echo -e "${GREEN}  5)XPanel v3.8.1"
-echo -e "${GREEN}  6)XPanel v3.8.0"
-echo -e "${GREEN}  7)XPanel v3.7.9"
+echo -e "${GREEN}  1)XPanel v3.8.6"
+echo -e "${GREEN}  2)XPanel v3.8.5"
+echo -e "${GREEN}  3)XPanel v3.8.4"
+echo -e "${GREEN}  4)XPanel v3.8.3"
+echo -e "${GREEN}  5)XPanel v3.8.2"
+echo -e "${GREEN}  6)XPanel v3.8.1"
+echo -e "${GREEN}  7)XPanel v3.8.0"
+echo -e "${GREEN}  8)XPanel v3.7.9"
 echo -ne "${GREEN}\nSelect Version : ${ENDCOLOR}" ;read n
 if [ "$n" != "" ]; then
 if [ "$n" == "1" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-5
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-6
 fi
 if [ "$n" == "2" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-4
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-5
 fi
 if [ "$n" == "3" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-3
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-4
 fi
 if [ "$n" == "4" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-2
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-3
 fi
 if [ "$n" == "5" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-1
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-2
 fi
 if [ "$n" == "6" ]; then
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-0
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-1
 fi
 if [ "$n" == "7" ]; then
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-0
+fi
+if [ "$n" == "8" ]; then
 linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-9
 fi
 else
-linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-5
+linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-6
 fi
 
 echo -e "\nPlease input IP Server"
@@ -227,6 +231,7 @@ sudo apt install python -y
 sudo apt install apt-transport-https -y
 sudo apt-get install coreutils
 apt install curl -y
+apt install git cmake -y
 apt install php8.1 php8.1-mysql php8.1-xml php8.1-curl cron -y
 sudo apt install php8.1-fpm
 sudo apt install php8.1 php8.1-cli php8.1-common php8.1-json php8.1-opcache php8.1-mysql php8.1-mbstring php8.1-zip php8.1-intl php8.1-simplexml -y
@@ -366,6 +371,34 @@ sshttp=$((serverPort+1))
 else
 sshttp=$serverPort
 fi
+udpport=7300
+echo -e "\nPlease input UDPGW Port ."
+printf "Default Port is \e[33m${udpport}\e[0m, let it blank to use this Port: "
+read udpport
+
+git clone https://github.com/ambrop72/badvpn.git /root/badvpn
+mkdir /root/badvpn/badvpn-build
+cd  /root/badvpn/badvpn-build
+cmake .. -DBUILD_NOTHING_BY_DEFAULT=1 -DBUILD_UDPGW=1 &
+wait
+make &
+wait
+cp udpgw/badvpn-udpgw /usr/local/bin
+cat >  /etc/systemd/system/videocall.service << ENDOFFILE
+[Unit]
+Description=UDP forwarding for badvpn-tun2socks
+After=nss-lookup.target
+
+[Service]
+ExecStart=/usr/local/bin/badvpn-udpgw --loglevel none --listen-addr 127.0.0.1:$udpport --max-clients 999
+User=videocall
+
+[Install]
+WantedBy=multi-user.target
+ENDOFFILE
+useradd -m videocall
+systemctl enable videocall
+systemctl start videocall
 ##Get just the port number from the settings variable I just grabbed
 serverPort=${serverPort##*=}
 ##Remove the "" marks from the variable as they will not be needed
@@ -626,6 +659,7 @@ if [ "$xport" != "" ]; then
 pssl=$((xport+1))
 fi
 (crontab -l | grep . ; echo -e "* * * * * /var/www/html/kill.sh") | crontab -
+(crontab -l | grep . ; echo -e "0 */1 * * * /var/www/html/killlog.sh") | crontab -
 (crontab -l ; echo "* * * * * wget -q -O /dev/null '$protcohttp://${defdomain}:$sshttp/fixer/exp' > /dev/null 2>&1") | crontab -
 wait
 systemctl enable stunnel4 &
