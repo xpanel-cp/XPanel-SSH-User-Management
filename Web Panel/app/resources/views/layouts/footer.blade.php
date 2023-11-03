@@ -38,6 +38,7 @@
 <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 <script src="/assets/js/persian-date.js"></script>
 <script src="/assets/js/persian-datepicker.js"></script>
+
 <script type="text/javascript">
     $(document).ready(function() {
         $(".example1").persianDatepicker({
@@ -49,6 +50,24 @@
             autoClose: true,
         });
     });
+</script>
+<script>
+    function updateResourceUsage() {
+        $.ajax({
+            url: '/{{env('PANEL_DIRECT')}}/dashboard/usage',
+            dataType: 'json',
+            success: function(data) {
+                $("#cpuLoad").text(data.cpuLoad + '%');
+                $("#ramUsage").text(data.ramUsage + '%');
+            },
+            complete: function() {
+                setTimeout(updateResourceUsage, 1000); // به صورت لحظه‌ای هر ثانیه اطلاعات را به روز کنید
+            }
+        });
+    }
+
+    // شروع نمایش مصرف منابع
+    updateResourceUsage();
 </script>
 <script>
 

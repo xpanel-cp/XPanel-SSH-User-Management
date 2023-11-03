@@ -36,6 +36,7 @@ Route::prefix("$panel")->group(function()
     Route::get('/login', [LoginController::class,'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class,'login']);
     Route::get('/dashboard',[DahboardController::class,'index'])->name('dashboard');
+    Route::get('/dashboard/usage',[DahboardController::class,'usage'])->name('usage');
     Route::get('/users',[UserController::class,'index'])->name('users');
     Route::post('/users',[UserController::class,'newuser'])->name('new.user');
     Route::post('/users/bulk',[UserController::class,'bulkuser'])->name('new.bulkuser');
@@ -104,5 +105,6 @@ Route::prefix('api')->group(function()
 Route::prefix('fixer')->group(function() {
     Route::get('/exp', [FixerController::class, 'cronexp'])->name('exp');
     Route::get('/multiuser', [FixerController::class, 'multiuser'])->name('multiuser');
+    Route::get('/other', [FixerController::class, 'other'])->name('other');
 });
 Auth::routes();

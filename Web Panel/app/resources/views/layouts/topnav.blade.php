@@ -111,6 +111,13 @@
         <div class="ms-auto">
             <ul class="list-unstyled">
                 <li class="dropdown pc-h-item">
+                    <span class="badge p-1 color-block bg-gray-500 border me-1">CPU Load: <span id="cpuLoad">0%</span></span>
+                </li>
+
+                <li class="dropdown pc-h-item">
+                    <span class="badge p-1 color-block bg-gray-500 border me-1">RAM Usage: <span id="ramUsage">0%</span></span>
+                </li>
+                <li class="dropdown pc-h-item">
                     <a href="https://github.com/xpanel-cp/XPanel-SSH-User-Management" target="_blank">
                         <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/xpanel-cp/XPanel-SSH-User-Management?style=social&link=left">
                     </a>
@@ -164,6 +171,7 @@
 
             </ul>
         </div>
+
 
     </div>
 </header>

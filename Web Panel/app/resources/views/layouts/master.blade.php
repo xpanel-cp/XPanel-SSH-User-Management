@@ -22,7 +22,7 @@
     $obj = json_decode($json);
     $github='https://github.com/xpanel-cp/XPanel-SSH-User-Management/blob/master/README-EN.md#installation-guide';
 @endphp
-@if($obj->last_version>385)
+@if($obj->last_version>386)
 
     <div class="p-4 mb-2" style="position: fixed;z-index: 9999;left: 0;">
         <div class="toast fade show" role="alert" aria-live="assertive" aria-atomic="true">

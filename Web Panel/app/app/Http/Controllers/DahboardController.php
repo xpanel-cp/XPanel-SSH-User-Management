@@ -171,4 +171,35 @@ class DahboardController extends Controller
         return view('dashboard.home', compact('alluser','active_user','expired_user','traffic_user','deactive_user','online_user','cpu_free','ram_free','disk_free','traffic_total','total'));
     }
 
+    public function usage()
+    {
+        $free = shell_exec("free");
+        $free = (string)trim($free);
+        $free_arr = explode("\n", $free);
+        $mem = explode(" ", $free_arr[1]);
+        $mem = array_filter($mem, function ($value) {
+            return $value !== NULL && $value !== false && $value !== "";
+        });
+        $mem = array_merge($mem);
+        $memtotal = round($mem[1] / 1000000, 2);
+        $memused = round($mem[2] / 1000000, 2);
+        $memfree = round($mem[3] / 1000000, 2);
+        $memtotal = str_replace(" GB", "", $memtotal);
+        $memused = str_replace(" GB", "", $memused);
+        $memfree = str_replace(" GB", "", $memfree);
+        $memtotal = str_replace(" MB", "", $memtotal);
+        $memused = str_replace(" MB", "", $memused);
+        $memfree = str_replace(" MB", "", $memfree);
+        $usedperc = 100 / $memtotal * $memused;
+        $exec_loads = sys_getloadavg();
+        $exec_cores = Process::run("grep -P '^processor' /proc/cpuinfo|wc -l");
+        $exec_cores = $exec_cores->output();
+        $exec_cores = trim($exec_cores);
+        $cpu = round($exec_loads[1] / ($exec_cores + 1) * 100, 0);
+        $cpu_free = round($cpu);
+        $ram_free = round($usedperc);
+        echo json_encode(array("cpuLoad" => $cpu_free, "ramUsage" => $ram_free));
+
+    }
+
 }

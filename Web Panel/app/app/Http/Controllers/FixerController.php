@@ -102,87 +102,95 @@ class FixerController extends Controller
 
     public function multiuser()
     {
+        $setting = Settings::first();
+        if (!$setting || $setting->multiuser !== 'active') {
+            return;
+        }
 
-        $setting = Settings::all();
-        $multiuser = $setting[0]->multiuser;
+        // Retrieve SSH users
+        $list = Process::run("sudo lsof -i :" . env('PORT_SSH') . " -n | grep -v root | grep ESTABLISHED");
+        $output = $list->output();
+        $onlineuserlist = preg_split("/\r\n|\n|\r/", $output);
+        $onlinelist = [];
+        foreach ($onlineuserlist as $user) {
+            $user = preg_replace('/\s+/', ' ', $user);
+            $userarray = explode(" ", $user);
+            $onlinelist[] = $userarray[2] ?? null;
+        }
 
-        if ($multiuser == 'active') {
-            $list = Process::run("sudo lsof -i :" . env('PORT_SSH') . " -n | grep -v root | grep ESTABLISHED");
-            $output = $list->output();
-            $onlineuserlist = preg_split("/\r\n|\n|\r/", $output);
-            foreach ($onlineuserlist as $user) {
+        // Read JSON file
+        $list_drop = Process::run("sudo lsof -i :" . env('PORT_DROPBEAR') . " -n | grep ESTABLISHED");
+        $output_drop = $list_drop->output();
+        $onlineuserlist_drop = preg_split("/\r\n|\n|\r/", $output_drop);
+        $jsonFilePath = '/var/www/html/app/storage/dropbear.json';
+
+        if (file_exists($jsonFilePath)) {
+            $jsonData = file_get_contents($jsonFilePath);
+            $dataArray = json_decode($jsonData, true);
+
+            foreach ($onlineuserlist_drop as $user) {
                 $user = preg_replace('/\s+/', ' ', $user);
                 $userarray = explode(" ", $user);
-                if (!isset($userarray[2])) {
-                    $userarray[2] = null;
-                }
-                $onlinelist[] = $userarray[2];
-            }
+                $pid = $userarray[1] ?? null;
 
-            if (file_exists("/var/www/html/app/storage/dropbear.json")) {
-                $jsonFilePath = '/var/www/html/app/storage/dropbear.json';
-                $jsonData = file_get_contents($jsonFilePath);
-                $dataArray = json_decode($jsonData, true);
+                // Check if the PID is in the JSON data
+                $userFound = false;
                 foreach ($dataArray as $item) {
-                    $user = $item['user'];
-                    $onlinelist[] = $user;
+                    if ($item['PID'] === $pid) {
+                        $userFound = true;
+                        $onlinelist[] = $item['user'];
+                        break;
+                    }
                 }
             }
-            //print_r($onlinelist);
-            $onlinelist = array_replace($onlinelist, array_fill_keys(array_keys($onlinelist, null), ''));
-            $onlinecount = array_count_values($onlinelist);
+        } else {
+            $onlinelist = [];
+        }
 
-            foreach ($onlinelist as $useron) {
-                $users = Users::where('username', $useron)->get();
-                foreach ($users as $row) {
-                    $limitation = $row->multiuser;
-                    $username = $row->username;
-                    $startdate = $row->start_date;
-                    $finishdate_one_connect = $row->date_one_connect;
-                    if (empty($limitation)) {
-                        $limitation = "0";
-                    }
-                    $userlist[$username] = $limitation;
-                    if (empty($startdate)) {
-                        $use_active = $username . "|" . $onlinecount[$username];
-                        $act_explode = explode("|", $use_active);
-                        if ($act_explode[1] > 0) {
-                            $start_inp = date("Y-m-d");
-                            $end_inp = date('Y-m-d', strtotime($start_inp . " + $finishdate_one_connect days"));
-                            Users::where('username', $act_explode[0])
-                                ->update(['start_date' => $start_inp, 'end_date' => $end_inp]);
+        // Remove duplicates
+        $onlinelist = array_replace($onlinelist, array_fill_keys(array_keys($onlinelist, null), ''));
+        $onlinecount = array_count_values($onlinelist);
+        $onlinelist_uniq = array_unique($onlinelist);
+        foreach ($onlinelist_uniq as $useron) {
+
+            $users = Users::where('username', $useron)->get();
+            foreach ($users as $row) {
+                $limitation = $row->multiuser ?: 0;
+                $username = $row->username;
+                $startdate = $row->start_date;
+                $finishdate_one_connect = $row->date_one_connect;
+
+                if (empty($startdate) && $onlinecount[$username] > 0) {
+                    $start_inp = now()->toDateString();
+                    $end_inp = now()->addDays($finishdate_one_connect)->toDateString();
+                    Users::where('username', $username)->update(['start_date' => $start_inp, 'end_date' => $end_inp]);
+                }
+
+                if ($limitation !== 0 && $onlinecount[$username] > $limitation) {
+                    if (file_exists($jsonFilePath)) {
+                        foreach ($dataArray as $item) {
+                            if (isset($item['user']) && $item['user'] === $username) {
+
+                                $pid = $item['PID'];
+                                Process::run("sudo kill -9 {$pid}");
+                                Process::run("sudo killall -u {$username}");                            }
                         }
-
                     }
-                    if ($limitation !== "0" && $onlinecount[$username] > $limitation) {
-
-                        if (file_exists("/var/www/html/app/storage/dropbear.json")) {
-                            foreach ($dataArray as $item) {
-                                if (isset($item['user']) && $item['user'] === $username) {
-                                    $pid = $item['PID'];
-                                    Process::run("sudo kill -9 {$pid}");
-                                }
-                            }
-                        }
-                        Process::run("sudo killall -u {$username}");
-                        Process::run("sudo pkill -u {$username}");
-                        Process::run("sudo timeout 10 pkill -u {$username}");
-                        Process::run("sudo timeout 10 killall -u {$username}");
-
-                    }
-
-
-                    //header("Refresh:1");
+                    Process::run("sudo killall -u {$username}");
+                    //Process::run("sudo timeout 20 killall -u {$username}");
                 }
             }
         }
+    }
+
+    public function other()
+    {
         if(env('CRON_TRAFFIC', 'active')=='active') {
             $this->synstraffics();
             $this->cronexp_traffic();
             $this->synstraffics_drop();
         }
     }
-
     public function cronexp_traffic()
     {
         $inactiveUsers = Users::where('status', '!=', 'active')->get();
@@ -396,56 +404,63 @@ $day
     }
     public function synstraffics_drop()
     {
-        $newarray_drop=[];
-        if (file_exists("/var/www/html/app/storage/out.json")) {
-            $out = file_get_contents("/var/www/html/app/storage/out.json");
-            $trafficlog = preg_split("/\r\n|\n|\r/", $out);
-            $trafficlog = array_filter($trafficlog);
-            $lastdata = end($trafficlog);
-            $json = json_decode($lastdata, true);
-            $traffic_base = env('TRAFFIC_BASE');
-            if (file_exists("/var/www/html/app/storage/dropbear.json")) {
+        $trafficLogFilePath = "/var/www/html/app/storage/out.json";
+        $dropbearJsonFilePath = "/var/www/html/app/storage/dropbear.json";
 
-                if (is_array($json)) {
-                    foreach ($json as $value) {
-                        $TX = round($value["TX"], 0);
-                        $RX = round($value["RX"], 0);
-                        $PID = $value["PID"];
-                        $name = $value["name"];
-                        $jsonData = file_get_contents("/var/www/html/app/storage/dropbear.json");
-                        $dataArray = json_decode($jsonData, true);
-                        foreach ($dataArray as $item) {
-                            if (isset($item['PID']) && $item['PID'] == $PID && $name=='/usr/sbin/dropbear') {
-                                $username = $item['user'];
-                                $traffic = Traffic::where('username', $username)->get();
-                                $user = $traffic[0];
-                                $userdownload = $user->download;
-                                $userupload = $user->upload;
-                                $usertotal = $user->total;
-                                $rx = round($RX);
-                                $rx = ($rx) / 10;
-                                $rx = round(($rx / $traffic_base) * 100);
-                                $tx = round($TX);
-                                $tx = ($tx) / 10;
-                                $tx = round(($tx / $traffic_base) * 100);
+        if (file_exists($trafficLogFilePath) && file_exists($dropbearJsonFilePath)) {
+            $trafficLog = file_get_contents($trafficLogFilePath);
+            $trafficEntries = explode(PHP_EOL, $trafficLog);
+            $trafficEntries = array_filter($trafficEntries); // حذف خطوط خالی
+            $lastEntry = end($trafficEntries); // استفاده از end برای آخرین مورد معتبر
+
+            $trafficData = json_decode($lastEntry, true);
+            $traffic_base = env('TRAFFIC_BASE');
+
+            if (is_array($trafficData)) {
+                $dropbearData = json_decode(file_get_contents($dropbearJsonFilePath), true);
+
+                foreach ($trafficData as $value) {
+                    $PID = $value['PID'];
+                    $TX = round($value['TX'], 0);
+                    $RX = round($value['RX'], 0);
+                    $name = $value['name'];
+
+                    if ($name == '/usr/sbin/dropbear') {
+                        $matchingDropbearUsers = array_filter($dropbearData, function ($item) use ($PID) {
+                            return isset($item['PID']) && $item['PID'] == $PID;
+                        });
+
+                        foreach ($matchingDropbearUsers as $item) {
+                            $username = $item['user'];
+
+                            $traffic = Traffic::where('username', $username)->first();
+
+                            if ($traffic) {
+                                $userdownload = $traffic->download;
+                                $userupload = $traffic->upload;
+                                $usertotal = $traffic->total;
+
+                                $rx = round(($RX / 10) / $traffic_base * 100);
+                                $tx = round(($TX / 10) / $traffic_base * 100);
                                 $tot = $rx + $tx;
+
                                 $lastdownload = $userdownload + $rx;
                                 $lastupload = $userupload + $tx;
                                 $lasttotal = $usertotal + $tot;
 
-                                $check_traffic = Traffic::where('username', $username)->count();
-                                if ($check_traffic < 1) {
-
+                                if ($traffic->exists) {
+                                    $traffic->update([
+                                        'download' => $lastdownload,
+                                        'upload' => $lastupload,
+                                        'total' => $lasttotal,
+                                    ]);
+                                } else {
                                     Traffic::create([
                                         'username' => $username,
                                         'download' => $lastdownload,
                                         'upload' => $lastupload,
-                                        'total' => $lasttotal
+                                        'total' => $lasttotal,
                                     ]);
-
-                                } else {
-                                    Traffic::where('username', $username)
-                                        ->update(['download' => $lastdownload, 'upload' => $lastupload, 'total' => $lasttotal]);
                                 }
                             }
                         }
@@ -454,160 +469,112 @@ $day
             }
         }
     }
+
     public function synstraffics()
     {
-        $list = Process::run("pgrep nethogs");
-        $output = $list->output();
-        $pid = preg_replace("/\\s+/", "", $output);
-        // print_r($pid);
-        if (file_exists("/var/www/html/app/storage/out.json")) {
-            $out = file_get_contents("/var/www/html/app/storage/out.json");
-            $trafficlog = preg_split("/\r\n|\n|\r/", $out);
-            $trafficlog = array_filter($trafficlog);
-            $lastdata = end($trafficlog);
-            $json = json_decode($lastdata, true);
+        // Retrieve NetHogs process ID
+        $nethogsPID = trim(Process::run("pgrep nethogs")->output());
 
-            $newarray = [];
-            if (is_array($json)) {
-                foreach ($json as $value) {
-                    $TX = round($value["TX"], 0);
-                    $RX = round($value["RX"], 0);
-                    $PID = round($value["PID"], 0);
+        // Check if the traffic log file exists
+        $trafficLogFilePath = "/var/www/html/app/storage/out.json";
+        if (file_exists($trafficLogFilePath)) {
+            $trafficLog = file_get_contents($trafficLogFilePath);
+            $trafficEntries = preg_split("/\r\n|\n|\r/", $trafficLog);
+            $trafficEntries = array_filter($trafficEntries);
+            $lastEntry = end($trafficEntries);
+            $trafficData = json_decode($lastEntry, true);
 
-                    $name = preg_replace("/\\s+/", "", $value["name"]);
-                    if (strpos($name, "sshd") === false) {
-                        $name = "";
+            if (is_array($trafficData)) {
+                $trafficBase = env('TRAFFIC_BASE');
+                $newarray = [];
+
+                foreach ($trafficData as $entry) {
+                    $TX = round($entry["TX"]);
+                    $RX = round($entry["RX"]);
+                    $PID = round($entry["PID"]);
+                    $name = preg_replace("/\\s+/", "", $entry["name"]);
+
+                    // Filter out undesired names
+                    $filteredNames = ["sshd", "root", "/usr/bin/stunnel4", "unknown TCP", "/usr/sbin/apache2", "[net]", "[accepted]", "[rexeced]", "@notty", "root:sshd", "/sbin/sshd", "[priv]", "@pts/1"];
+                    if (empty($name) || in_array($name, $filteredNames) || ($RX < 1 && $TX < 1)) {
+                        continue;
                     }
-                    if (strpos($name, "root") !== false) {
-                        $name = "";
-                    }
-                    if (strpos($name, "/usr/bin/stunnel4") !== false) {
-                        $name = "";
-                    }
-                    if (strpos($name, "unknown TCP") !== false) {
-                        $name = "";
-                    }
-                    if (strpos($name, "/usr/sbin/apache2") !== false) {
-                        $name = "";
-                    }
-                    if (strpos($name, "[net]") !== false) {
-                        $name = "";
-                    }
-                    if (strpos($name, "[accepted]") !== false) {
-                        $name = "";
-                    }
-                    if (strpos($name, "[rexeced]") !== false) {
-                        $name = "";
-                    }
-                    if (strpos($name, "@notty") !== false) {
-                        $name = "";
-                    }
-                    if (strpos($name, "root:sshd") !== false) {
-                        $name = "";
-                    }
-                    if (strpos($name, "/sbin/sshd") !== false) {
-                        $name = "";
-                    }
-                    if (strpos($name, "[priv]") !== false) {
-                        $name = "";
-                    }
-                    if (strpos($name, "@pts/1") !== false) {
-                        $name = "";
-                    }
-                    if ($value["RX"] < 1 && $value["TX"] < 1) {
-                        $name = "";
-                    }
+
+                    // Remove "sshd:" prefix
                     $name = str_replace("sshd:", "", $name);
+
                     if (!empty($name)) {
                         if (isset($newarray[$name])) {
-                            $newarray[$name]["TX"] + $TX;
-                            $newarray[$name]["RX"] + $RX;
-                            $newarray[$name]["PID"] + $PID;
+                            $newarray[$name]["TX"] += $TX;
+                            $newarray[$name]["RX"] += $RX;
+                            $newarray[$name]["PID"] += $PID;
                         } else {
                             $newarray[$name] = ["RX" => $RX, "TX" => $TX, "Total" => $RX + $TX, "PID" => $PID];
                         }
                     }
                 }
-                //$newarray= json_encode($newarray);
-                $traffic_base=env('TRAFFIC_BASE');
+
                 foreach ($newarray as $username => $usr) {
-                    $traffic = Traffic::where('username', $username)->get();
-                    $user = $traffic[0];
-                    $userdownload = $user->download;
-                    $userupload = $user->upload;
-                    $usertotal = $user->total;
-                    $rx = round($usr["RX"]);
-                    $rx = ($rx) / 10;
-                    $rx = round(($rx / $traffic_base) * 100);
-                    $tx = round($usr["TX"]);
-                    $tx = ($tx) / 10;
-                    $tx = round(($tx / $traffic_base) * 100);
-                    $tot = $rx + $tx;
-                    $lastdownload = $userdownload + $rx;
-                    $lastupload = $userupload + $tx;
-                    $lasttotal = $usertotal + $tot;
+                    $traffic = Traffic::where('username', $username)->first();
 
-                    $check_traffic = Traffic::where('username', $username)->count();
-                    if ($check_traffic < 1) {
+                    if ($traffic) {
+                        $userdownload = $traffic->download;
+                        $userupload = $traffic->upload;
+                        $usertotal = $traffic->total;
 
-                        Traffic::create([
-                            'username' => $username,
-                            'download' => $lastdownload,
-                            'upload' => $lastupload,
-                            'total' => $lasttotal
-                        ]);
+                        $rx = round($usr["RX"]);
+                        $rx = ($rx / 10);
+                        $rx = round(($rx / $trafficBase) * 100);
 
-                    } else {
-                        Traffic::where('username', $username)
-                            ->update(['download' => $lastdownload, 'upload' => $lastupload, 'total' => $lasttotal]);
+                        $tx = round($usr["TX"]);
+                        $tx = ($tx / 10);
+                        $tx = round(($tx / $trafficBase) * 100);
+
+                        $tot = $rx + $tx;
+                        $lastdownload = $userdownload + $rx;
+                        $lastupload = $userupload + $tx;
+                        $lasttotal = $usertotal + $tot;
+
+                        if (empty($traffic->username)) {
+                            Traffic::create([
+                                'username' => $username,
+                                'download' => $lastdownload,
+                                'upload' => $lastupload,
+                                'total' => $lasttotal
+                            ]);
+                        } else {
+                            Traffic::where('username', $username)
+                                ->update(['download' => $lastdownload, 'upload' => $lastupload, 'total' => $lasttotal]);
+                        }
                     }
-
                 }
             }
         }
-        $settings = Settings::where('id', '1')->get();
-        $multiuser = $settings[0]->multiuser;
 
-        $list = Process::run("sudo lsof -i :" . env('PORT_SSH') . " -n | grep -v root | grep ESTABLISHED");
-        $output = $list->output();
-        $onlineuserlist = preg_split("/\r\n|\n|\r/", $output);
-        foreach ($onlineuserlist as $user) {
-            $user = preg_replace('/\s+/', ' ', $user);
-            $userarray = explode(" ", $user);
-            if (!isset($userarray[2])) {
-                $userarray[2] = null;
-            }
+        // Continue with the rest of the function for online users
+        $settings = Settings::find(1);
+        $multiuser = $settings->multiuser;
+        $portSSH = env('PORT_SSH');
+        $onlineUsers = $this->getOnlineSSHUsers($portSSH);
 
-            $onlinelist[] = $userarray[2];
-        }
+        foreach ($onlineUsers as $user) {
+            $username = $user['username'];
+            $onlineCount = $user['onlineCount'];
 
-        $onlinelist = array_replace($onlinelist, array_fill_keys(array_keys($onlinelist, null), ''));
-        $onlinecount = array_count_values($onlinelist);
+            $users = Users::where('username', $username)->get();
 
-        foreach ($onlinelist as $useron) {
-            $users = Users::where('username', $useron)->get();
             foreach ($users as $row) {
-                $limitation = $row->multiuser;
-                $username = $row->username;
+                $limitation = $row->multiuser ?: 0;
                 $startdate = $row->start_date;
                 $finishdate_one_connect = $row->date_one_connect;
-                if (empty($limitation)) {
-                    $limitation = "0";
-                }
-                $userlist[$username] = $limitation;
-                if (empty($startdate)) {
 
-                    $use_active = $username . "|" . $onlinecount[$username];
-                    $act_explode = explode("|", $use_active);
-                    if ($act_explode[1] > 0) {
-                        $start_inp = date("Y-m-d");
-                        $end_inp = date('Y-m-d', strtotime($start_inp . " + $finishdate_one_connect days"));
-                        Users::where('username', $act_explode[0])
-                            ->update(['start_date' => $start_inp,'end_date' => $end_inp]);
-                    }
-
+                if (empty($startdate) && $onlineCount > 0) {
+                    $start_inp = now()->toDateString();
+                    $end_inp = now()->addDays($finishdate_one_connect)->toDateString();
+                    Users::where('username', $username)->update(['start_date' => $start_inp, 'end_date' => $end_inp]);
                 }
-                if ($limitation !== "0" && $onlinecount[$username] > $limitation) {
+
+                if ($limitation !== 0 && $onlineCount > $limitation) {
                     if ($multiuser == 'on') {
                         Process::run("sudo killall -u {$username}");
                         Process::run("sudo pkill -u {$username}");
@@ -615,18 +582,41 @@ $day
                         Process::run("sudo timeout 10 killall -u {$username}");
                     }
                 }
-                //header("Refresh:1");
             }
-            Process::run("sudo kill -9 {$pid}");
-            Process::run("sudo killall -9 nethogs");
 
+            Process::run("sudo kill -9 $nethogsPID");
+            Process::run("sudo killall -9 nethogs");
         }
 
-
-        Process::run("sudo rm -rf /var/www/html/app/storage/out.json");
-        Process::run("sudo nethogs -j -v3 -c6 > /var/www/html/app/storage/out.json");
+        Process::run("sudo rm -rf $trafficLogFilePath");
+        Process::run("sudo nethogs -j -v3 -c6 > $trafficLogFilePath");
         Process::run("sudo pkill nethogs");
     }
+
+    private function getOnlineSSHUsers($portSSH)
+    {
+        $list = Process::run("sudo lsof -i :$portSSH -n | grep -v root | grep ESTABLISHED");
+        $output = $list->output();
+        $onlineuserlist = preg_split("/\r\n|\n|\r/", $output);
+        $onlineUsers = [];
+
+        foreach ($onlineuserlist as $user) {
+            $user = preg_replace('/\s+/', ' ', $user);
+            $userarray = explode(" ", $user);
+            $username = $userarray[2] ?? null;
+
+            if (!isset($onlineUsers[$username])) {
+                $onlineUsers[$username] = 1;
+            } else {
+                $onlineUsers[$username]++;
+            }
+        }
+
+        return array_map(function ($username, $onlineCount) {
+            return ['username' => $username, 'onlineCount' => $onlineCount];
+        }, array_keys($onlineUsers), array_values($onlineUsers));
+    }
+
 
 
 }
