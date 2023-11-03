@@ -657,10 +657,10 @@ ENDOFFILE
 #!/bin/bash
 #By Alireza
 i=0
-while [ 1i -lt 10 ]; do
+while [ 1i -lt 3 ]; do
 cmd=(bbh '$othercron')
 echo cmd &
-sleep 6
+sleep 17
 i=(( i + 1 ))
 done
 ENDOFFILE
