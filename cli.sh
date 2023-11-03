@@ -37,6 +37,9 @@ fi
 def_port=$(grep "PORT_PANEL=" /var/www/html/app/.env | awk -F "=" '{print $2}')
 def_cp=$(grep "PANEL_DIRECT=" /var/www/html/app/.env | awk -F "=" '{print $2}')
 def_pw=$(grep "DB_PASSWORD=" /var/www/html/app/.env | awk -F "=" '{print $2}')
+BLUE=$(tput setaf 12)
+RED=$(tput setaf 1)
+RESET=$(tput sgr0)
 function show_menu() {
     clear
     echo "Detail XPanel"
@@ -45,24 +48,25 @@ function show_menu() {
     echo "Password: $def_pw"
     echo "SSH PORT: $sshport"
     echo "SSH PORT TLS: $ssh_tls_port"
-    echo "XPanel Link: http://$domain:$def_port/$def_cp/login"
+    echo "XPanel Link: \"http://$domain:$def_port/$def_cp/login\""
     echo ""
     echo "XPanel CLI Menu"
     echo "------------------"
-    echo "1. Change Username AND Password"
-    echo "2. Change Port SSH"
-    echo "3. Change Port SSH TLS"
-    echo "4. Update XPanel Nginx Web Server"
-    echo "5. Remove XPanel"
-    echo "6. Remove All Admin XPanel"
-    echo "7. Change Banner Text"
-    echo "8. Blocked Port 80 and 443 IRAN"
-    echo "9. UnBlock Port 80 and 443 IRAN"
-    echo "10. Install Dropbear"
-    echo "11. Install WordPress"
-    echo "12. Fix Call (UDPGW)"
-    echo "13. Update XPanel Apache Web Server"
-    echo "0. Exit"
+    
+    echo "${BLUE}1. Change Username AND Password"
+    echo "${RED}2. Change Port SSH"
+    echo "${BLUE}3. Change Port SSH TLS"
+    echo "${RED}4. Update XPanel Nginx Web Server"
+    echo "${BLUE}5. Remove XPanel"
+    echo "${RED}6. Remove All Admin XPanel"
+    echo "${BLUE}7. Change Banner Text"
+    echo "${RED}8. Blocked Port 80 and 443 IRAN"
+    echo "${BLUE}9. UnBlock Port 80 and 443 IRAN"
+    echo "${RED}10. Install Dropbear"
+    echo "${BLUE}11. Install WordPress"
+    echo "${RED}12. Fix Call (UDPGW)"
+    echo "${BLUE}13. Update XPanel Apache Web Server"
+    echo "${RED}0. Exit${RESET}"
 }
 
 # Function to select an option
