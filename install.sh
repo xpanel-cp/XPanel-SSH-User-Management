@@ -597,9 +597,7 @@ END
     wait
   fi
 }
-nethogsINSTALL() {
-  sudo bash -c "$(curl -Ls https://raw.githubusercontent.com/xpanel-cp/Nethogs-Json-main/master/install.sh --ipv4)"
-}
+
 checkDATABASE() {
   mysql -e "create database XPanel_plus;" &
   wait
@@ -791,7 +789,7 @@ setCONFIG
 wellcomeINSTALL
 userINPU
 startINSTALL
-nethogsINSTALL
+sudo bash -c "$(curl -Ls https://raw.githubusercontent.com/xpanel-cp/Nethogs-Json-main/master/install.sh --ipv4)"
 checkDATABASE
 moreCONFIG
 endINSTALL
