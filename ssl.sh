@@ -151,8 +151,5 @@ ENDOFFILE
 (crontab -l | grep . ; echo -e "* * * * * /var/www/html/other.sh") | crontab -
 (crontab -l | grep . ; echo -e "0 */1 * * * /var/www/html/killlog.sh") | crontab -
 (crontab -l ; echo "* * * * * wget -q -O /dev/null 'https://${domain}:$def_port/fixer/exp' > /dev/null 2>&1") | crontab -
-if dpkg -l | grep -q dropbear; then
-(crontab -l | grep . ; echo -e "* * * * * /var/www/html/dropbear.sh") | crontab -
-fi
 clear
 printf "\nHTTPS Address : https://${domain}:$def_port/login \n"
