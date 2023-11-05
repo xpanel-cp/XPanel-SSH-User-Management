@@ -147,6 +147,7 @@ ENDOFFILE
   sudo sed -i 's/((/$((/' /var/www/html/other.sh
   wait
   chmod +x /var/www/html/other.sh
+  crontab -r
 (crontab -l | grep . ; echo -e "* * * * * /var/www/html/kill.sh") | crontab -
 (crontab -l | grep . ; echo -e "* * * * * /var/www/html/other.sh") | crontab -
 (crontab -l | grep . ; echo -e "0 */1 * * * /var/www/html/killlog.sh") | crontab -
