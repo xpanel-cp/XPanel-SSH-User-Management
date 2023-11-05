@@ -143,10 +143,7 @@ class FixerController extends Controller
                     }
                 }
             }
-        } else {
-            $onlinelist = [];
         }
-
         // Remove duplicates
         $onlinelist = array_replace($onlinelist, array_fill_keys(array_keys($onlinelist, null), ''));
         $onlinecount = array_count_values($onlinelist);
