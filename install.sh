@@ -703,9 +703,9 @@ ENDOFFILE
   DEFAULT_PORT_DROPBEAR=2083
   DEFAULT_TRAFFIC_BASE=12
   DEFAULT_STATUS_LOG=deactive
-  DEFAULT_BOT_TOKEN= 
-  DEFAULT_BOT_ID_ADMIN= 
-  DEFAULT_BOT_API_ACCESS= 
+  DEFAULT_BOT_TOKEN=none
+  DEFAULT_BOT_ID_ADMIN=none
+  DEFAULT_BOT_API_ACCESS=none 
 
   if [ -f /var/www/html/.env_copy ]; then
     while IFS= read -r line; do
@@ -728,17 +728,13 @@ ENDOFFILE
         TRAFFIC_BASE="$value"
       elif [ "$key" = "STATUS_LOG" ]; then
         STATUS_LOG="$value"
-      fi
       elif [ "$key" = "BOT_TOKEN" ]; then
         BOT_TOKEN="$value"
-      fi
       elif [ "$key" = "BOT_ID_ADMIN" ]; then
         BOT_ID_ADMIN="$value"
-      fi
       elif [ "$key" = "BOT_API_ACCESS" ]; then
         BOT_API_ACCESS="$value"
       fi
-
     done </var/www/html/.env_copy
   fi
 
