@@ -703,6 +703,9 @@ ENDOFFILE
   DEFAULT_PORT_DROPBEAR=2083
   DEFAULT_TRAFFIC_BASE=12
   DEFAULT_STATUS_LOG=deactive
+  DEFAULT_BOT_TOKEN=
+  DEFAULT_BOT_ID_ADMIN=
+  DEFAULT_BOT_API_ACCESS=
 
   if [ -f /var/www/html/.env_copy ]; then
     while IFS= read -r line; do
@@ -726,6 +729,15 @@ ENDOFFILE
       elif [ "$key" = "STATUS_LOG" ]; then
         STATUS_LOG="$value"
       fi
+      elif [ "$key" = "BOT_TOKEN" ]; then
+        BOT_TOKEN="$value"
+      fi
+      elif [ "$key" = "BOT_ID_ADMIN" ]; then
+        BOT_ID_ADMIN="$value"
+      fi
+      elif [ "$key" = "BOT_API_ACCESS" ]; then
+        BOT_API_ACCESS="$value"
+      fi
 
     done </var/www/html/.env_copy
   fi
@@ -738,6 +750,9 @@ ENDOFFILE
   PORT_DROPBEAR="${PORT_DROPBEAR:-$DEFAULT_PORT_DROPBEAR}"
   TRAFFIC_BASE="${TRAFFIC_BASE:-$DEFAULT_TRAFFIC_BASE}"
   STATUS_LOG="${STATUS_LOG:-$DEFAULT_STATUS_LOG}"
+  STATUS_LOG="${BOT_TOKEN:-$DEFAULT_BOT_TOKEN}"
+  STATUS_LOG="${BOT_ID_ADMIN:-$DEFAULT_BOT_ID_ADMIN}"
+  STATUS_LOG="${BOT_API_ACCESS:-$DEFAULT_BOT_API_ACCESS}"
 
   sed -i "s/APP_LOCALE=.*/APP_LOCALE=$APP_LOCALE/g" /var/www/html/app/.env
   sed -i "s/APP_MODE=.*/APP_MODE=$APP_MODE/g" /var/www/html/app/.env
@@ -747,6 +762,9 @@ ENDOFFILE
   sed -i "s/PORT_DROPBEAR=.*/PORT_DROPBEAR=$PORT_DROPBEAR/g" /var/www/html/app/.env
   sed -i "s/TRAFFIC_BASE=.*/TRAFFIC_BASE=$TRAFFIC_BASE/g" /var/www/html/app/.env
   sed -i "s/STATUS_LOG=.*/STATUS_LOG=$STATUS_LOG/g" /var/www/html/app/.env
+  sed -i "s/BOT_TOKEN=.*/BOT_TOKEN=$BOT_TOKEN/g" /var/www/html/app/.env
+  sed -i "s/BOT_ID_ADMIN=.*/BOT_ID_ADMIN=$BOT_ID_ADMIN/g" /var/www/html/app/.env
+  sed -i "s/BOT_API_ACCESS=.*/BOT_API_ACCESS=$BOT_API_ACCESS/g" /var/www/html/app/.env
   sudo systemctl stop apache2
   sudo systemctl disable apache2
   sudo apt-get remove apache2 -y
