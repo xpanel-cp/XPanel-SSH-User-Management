@@ -64,6 +64,7 @@ Route::prefix("$panel")->group(function()
     Route::get('/settings/backup/delete/{name}',[SettingsController::class,'delete_backup'])->name('settings.backup.delete');
     Route::get('/settings/backup/restore/{name}',[SettingsController::class,'restore_backup'])->name('settings.backup.restore');
     Route::post('/settings/backup/make/',[SettingsController::class,'make_backup'])->name('settings.backup.make');
+    Route::post('/settings/backup/bot/',[SettingsController::class,'bot_backup_up'])->name('settings.backup.bot.up');
     Route::get('/settings/backup/dl/{name}',[SettingsController::class,'download_backup'])->name('settings.backup.dl');
     Route::post('/settings/api',[SettingsController::class,'insert_api'])->name('settings.api');
     Route::get('/settings/api/renew/{id}',[SettingsController::class,'renew_api'])->name('settings.token.renew');
