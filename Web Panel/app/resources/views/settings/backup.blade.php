@@ -27,6 +27,28 @@
                         @include('layouts.setting_menu')
                         <div class="tab-content" id="myTabContent">
                             <div class="card-body">
+                                <div class="card-header">
+                                    <h5>{{__('setting-backup-bot_title')}}</h5>
+                                </div>
+                                <form class="row align-items-center" action="{{route('settings.backup.bot.up')}}" method="post" enctype="multipart/form-data">
+                                    @csrf
+                                    <div class="col-lg-5">
+                                        <input type="text" class="form-control" id="inlineFormInputName" name="token_bot" placeholder="Bot Token" value="{{$token_bot}}">
+                                        <small>@BotFather</small>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <input type="text" class="form-control" id="inlineFormInputName" name="id_admin" placeholder="ID" value="{{$id_admin}}">
+                                        <small>@userinfobot</small>
+                                    </div>
+
+                                    <div class="col-lg-2">
+                                        <p>
+                                            <label class="form-check-label" for="inlineFormCheck"> {{$status_webhoock}} </label> &nbsp; <button type="submit" class="btn btn-primary">{{__('setting-backup-bot_submit')}}</button>
+                                        </p>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="card-body">
                                 <div class="col-sm-12">
                                     <form class="validate-me" action="{{route('settings.backup.make')}}" method="post" enctype="multipart/form-data">
                                         <div class="form-group row">
@@ -40,10 +62,17 @@
                                         @csrf
                                         <div class="form-group row">
                                             <div class="col-lg-6">
-                                                <div class="UppyInput form"><div class="uppy-Root uppy-FileInput-container">
+                                                <div class="UppyInput form">
+                                                    <div class="uppy-Root uppy-FileInput-container">
                                                         <input class="uppy-FileInput-input form-control" type="file" name="file" multiple="" style="">
                                                         <small class="form-text text-muted">{{__('setting-backup-desc')}}</small>
-                                                        <br>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6">
+                                                <div class="UppyInput form">
+                                                    <div class="uppy-Root uppy-FileInput-container">
                                                         <input type="submit" class="btn btn-primary" value="{{__('setting-backup-upload')}}">
 
                                                     </div>

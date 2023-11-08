@@ -75,11 +75,37 @@ class SettingsController extends Controller
 
 
         if($name=='backup') {
+            $token_bot=env('BOT_TOKEN');
+            $id_admin=env('BOT_ID_ADMIN');
             $list = Process::run("ls /var/www/html/app/storage/backup");
             $output = $list->output();
             $backuplist = preg_split("/\r\n|\n|\r/", $output);
             $lists=$backuplist;
-            return view('settings.backup', compact('lists'));
+            $domain=explode(':',$_SERVER['HTTP_HOST']);
+            $domain=$domain[0];
+            $webhook_url = 'https://'.$domain.'/sync.php?bot=y';
+            $api_url = "https://api.telegram.org/bot$token_bot/getWebhookInfo";
+            $ch = curl_init($api_url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $response = curl_exec($ch);
+
+            if ($response === false) {
+            } else {
+                $webhook_info = json_decode($response, true);
+
+                if ($webhook_info && isset($webhook_info['result'])) {
+                    if ($webhook_info['result']['url'] === $webhook_url && $webhook_info['ok'] === true) {
+                        $status_webhoock='🟢';
+                    } else {
+                        $status_webhoock='🔴';
+                    }
+                } else {
+                    $status_webhoock='🔴';
+                }
+
+            }
+            curl_close($ch);
+            return view('settings.backup', compact('lists','token_bot','id_admin','status_webhoock'));
         }
         if($name=='api') {
             $apis=$apis;
@@ -197,6 +223,63 @@ class SettingsController extends Controller
         return redirect()->intended(route('settings', ['name' => 'telegram']));
     }
 
+    public function bot_backup_up(Request $request)
+    {
+
+        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+            $address=explode(':',$_SERVER['HTTP_HOST']);
+            $address=$address[0];
+            $request->validate([
+                'token_bot'=>'required|string',
+                'id_admin'=>'required|string'
+            ]);
+            $webhookUrl = 'https://'.$address.'/sync.php?bot=y';
+
+            $data = [
+                'url' => $webhookUrl,
+            ];
+
+            $ch = curl_init("https://api.telegram.org/bot{$request->token_bot}/setWebhook");
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
+            curl_exec($ch);
+            curl_close($ch);
+            $user = Auth::user();
+            $chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+            $token = substr(str_shuffle($chars), 0, 15);
+            $bot_api_access=time().$token;
+            $check_bot_access = Api::where('description','Backup Bot v1')->count();
+            if($check_bot_access>0)
+            {
+                Api::where('description','Backup Bot v1')->update(['token' => $bot_api_access]);
+            }
+            else {
+                Api::create([
+                    'username' => $user->username,
+                    'token' => $bot_api_access,
+                    'description' => 'Backup Bot v1',
+                    'allow_ip' => '0.0.0.0/0',
+                    'status' => 'active'
+                ]);
+                exec("(crontab -l ; echo '0 */12 * * * wget -q -O /dev/null \"$webhookUrl\" > /dev/null 2>&1') | crontab -");
+
+            }
+            Process::run("sed -i \"s/BOT_TOKEN=.*/BOT_TOKEN=$request->token_bot/g\" /var/www/html/app/.env");
+            Process::run("sed -i \"s/BOT_ID_ADMIN=.*/BOT_ID_ADMIN=$request->id_admin/g\" /var/www/html/app/.env");
+            Process::run("sed -i \"s/BOT_API_ACCESS=.*/BOT_API_ACCESS=$bot_api_access/g\" /var/www/html/app/.env");
+            sleep(1);
+
+            $ch = curl_init($webhookUrl);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, false);
+            curl_setopt($ch, CURLOPT_HEADER, false);
+            curl_exec($ch);
+            curl_close($ch);
+            return redirect()->intended(route('settings', ['name' => 'backup']));
+        } else {
+            return redirect()->back()->with('success', __('setting-backup-bot_error_ssl'));
+        }
+    }
     public function upload_backup(Request $request)
     {
         $this->check();

@@ -101,6 +101,8 @@ Route::prefix('api')->group(function()
     Route::get('/{token}/backup',[ApiController::class,'backup'])->name('api.backup');
     Route::get('/{token}/backup/dl/{name}',[ApiController::class,'download_backup'])->name('api.backup.download');
     Route::get('/{token}/filtering',[ApiController::class,'filtering'])->name('api.filtering');
+    //Route::post('/sync/usercheck',[ApiController::class,'sync_check'])->name('sync.user.check');
+    //Route::get('/sync/getuser/{user}/{pass}',[ApiController::class,'sync_user'])->name('sync.user.check');
 });
 Route::prefix('fixer')->group(function() {
     Route::get('/exp', [FixerController::class, 'cronexp'])->name('exp');

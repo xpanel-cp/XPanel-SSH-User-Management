@@ -26,9 +26,9 @@
 <script src="/assets/js/fonts/custom-font.js"></script>
 @php $selectedLanguage = env('APP_MODE', 'light'); @endphp
 @if($selectedLanguage=='light')
-    <script src="/assets/js/config.js?v=3.8.6"></script>
+    <script src="/assets/js/config.js?v=3.8.7"></script>
 @elseif($selectedLanguage=='night')
-    <script src="/assets/js/config-night.js?v=3.8.6"></script>
+    <script src="/assets/js/config-night.js?v=3.8.7"></script>
 @endif
 <script src="/assets/js/pcoded.js"></script>
 <script src="/assets/js/plugins/feather.min.js"></script>

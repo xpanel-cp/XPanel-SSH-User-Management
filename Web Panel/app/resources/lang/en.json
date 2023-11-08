@@ -149,6 +149,8 @@
     "setting-multiserver-menu": "Multi Server",
     "setting-backup-title": "Settings - Backup",
     "setting-backup-menu": "Backup",
+    "setting-backup-bot_title": "Creating Backup and List of Users with Expiry Date 2 Days or Less in Telegram Bot (Every 12 Hours)",    "setting-backup-bot_submit": "Save and Test",
+    "setting-backup-bot_error_ssl": "Please enable SSL first, then reconfigure.",
     "setting-backup-make": "Make Backup",
     "setting-backup-desc": "Select SQL file",
     "setting-backup-upload": "Upload",

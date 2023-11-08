@@ -9,6 +9,7 @@ use App\Models\Users;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Process;
+use DateTime;
 
 class ApiController extends Controller
 {
@@ -505,6 +506,83 @@ class ApiController extends Controller
         }
         $data = json_decode(json_encode($data));
         return response()->json($data);
+    }
+
+    public function sync_check(Request $request)
+    {
+        $request->validate([
+            'username' => 'required|string',
+            'password' => 'required|string',
+        ]);
+
+        $check_user = Users::where('username', $request->username)->where('password', $request->password)->where('status', 'active')->count();
+        if($check_user>0)
+        {
+            return response()->json(['message' => 'success']);
+        }
+        else
+        {
+            return response()->json(['message' => 'error']);
+        }
+    }
+
+    public function sync_user(Request $request,$user,$pass)
+    {
+        if (!is_string($user) and !is_string($pass)) {
+            abort(400, 'Not Validate');
+        }
+        $settings = Settings::all();
+        $tls_port=$settings[0]->tls_port;
+        $check_user = Users::where('username', $user)->where('password', $pass)->where('status', 'active')->count();
+        if ($check_user > 0) {
+            $user=Users::where('username', $user)->with('traffics')->get();
+            if($user[0]->traffic>0) {
+                if (1024 <= $user[0]->traffic) {
+                    $trafficValue = floatval($user[0]->traffic);
+                    $total = round($trafficValue / 1024, 3) . ' GB';
+                } else {
+                    $total = $user[0]->traffic . ' MB';
+                }
+            }
+            else
+            {
+                $total='Unlimit';
+            }
+
+            if (1024 <= $user[0]['traffics'][0]['total']) {
+                $trafficValue = floatval($user[0]['traffics'][0]['total']);
+                $total_usage = round($trafficValue / 1024, 3) . ' GB';
+            } else {
+                $total_usage = $user[0]['traffics'][0]['total'] . ' MB';
+            }
+            $end_date = $user[0]->end_date;
+            if (!empty($end_date)) {
+                $start_inp = date("Y-m-d");
+                $today = new DateTime($start_inp); // تاریخ امروز
+                $futureDate = new DateTime($end_date);
+                if ($today > $futureDate) {
+                    $interval = $futureDate->diff($today);
+                    $daysDifference = -1 * $interval->days; // تعداد روزهای منفی برای تاریخ‌های گذشته
+                } else {
+                    $interval = $today->diff($futureDate);
+                    $daysDifference = $interval->days;
+                }
+            } else {
+                $daysDifference = 'Unlimit';
+            }
+            $user_detail = [
+                "message" => 'success',
+                "username" => $user[0]->username,
+                "traffic" => $total,
+                "traffic_usage" => $total_usage,
+                "validity_day" => $daysDifference
+            ];
+            return response()->json($user_detail);
+        }
+        else
+        {
+            return response()->json(['message' => 'NotValidate']);
+        }
     }
 
 }
