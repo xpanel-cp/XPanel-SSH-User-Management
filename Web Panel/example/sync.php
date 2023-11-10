@@ -234,7 +234,7 @@ if ($_SERVER["REQUEST_METHOD"] == "GET") {
                             $zipFileName = $zip_name . '.zip';
                             exec("zip -r $zipFileName $file_name", $output, $returnCode);
                             sleep(1);
-                            sendTelegramFile($bot_token, $id_admin, $file_name, "https://xe.iklak.com/$zip_name.zip");
+                            sendTelegramFile($bot_token, $id_admin, $file_name, "https://$host/$zip_name.zip");
                             shell_exec("sudo rm -rf /var/www/html/app/storage/backup/$file_name");
                             shell_exec("sudo rm -rf /var/www/html/example/$file_name");
                             shell_exec("sudo rm -rf /var/www/html/example/$zip_name.zip");
