@@ -129,7 +129,7 @@ connect = 0.0.0.0:$sshport
         rm -rf /var/www/html/app
         sudo apt-get purge '^php8.*' -y
         sudo apt purge stunnel4 -y
-        sudo apt-get purge apache2 php8.1 zip unzip net-tools curl mariadb-server php8.1-cli php8.1-fpm php8.1-mysql php8.1-curl php8.1-gd php8.1-mbstring php8.1-xml -y
+        sudo apt-get purge apache2 nginx php8.1 zip unzip net-tools mariadb-server php8.1-cli php8.1-fpm php8.1-mysql php8.1-curl php8.1-gd php8.1-mbstring php8.1-xml -y
         fi
         ;;
         
