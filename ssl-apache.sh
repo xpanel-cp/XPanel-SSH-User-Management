@@ -247,6 +247,16 @@ mkdir /etc/ssl/
 bash ~/.acme.sh/acme.sh --install-cert -d ${domain} --key-file /etc/ssl/${domain}.key --fullchain-file /etc/ssl/${domain}.crt --ecc 
 
 cat > /etc/httpd/conf.d/${domain}.conf << ENDOFFILE
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    ServerName ${domain}
+    DocumentRoot /var/www/html/example
+    ErrorLog /error.log
+    CustomLog /access.log combined
+    <Directory '/var/www/html/example'>
+    AllowOverride All
+    </Directory>
+</VirtualHost>
 <VirtualHost *:443>
    ServerName ${domain}
    DocumentRoot /var/www/html/example
