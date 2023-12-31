@@ -217,5 +217,6 @@
     "settings-xguard-domain": "<b>Anti-Filter is active, please follow the steps below</b><br>Create a Cname record in Cloudflare and connect it to your personal anti-filter address.<br>Make sure the proxy or orange cdn cloud is off.<br><b>After completing the mentioned steps, set your domain in the corresponding field.</b>",
     "settings-xguard-doamin_lable": "Cname Record Type Domain Address",
     "settings-xguard-capacity": "The capacity of the anti-filter server is full",
-    "settings-xguard-capacity-off": "Remaining capacity:"
+    "settings-xguard-capacity-off": "Remaining capacity:",
+    "settings-xguard-amount": "Monthly Subscription <b>%s</b> USD"
 }

@@ -32,6 +32,10 @@
                                 <span class="badge color-block bg-blue-500 border">
                                         {{__('settings-xguard-capacity-off')}} {{$response[0]['capacity']}}
                                             </span>
+                                <span class="badge color-block bg-blue-500 border">
+                                        {!! sprintf(__('settings-xguard-amount'), $response[0]['amount']) !!}
+
+                                            </span>
                                 <br>
                                 @if(isset($response[0]['message']) and $response[0]['message']=='access')
                                     <ul class="list-inline pt-2">
