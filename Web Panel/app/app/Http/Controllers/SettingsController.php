@@ -9,11 +9,14 @@ use Illuminate\Http\Request;
 use Auth;
 use App\Models\Settings;
 use App\Models\Traffic;
+use App\Models\Xguard;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Illuminate\Support\Process\ProcessResult;
+use Illuminate\Support\Facades\Http;
+
 
 class SettingsController extends Controller
 {
@@ -68,10 +71,51 @@ class SettingsController extends Controller
         }
         $setting = Settings::all();
         $apis =Api::all();
+        if($name=='xguard') {
+            $xguard_check = Xguard::all()->count();
+            $xguard = Xguard::all();
+            if($xguard_check>0)
+            {$email=$xguard[0]->email;}
+            else
+            {
+                $email=null;
+            }
+
+            $server_ip = $_SERVER['SERVER_ADDR'];
+            $portssh = env('PORT_SSH');
+            $post = [
+                'email' => $email,
+                'ip' => $server_ip,
+                'port' => $portssh,
+            ];
+            $ch = curl_init('https://xguard.xpanel.pro/api/validate');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+            $response = curl_exec($ch);
+            $response = json_decode($response, true);
+            curl_close($ch);
+            if(isset($response[0]['message']) and $response[0]['message']=='access')
+            {
+                DB::beginTransaction();
+                Xguard::where('email', $xguard[0]->email)->update([
+                    'port' => $response[0]['port_tunnel'],
+                    'expired' => $response[0]['end_license']
+                ]);
+                DB::commit();
+                Process::run("sed -i \"s/XGUARD=.*/XGUARD=active/g\" /var/www/html/app/.env");
+            }
+            else
+            {
+                Process::run("sed -i \"s/XGUARD=.*/XGUARD=deactive/g\" /var/www/html/app/.env");
+            }
+            return view('settings.xguard', compact('server_ip','xguard','portssh','response'));}
+
         if($name=='general') {
             $status=$setting[0]->multiuser;
+            $tls_port=$setting[0]->tls_port;
             $traffic_base=env('TRAFFIC_BASE');
-            return view('settings.general', compact('traffic_base','status'));}
+            return view('settings.general', compact('traffic_base','status','tls_port'));}
 
 
         if($name=='backup') {
@@ -130,7 +174,41 @@ class SettingsController extends Controller
         }
 
     }
+    public function change_port_ssh(Request $request)
+    {
+        $this->check();
+        $request->validate([
+            'port_ssh' => 'required|numeric',
+        ]);
 
+        exec("sudo sed -i 's/^\\s*Port\\s.*/Port {$request->port_ssh}/' /etc/ssh/sshd_config", $output, $returnVar);
+        if ($returnVar === 0) {
+            shell_exec("sed -i 's/PORT_SSH=.*/PORT_SSH={$request->port_ssh}/g' /var/www/html/app/.env");
+            shell_exec("sudo sed -i \"s/DEFAULT_HOST =.*/DEFAULT_HOST = \'127.0.0.1:{$request->port_ssh}\'/g\" /usr/local/bin/wss");
+            shell_exec("sudo sed -i \"s/connect =.*/connect = 0.0.0.0:{$request->port_ssh}/g\" /etc/stunnel/stunnel.conf");
+            shell_exec("sudo systemctl daemon-reload");
+            shell_exec("sudo systemctl enable wss");
+            shell_exec("sudo systemctl restart wss");
+            shell_exec("sudo reboot");
+        }
+        return response()->json(['message' => __('settings-port-alert-success')]);
+
+    }
+
+    public function change_port_ssh_tls(Request $request)
+    {
+        $this->check();
+        $request->validate([
+            'port_ssh_tls' => 'required|numeric',
+        ]);
+        shell_exec("sudo sed -i \"s/accept =.*/accept = {$request->port_ssh_tls}/g\" /etc/stunnel/stunnel.conf");
+        shell_exec("sudo systemctl enable stunnel4");
+        shell_exec("sudo systemctl restart stunnel4");
+        Settings::where('id', '1')->update(['tls_port' => $request->port_ssh_tls]);
+        shell_exec("sudo reboot");
+        return response()->json(['message' => __('settings-port-alert-success')]);
+
+    }
     public function update_general(Request $request)
     {
         $this->check();
@@ -143,6 +221,7 @@ class SettingsController extends Controller
             'status_multiuser'=>'string',
             'status_day'=>'string',
             'status_log'=>'string',
+            'anti_user'=>'string',
         ]);
         $traffic_base_old=env('TRAFFIC_BASE');
         $traffic_base_new=$request->trafficbase;
@@ -194,6 +273,15 @@ class SettingsController extends Controller
         {
             $status_log='active';
         }
+        if (empty($request->anti_user) or $request->anti_user=='deactive')
+        {
+            $anti_user='deactive';
+        }
+        else
+        {
+            $anti_user='active';
+        }
+        Process::run("sed -i \"s/ANTI_USER=.*/ANTI_USER=$anti_user/g\" /var/www/html/app/.env");
         Process::run("sed -i \"s/STATUS_LOG=.*/STATUS_LOG=$status_log/g\" /var/www/html/app/.env");
         Process::run("sed -i \"s/CRON_TRAFFIC=.*/CRON_TRAFFIC=$status_traffic/g\" /var/www/html/app/.env");
         Process::run("sed -i \"s/DAY=.*/DAY=$status_day/g\" /var/www/html/app/.env");
@@ -205,6 +293,62 @@ class SettingsController extends Controller
         return redirect()->intended(route('settings', ['name' => 'general']));
     }
 
+    public function xguard(Request $request)
+    {
+        $this->check();
+        $request->validate([
+            'email' => 'required|string',
+            'ip' => 'required|string',
+            'port' => 'required|string'
+        ]);
+
+        $check_xguard = Xguard::all()->count();
+        if($check_xguard<1)
+        {
+            DB::beginTransaction();
+            Xguard::create([
+                'email' => $request->email,
+                'domain' => '',
+                'port' => '',
+                'expired' => ''
+            ]);
+            DB::commit();
+        }
+        return view('xguard', [
+            'email' => $request->email,
+            'ip' => $request->ip,
+            'port' => $request->port,
+        ]);
+
+
+
+    }
+    public function xguard_domain(Request $request)
+    {
+        $this->check();
+        $request->validate([
+            'domain_cname' => 'required|string'
+        ]);
+
+        $xguard = Xguard::all();
+        DB::beginTransaction();
+        Xguard::where('email', $xguard[0]->email)->update([
+            'domain' => $request->domain_cname
+        ]);
+        DB::commit();
+        return redirect()->intended(route('settings', ['name' => 'xguard']));
+
+    }
+    public function delete_xguard(Request $request,$id)
+    {
+        if (!is_numeric($id)) {
+            abort(400, 'Not Valid Username');
+        }
+
+        Xguard::where('id', $id)->delete();
+
+        return redirect()->back()->with('success', 'Deleted');
+    }
     public function update_telegram(Request $request)
     {
         $this->check();

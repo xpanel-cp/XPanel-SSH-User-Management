@@ -129,6 +129,44 @@
                 </div>
 
             </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="card table-card">
+                        <div class="card-header d-flex align-items-center justify-content-between">
+                            <h5>{{__('dashboard-high-usage')}}</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover table-borderless mb-0">
+                                    <thead>
+                                    <tr>
+                                        <th>{{__('user-table-username')}}</th>
+                                        <th>{{__('user-table-traffic')}}</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach($high_usages as $val)
+                                        @if (1024 <= $val->total)
+
+                                            @php
+                                                $trafficValue = floatval($val->total);
+                                                $total = round($trafficValue / 1024, 3) . ' GB';  @endphp
+                                        @else
+                                            @php $total = $val->total . ' MB'; @endphp
+                                        @endif
+                                        <tr>
+                                            <td>{{$val->username}}</td>
+                                            <td>{{$total}}</td>
+                                        </tr>
+                                    @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!-- [ Main Content ] end -->
         </div>
     </div>

@@ -2,6 +2,8 @@
 @section('title','XPanel - '.__('user-title'))
 @section('content')
     <!-- [ Main Content ] start -->
+
+    <script src="/assets/js/clipboard.min.js"></script>
     <div class="pc-container">
         <div class="pc-content">
             <!-- [ breadcrumb ] start -->
@@ -23,13 +25,14 @@
             <div class="row">
                 <!-- [ sample-page ] start -->
                 <div class="col-sm-12">
+
                     <div class="card table-card">
                         <div class="card-body">
                             <form action="{{route('user.delete.bulk')}}" method="post" enctype="multipart/form-data"
                                   onkeydown="return event.key != 'Enter';">
                                 @csrf
 
-                                <div class="p-4 pb-0">
+                                <div class="p-4 pb-0 d-flex flex-wrap gap-2">
                                     <a href="javascript:void(0);"
                                        class="btn btn-primary d-inline-flex align-items-center"
                                        data-bs-toggle="modal"
@@ -55,8 +58,7 @@
                                         <tr>
                                             <th>#ID</th>
                                             <th>{{__('user-table-customer')}}</th>
-                                            <th>{{__('user-table-username')}}</th>
-                                            <th>{{__('user-table-password')}}</th>
+                                            <th>{{__('user-table-username')}}/{{__('user-table-password')}}</th>
                                             <th>{{__('user-table-traffic')}}</th>
                                             <th>{{__('user-table-limit-user')}}</th>
                                             <th>{{__('user-table-contact')}}</th>
@@ -70,7 +72,7 @@
                                             <th class="text-center">{{__('user-table-action')}}</th>
                                         </tr>
                                         </thead>
-                                        <tbody>
+                                        <tbody id="online-table">
                                         @php
                                             $uid = 0;
                                         @endphp
@@ -78,24 +80,9 @@
                                             @php
                                                 $uid++
                                             @endphp
-                                            @if ($user->traffic > 0)
-                                                @if (1024 <= $user->traffic)
-                                                    @php
-                                                        $trafficValue = floatval($user->traffic);
-                                                        $traffic_user = round($trafficValue / 1024,3) . ' GB';
-                                                    @endphp
-                                                @else
-                                                    @php
-                                                        $traffic_user = $user->traffic . ' MB';
-                                                    @endphp
-                                                @endif
-                                            @else
-                                                @php
-                                                    $traffic_user = 'Unlimited';
-                                                @endphp
-                                            @endif
-
                                             @foreach($user->traffics as $traffic)
+                                                @php $total_exo=$traffic->total;@endphp
+
                                                 @if (1024 <= $traffic->total)
 
                                                     @php
@@ -105,6 +92,37 @@
                                                     @php $total = $traffic->total . ' MB'; @endphp
                                                 @endif
                                             @endforeach
+
+                                            @if ($user->traffic > 0)
+                                                @if (1024 <= $user->traffic)
+                                                    @php
+                                                        $trafficValue = floatval($user->traffic);
+                                                        $traffic_user = round($trafficValue / 1024,3) . ' GB';
+                                                    @endphp
+                                                @else
+                                                    @php
+                                                        $traffic_user = $user->traffic . ' MB';
+
+                                                    @endphp
+                                                @endif
+                                                @php
+
+                                                    // تعیین مقادیر
+                                                    $value2 = $user->traffic;
+                                                    $value1 = $total_exo;
+                                                    $percentageDifference = intval(($value1 / $value2) * 100);
+                                                    $percentageBG='';
+                                                @endphp
+                                            @else
+                                                @php
+                                                    $traffic_user = 'Unlimited';
+                                                    $percentageDifference=100;
+                                                    $percentageBG='bg-success';
+
+                                                @endphp
+                                            @endif
+
+
 
                                             @if ($user->status == "active" or $user->status == "true")
                                                 @php $status = "<span class='badge bg-light-success rounded-pill f-12'>".__('user-table-status-active')."</span>"; @endphp
@@ -161,24 +179,31 @@
                                             @else
                                                 @php $daysDifference_day='Unlimit'; @endphp
                                             @endif
-
+                                            @if(!empty($user->conections))
+                                                @php $connection = $user->conections->connection; @endphp
+                                                @php $datecon = $user->conections->datecon;
+                                                if(env('APP_LOCALE', 'en')=='fa')
+                                                    {
+                                                $datecon=Verta::instance($datecon)->format('Y/m/d H:i');
+                                                }
+                                                @endphp
+                                            @else
+                                                @php $connection = '0'; @endphp
+                                                @php $datecon = ''; @endphp
+                                            @endif
                                             <tr>
                                                 <td><input name="usernamed[]" id="checkItem" type="checkbox"
                                                            class="checkItem form-check-input"
                                                            value="{{$user->username}}"/> {{$uid}}
                                                 </td>
                                                 <td>{{$customer_user}}</td>
-                                                <td>{{$user->username}}</td>
-                                                <td>{{$user->password}}</td>
-                                                <td>{{$traffic_user}}
-                                                    <br>
-                                                    <small>
+                                                <td>{{$user->username}}<br><small>{{$user->password}}</small></td>
+                                                <td><small>{{$total}} {{__('user-from')}} {{$traffic_user}}</small><br>
+                                                    <div class="progress" style="height: 7px">
+                                                        <div class="progress-bar {{$percentageBG}}" role="progressbar" style="width: {{$percentageDifference}}%" aria-valuenow="{{$percentageDifference}}" aria-valuemin="0" aria-valuemax="100"></div>
+                                                    </div></td>
 
-                                                <span
-                                                    style="background: #4a9afe; padding: 2px; color: #fff; border-radius: 5px;"><i
-                                                        class="ti ti-cloud-download"></i> {{$total}}</span>
-                                                    </small></td>
-                                                <td>{{$user->multiuser}}</td>
+                                                <td><span class="badge bg-light-secondary f-12" style="width: -webkit-fill-available;">{{$connection}} {{__('user-from')}} {{$user->multiuser}}</span></td>
                                                 <td>{{$user->mobile}}<br>
                                                     <small>{{$user->email}}</small></td>
                                                 <td>
@@ -188,18 +213,18 @@
                                                         <small>
                                                             @if(env('APP_LOCALE', 'en')=='fa')
                                                                 {{__('user-table-date-start')}}: @if(!empty($startdate))
- <span
-     style="display: inline-block;">{{Verta::instance($startdate)->format('Y-m-d')}}</span>@endif
+                                                                    <span
+                                                                        style="display: inline-block;">{{Verta::instance($startdate)->format('Y-m-d')}}</span>@endif
                                                                 <br>
                                                                 {{__('user-table-date-end')}}: @if(!empty($finishdate))
- <span
-     style="display: inline-block;">{{Verta::instance($finishdate)->format('Y-m-d')}}</span>@endif
+                                                                    <span
+                                                                        style="display: inline-block;">{{Verta::instance($finishdate)->format('Y-m-d')}}</span>@endif
                                                             @else
                                                                 {{__('user-table-date-start')}}: <span
- style="display: inline-block;">{{$startdate}}</span>
+                                                                    style="display: inline-block;">{{$startdate}}</span>
                                                                 <br>
                                                                 {{__('user-table-date-end')}}: <span
- style="display: inline-block;">{{$finishdate}}</span>
+                                                                    style="display: inline-block;">{{$finishdate}}</span>
                                                             @endif
                                                         </small>
                                                     @endif
@@ -216,16 +241,16 @@
                                                                 style="border:none" type="button"
                                                                 data-bs-toggle="dropdown" aria-haspopup="true"
                                                                 aria-expanded="false"><i
- class="ti ti-adjustments f-18"></i></button>
+                                                                    class="ti ti-adjustments f-18"></i></button>
                                                             <div class="dropdown-menu">
                                                                 <a class="dropdown-item"
-href="{{ route('user.active', ['username' => $user->username]) }}">{{__('user-table-active')}}</a>
+                                                                   href="{{ route('user.active', ['username' => $user->username]) }}">{{__('user-table-active')}}</a>
                                                                 <a class="dropdown-item"
-href="{{ route('user.deactive', ['username' => $user->username]) }}">{{__('user-table-deactive')}}</a>
+                                                                   href="{{ route('user.deactive', ['username' => $user->username]) }}">{{__('user-table-deactive')}}</a>
                                                                 <a class="dropdown-item"
-href="{{ route('user.reset', ['username' => $user->username]) }}">{{__('user-table-reset')}}</a>
+                                                                   href="{{ route('user.reset', ['username' => $user->username]) }}">{{__('user-table-reset')}}</a>
                                                                 <a class="dropdown-item"
-href="{{ route('user.delete', ['username' => $user->username]) }}">{{__('user-table-delete')}}</a>
+                                                                   href="{{ route('user.delete', ['username' => $user->username]) }}">{{__('user-table-delete')}}</a>
                                                             </div>
                                                         </li>
                                                         <li class="list-inline-item align-bottom"
@@ -246,114 +271,222 @@ href="{{ route('user.delete', ['username' => $user->username]) }}">{{__('user-ta
                                                                 <i class="ti ti-calendar-plus f-18"></i>
                                                             </a>
                                                         </li>
-                                                        <li class="list-inline-item align-bottom">
-                                                            <button
-                                                                class="avtar avtar-xs btn-link-success btn-pc-default"
-                                                                style="border:none" type="button"
-                                                                data-bs-toggle="dropdown" aria-haspopup="true"
-                                                                aria-expanded="false"><i class="ti ti-share f-18"></i>
-                                                            </button>
+                                                        <li class="list-inline-item align-bottom"
+                                                            data-bs-toggle="tooltip"
+                                                            title="{{__('detail-pop-user-togle')}}">
+                                                            <section>
+                                                                <div class="button hire{{$user->username}}">
+                                                                    <i class="bx bxs-envelope"></i>
+                                                                    <a class="avtar avtar-xs btn-link-success btn-pc-default" href="javascript:void(0);"><i class="ti ti-info-square f-18"></i></a>
+                                                                </div>
 
-                                                            <div class="dropdown-menu">
-                                                                <a href="javascript:void(0);" class="dropdown-item"
-style="border:none"
-data-clipboard="true"
-data-clipboard-text="Host:{{$websiteAddress}}&nbsp;
-Port:{{env('PORT_SSH')}}&nbsp;
+                                                                <!-- popup box start -->
+                                                                <div class="modal fade bd-example-modal-lg popup-outer popup-outer-{{$user->username}}">
+                                                                    <div class="modal-dialog modal-lg">
+                                                                        <div class="modal-content">
+                                                                            <div class="modal-header">
+                                                                                <button type="button" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                            </div>
+                                                                            <div class="modal-body">
+                                                                                <div class="row" style="margin-left:0;margin-right:0">
+
+                                                                                    <div class="col-sm-5 ms-auto">
+                                                                                        <i class="ti ti-copy"></i>{{__('detail-pop-user-config')}}
+                                                                                        <br><div class="btn-group" role="group" aria-label="button groups">
+                                                                                            <button type="button" class="btn copy-txt btn-light-secondary"
+                                                                                                    data-clipboard-text="Host:{{$sshAddress}}&nbsp;
+Port:{{$port_ssh}}&nbsp;
 Username:{{$user->username}}&nbsp;
 Password:{{$user->password}}&nbsp;
 @if (!empty($startdate))
-@if(env('APP_LOCALE', 'en')=='fa')
-StartTime:{{Verta::instance($startdate)->format('Y/m/d')}}
-@else
-StartTime:{{$startdate}}&nbsp;
+                                                                                                    @if(env('APP_LOCALE', 'en')=='fa')
+                                                                                                        StartTime:{{Verta::instance($startdate)->format('Y/m/d')}}
+                                                                                                    @else
+                                                                                                        StartTime:{{$startdate}}&nbsp;
 @endif
-@endif
-@if (!empty($finishdate))
-@if(env('APP_LOCALE', 'en')=='fa')
-EndTime:{{Verta::instance($finishdate)->format('Y/m/d')}}
-@else
-EndTime:{{$finishdate}}
-@endif  @endif">{{__('user-table-copy')}}
- (Direct)</a>
-                                                                <a href="javascript:void(0);" class="dropdown-item"
-style="border:none"
-data-clipboard="true"
-data-clipboard-text="Host:{{$websiteAddress}}&nbsp;
+                                                                                                    @endif
+                                                                                                    @if (!empty($finishdate))
+                                                                                                    @if(env('APP_LOCALE', 'en')=='fa')
+                                                                                                        EndTime:{{Verta::instance($finishdate)->format('Y/m/d')}}
+                                                                                                    @else
+                                                                                                        EndTime:{{$finishdate}}
+                                                                                                    @endif  @endif">@if($xguard_status=='active')<i class="ti ti-shield-check"></i> @endif Direct</button>
+                                                                                            <button type="button" class="btn copy-txt btn-light-secondary"
+                                                                                                    data-clipboard-text="Host:{{$websiteAddress}}&nbsp;
 TLS Port:{{$tls_port}}&nbsp;
 Username:{{$user->username}}&nbsp;
 Password:{{$user->password}}&nbsp;
 @if (!empty($startdate))
-@if(env('APP_LOCALE', 'en')=='fa')
-StartTime:{{Verta::instance($startdate)->format('Y/m/d')}}
-@else
-StartTime:{{$startdate}}&nbsp;
+                                                                                                    @if(env('APP_LOCALE', 'en')=='fa')
+                                                                                                        StartTime:{{Verta::instance($startdate)->format('Y/m/d')}}
+                                                                                                    @else
+                                                                                                        StartTime:{{$startdate}}&nbsp;
 @endif
-@endif
-@if (!empty($finishdate))
-@if(env('APP_LOCALE', 'en')=='fa')
-EndTime:{{Verta::instance($finishdate)->format('Y/m/d')}}
-@else
-EndTime:{{$finishdate}}
-@endif  @endif">{{__('user-table-copy')}} (TLS)</a>
-                                                                <a href="javascript:void(0);" class="dropdown-item"
-style="border:none"
-data-clipboard="true"
-data-clipboard-text="Host:{{$websiteAddress}}&nbsp;
+                                                                                                    @endif
+                                                                                                    @if (!empty($finishdate))
+                                                                                                    @if(env('APP_LOCALE', 'en')=='fa')
+                                                                                                        EndTime:{{Verta::instance($finishdate)->format('Y/m/d')}}
+                                                                                                    @else
+                                                                                                        EndTime:{{$finishdate}}
+                                                                                                    @endif  @endif">TLS</button>
+                                                                                            <button type="button" class="btn copy-txt btn-light-secondary"
+                                                                                                    data-clipboard-text="Host:{{$websiteAddress}}&nbsp;
 Port:{{env('PORT_DROPBEAR')}}&nbsp;
 Username:{{$user->username}}&nbsp;
 Password:{{$user->password}}&nbsp;
 @if (!empty($startdate))
-@if(env('APP_LOCALE', 'en')=='fa')
-StartTime:{{Verta::instance($startdate)->format('Y/m/d')}}
-@else
-StartTime:{{$startdate}}&nbsp;
+                                                                                                    @if(env('APP_LOCALE', 'en')=='fa')
+                                                                                                        StartTime:{{Verta::instance($startdate)->format('Y/m/d')}}
+                                                                                                    @else
+                                                                                                        StartTime:{{$startdate}}&nbsp;
 @endif
-@endif
-@if (!empty($finishdate))
-@if(env('APP_LOCALE', 'en')=='fa')
-EndTime:{{Verta::instance($finishdate)->format('Y/m/d')}}
-@else
-EndTime:{{$finishdate}}
-@endif  @endif">{{__('user-table-copy')}}
- (Dropbear)</a>
-                                                                @php
- $at="@";
-                                                                @endphp
+                                                                                                    @endif
+                                                                                                    @if (!empty($finishdate))
+                                                                                                    @if(env('APP_LOCALE', 'en')=='fa')
+                                                                                                        EndTime:{{Verta::instance($finishdate)->format('Y/m/d')}}
+                                                                                                    @else
+                                                                                                        EndTime:{{$finishdate}}
+                                                                                                    @endif  @endif">Dropbear</button>
+                                                                                        </div><br><br>
+                                                                                        <i class="ti ti-copy"></i>{{__('detail-pop-user-link')}}
+                                                                                        @php
+                                                                                            $at="@";
+                                                                                        @endphp
+                                                                                        <br><div class="btn-group" role="group" aria-label="button groups">
+                                                                                            <button type="button" class="btn btn-light-primary copy-txt"
+                                                                                                    data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$sshAddress}}:{{$port_ssh}}/#{{$user->username}}">
+                                                                                                @if($xguard_status=='active')<i class="ti ti-shield-check"></i> @endif Direct
+                                                                                            </button>
+                                                                                            <button type="button" class="btn btn-light-primary copy-txt"
+                                                                                                    data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{$tls_port}}/#{{$user->username}}">
+                                                                                                TLS
+                                                                                            </button>
+                                                                                            <button type="button" class="btn btn-light-primary copy-txt"
+                                                                                                    data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}">
+                                                                                                Dropbear
+                                                                                            </button></div>
+                                                                                        <!-- Slideshow container -->
+                                                                                        <div class="slideshow-container">
 
-                                                                <a href="javascript:void(0);" class="dropdown-item"
-style="border:none"
-data-clipboard="true"
-data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{env('PORT_SSH')}}/#{{$user->username}}">{{__('user-table-link')}}
- SSH
-                                                                </a>
-                                                                <a href="javascript:void(0);" class="dropdown-item"
-style="border:none"
-data-clipboard="true"
-data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{$tls_port}}/#{{$user->username}}">{{__('user-table-link')}}
- SSH TLS
-                                                                </a>
-                                                                <a href="javascript:void(0);" class="dropdown-item"
-style="border:none"
-data-clipboard="true"
-data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}">{{__('user-table-link')}}
- SSH Dropbear
-                                                                </a>
-                                                                <a href="javascript:void(0);" class="qrs dropdown-item"
-data-tls="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{$tls_port}}/#{{$user->username}}"
-data-id="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{env('PORT_SSH')}}/#{{$user->username}}"
-data-drop="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}"
-data-bs-toggle="modal"
-data-bs-target="#qr-modal">
- QR
-                                                                </a>
+                                                                                            <!-- Full-width images with number and caption text -->
+                                                                                            <div class="mySlides">
+                                                                                                <img style="width:100%" src="https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$sshAddress}}:{{$port_ssh}}/#{{$user->username}}&choe=UTF-8" title="{{$user->username}}" />
+                                                                                                <div class="text" style="text-align: center;">QR Scan ssh Direct</div>
+                                                                                            </div>
 
-                                                            </div>
+                                                                                            <div class="mySlides">
+                                                                                                <img style="width:100%" src="https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{$tls_port}}/#{{$user->username}}&choe=UTF-8" title="{{$user->username}}" />
+                                                                                                <div class="text" style="text-align: center;">QR Scan ssh Tls</div>
+                                                                                            </div>
+
+                                                                                            <div class="mySlides">
+                                                                                                <img style="width:100%" src="https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}&choe=UTF-8" title="{{$user->username}}" />
+                                                                                                <div class="text" style="text-align: center;">QR Scan ssh Dropbear</div>
+                                                                                            </div>
+
+                                                                                            <!-- Next and previous buttons -->
+                                                                                            <a class="next" onclick="plusSlides(-1)">&#10094;</a>
+                                                                                            <a class="prev" onclick="plusSlides(1)">&#10095;</a>
+                                                                                        </div>
+                                                                                        <br>
+
+                                                                                    </div>
+                                                                                    <div class="col-sm-7 ms-auto" style="text-align: start;">
+                                                                                        <div class="row" style="margin-left:0;margin-right:0">
+                                                                                            <div class="col-sm-6">
+                                                                                                <div class="form-group">
+                                                                                                    <div class="bg-body rounded fs-6 p-2 border text-body">
+                                                                                                        {{__('user-table-username')}}: {{$user->username}}
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-sm-6">
+                                                                                                <div class="form-group">
+                                                                                                    <div class="bg-body rounded fs-6 p-2 border text-body">
+                                                                                                        {{__('user-table-password')}}: {{$user->password}}
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-sm-12">
+                                                                                                <div class="form-group">
+                                                                                                    <div class="bg-body rounded fs-6 p-2 border text-body">
+                                                                                                        {{__('user-table-traffic')}}: {{$total}} {{__('user-from')}} {{$traffic_user}}
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-sm-12">
+                                                                                                <div class="form-group">
+                                                                                                    <div class="bg-body rounded fs-6 p-2 border text-body">
+                                                                                                        {{__('user-table-limit-user')}}: {{$connection}} {{__('user-from')}} {{$user->multiuser}}
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-sm-12">
+                                                                                                <div class="form-group">
+                                                                                                    <div class="bg-body rounded fs-6 p-2 border text-body">
+                                                                                                        {{__('detail-pop-user-connect')}}: {{$datecon}}
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-sm-12">
+                                                                                                <div class="form-group">
+                                                                                                    <div class="bg-body rounded fs-6 p-2 border text-body">
+                                                                                                        {{__('user-table-day')}}: {{$daysDifference_day}}
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-sm-12">
+                                                                                                <div class="form-group">
+                                                                                                    <div class="bg-body rounded fs-6 p-2 border text-body">
+                                                                                                        {{__('user-table-status')}}: {!! $status !!}
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div class="col-sm-12">
+                                                                                                <div class="form-group">
+                                                                                                    <div class="bg-body rounded fs-6 p-2 border text-body">
+                                                                                                        {{__('user-table-desc')}}: {{$user->desc}}
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+
+                                                                                        </div>
+
+                                                                                    </div>
+                                                                                </div>
+
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </section>
+                                                            <script>
+                                                                document.addEventListener("DOMContentLoaded", function() {
+                                                                    const hireBtn = document.querySelector(".hire{{$user->username}}");
+                                                                    const closeBtns = document.querySelectorAll(".close, .cancel");
+                                                                    const section = document.querySelector(".popup-outer-{{$user->username}}");
+                                                                    const textArea = document.querySelector("textarea");
+
+                                                                    hireBtn.addEventListener("click", function() {
+                                                                        section.classList.add("show");
+                                                                    });
+
+                                                                    closeBtns.forEach(function(btn) {
+                                                                        btn.addEventListener("click", function() {
+                                                                            section.classList.remove("show");
+                                                                            textArea.value = "";
+                                                                        });
+                                                                    });
+                                                                });
+
+                                                            </script>
                                                         </li>
 
                                                     </ul>
                                                 </td>
                                             </tr>
+
+
                                         @endforeach
                                         </tbody>
                                     </table>
@@ -364,8 +497,11 @@ data-bs-target="#qr-modal">
                 </div>
                 <!-- [ sample-page ] end -->
             </div>
+
+
             <!-- [ Main Content ] end -->
         </div>
+
     </div>
 
     <!-- qr -->
@@ -467,7 +603,6 @@ data-bs-target="#qr-modal">
             </form>
         </div>
     </div>
-
 
     <div class="modal fade" id="customer_add-modal" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
@@ -798,8 +933,90 @@ data-bs-target="#qr-modal">
             </form>
         </div>
     </div>
-    <script src="https://code.jquery.com/jquery.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const hireBtn = document.querySelector(".hireBtn");
+            const closeBtns = document.querySelectorAll(".close, .cancel");
+            const section = document.querySelector(".popup-outer");
+            const textArea = document.querySelector("textarea");
 
+            hireBtn.addEventListener("click", function() {
+                section.classList.add("show");
+            });
+
+            closeBtns.forEach(function(btn) {
+                btn.addEventListener("click", function() {
+                    section.classList.remove("show");
+                    textArea.value = "";
+                });
+            });
+        });
+
+    </script>
+    <script>
+        let slideIndex = 1;
+        showSlides(slideIndex);
+
+        function plusSlides(n) {
+            showSlides(slideIndex + n);
+        }
+
+        function currentSlide(n) {
+            showSlides(n);
+        }
+
+        function showSlides(n) {
+            let i;
+            let slides = document.getElementsByClassName("mySlides");
+            let dots = document.getElementsByClassName("dot");
+
+            if (n > slides.length) {
+                slideIndex = 1;
+            } else if (n < 1) {
+                slideIndex = slides.length;
+            } else {
+                slideIndex = n;
+            }
+
+            for (i = 0; i < slides.length; i++) {
+                slides[i].style.display = "none";
+            }
+
+            for (i = 0; i < dots.length; i++) {
+                dots[i].className = dots[i].className.replace(" active", "");
+            }
+
+            slides[slideIndex - 1].style.display = "block";
+            dots[slideIndex - 1].className += " active";
+        }
+    </script>
+
+    <script>
+        var colorBlock = new ClipboardJS('.copy-txt');
+
+        colorBlock.on('success', function (e) {
+            var targetElement = e.trigger;
+            var iconBadge = document.createElement('span');
+            iconBadge.setAttribute('class', 'ic-badge badge bg-success float-end');
+            iconBadge.innerHTML = 'Copied';
+            targetElement.append(iconBadge);
+            setTimeout(function () {
+                targetElement.removeChild(iconBadge);
+            }, 3000);
+        });
+
+        colorBlock.on('error', function (e) {
+            var targetElement = e.trigger;
+            var iconBadge = document.createElement('span');
+            iconBadge.setAttribute('class', 'ic-badge badge bg-danger float-end');
+            iconBadge.innerHTML = 'Error';
+            targetElement.append(iconBadge);
+            setTimeout(function () {
+                targetElement.removeChild(iconBadge);
+            }, 3000);
+        });
+
+    </script>
     <!-- [ Main Content ] end -->
     <script type="text/javascript">
         $(document).on("click", ".qrs", function () {
@@ -822,13 +1039,20 @@ data-bs-target="#qr-modal">
         });
     </script>
     <script>
-        $(document).ready(function () {
-            document.getElementById("btndl").disabled = true;
+        const section = document.querySelector("div"),
+            hireBtn = section.querySelector("#hireBtn"),
+            closeBtn = section.querySelectorAll("#close"),
+            textArea = section.querySelector("textarea");
+
+        hireBtn.addEventListener("click" , () =>{
+            section.classList.add("show");
         });
-        $(document).on("click", ".checkItem", function () {
 
-            document.getElementById("btndl").disabled = false;
-
+        closeBtn.forEach(cBtn => {
+            cBtn.addEventListener("click" , ()=>{
+                section.classList.remove("show");
+                textArea.value = "";
+            });
         });
     </script>
 

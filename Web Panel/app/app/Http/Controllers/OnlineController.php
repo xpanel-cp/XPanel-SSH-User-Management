@@ -170,7 +170,7 @@ class OnlineController extends Controller
         $data = [];
         $serverip = $_SERVER["SERVER_ADDR"];
         $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, "https://check-host.net/check-tcp?host=" . $serverip.":".env('PORT_SSH')."&max_nodes=50");
+        curl_setopt($ch, CURLOPT_URL, "https://check-host.net/check-tcp?host=" . $serverip.":".env('PORT_SSH')."&max_nodes=40");
         curl_setopt($ch, CURLOPT_POST, 1);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $headers = ["Accept: application/json", "Cache-Control: no-cache"];

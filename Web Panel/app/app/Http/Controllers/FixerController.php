@@ -6,6 +6,7 @@ use App\Models\Fixer;
 use App\Models\Settings;
 use App\Models\Traffic;
 use App\Models\Users;
+use App\Models\LogConnection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Process;
@@ -16,22 +17,22 @@ class FixerController extends Controller
 
     public function cronexp()
     {
-        $list = Process::run("ls /home");
-        $output = $list->output();
-        $list_user = preg_split("/\r\n|\n|\r/", $output);
-        foreach ($list_user as $us)
-        {
-            $check_user = Users::where('username', $us)->count();
-            if ($check_user < 1 && $us!='videocall' && $us!='ubuntu') {
-                Process::run("sudo killall -u {$us}");
-                Process::run("sudo pkill -u {$us}");
-                Process::run("sudo timeout 10 pkill -u {$us}");
-                Process::run("sudo timeout 10 killall -u {$us}");
-                Process::run("sudo userdel -r {$us}");
+        if(env('ANTI_USER')=='active') {
+            $list = Process::run("ls /home");
+            $output = $list->output();
+            $list_user = preg_split("/\r\n|\n|\r/", $output);
+            foreach ($list_user as $us) {
+                $check_user = Users::where('username', $us)->count();
+                if ($check_user < 1 && $us != 'videocall' && $us != 'ubuntu') {
+                    Process::run("sudo killall -u {$us}");
+                    Process::run("sudo pkill -u {$us}");
+                    Process::run("sudo timeout 10 pkill -u {$us}");
+                    Process::run("sudo timeout 10 killall -u {$us}");
+                    Process::run("sudo userdel -r {$us}");
+                }
+
             }
-
         }
-
         $users = Users::where('status', 'active')->get();
         $activeUserCount = Users::where('status', 'active')->count();
         foreach ($users as $us) {
@@ -148,6 +149,14 @@ class FixerController extends Controller
         $onlinelist = array_replace($onlinelist, array_fill_keys(array_keys($onlinelist, null), ''));
         $onlinecount = array_count_values($onlinelist);
         $onlinelist_uniq = array_unique($onlinelist);
+        $allUsersCO = LogConnection::pluck('username')->toArray();
+        foreach ($allUsersCO as $username) {
+            // اگر کاربر در لیست آنلاین نبود
+            if (!in_array($username, $onlinelist_uniq)) {
+                LogConnection::where('username', $username)->update(['connection' => 0]);
+
+            }
+        }
         foreach ($onlinelist_uniq as $useron) {
 
             $users = Users::where('username', $useron)->get();
@@ -162,8 +171,22 @@ class FixerController extends Controller
                     $end_inp = now()->addDays($finishdate_one_connect)->toDateString();
                     Users::where('username', $username)->update(['start_date' => $start_inp, 'end_date' => $end_inp]);
                 }
-
+                $UserCount = LogConnection::where('username', $username)->count();
+                $date_time=date("Y-m-d H:i");
+                if($UserCount>0)
+                {
+                    LogConnection::where('username', $username)->update(['connection' => $onlinecount[$username], 'datecon' => $date_time]);
+                }
+                else
+                {
+                    LogConnection::create([
+                        'username' => $username,
+                        'connection' => $onlinecount[$username],
+                        'datecon' => $date_time
+                    ]);
+                }
                 if ($limitation !== 0 && $onlinecount[$username] > $limitation) {
+
                     if (file_exists($jsonFilePath)) {
                         foreach ($dataArray as $item) {
                             if (isset($item['user']) && $item['user'] === $username) {

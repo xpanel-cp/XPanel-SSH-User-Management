@@ -22,5 +22,8 @@
         <li class="nav-item" role="presentation">
             <a href="wordpress" class="nav-link {{ request()->segment(3) === 'wordpress' ? 'active' : '' }}" type="button" role="tab" aria-selected="false" tabindex="-1"><i class="fab fa-wpexplorer"></i>&nbsp;&nbsp;{{__('setting-wordpress-menu')}}</a>
         </li>
+        <li class="nav-item" role="presentation">
+            <a href="xguard" class="nav-link {{ request()->segment(3) === 'xguard' ? 'active' : '' }}" type="button" role="tab" aria-selected="false" tabindex="-1"><i class="ti ti-shield"></i>&nbsp;&nbsp;{{__('settings-xguard-title')}}</a>
+        </li>
     </ul>
 </div>

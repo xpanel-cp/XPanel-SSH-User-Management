@@ -26,4 +26,8 @@ class Users extends Model
     public function traffics() {
         return $this->hasMany(Traffic::class, 'username', 'username');
     }
+    public function conections() {
+        return $this->belongsTo(LogConnection::class, 'username', 'username');
+
+    }
 }

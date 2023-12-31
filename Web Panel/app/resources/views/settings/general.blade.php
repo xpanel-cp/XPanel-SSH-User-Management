@@ -76,6 +76,30 @@
                                             </div>
                                         </div>
 
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <div class="input-group mb-3">
+                                                    <button class="btn btn-success" type="button" id="change_port_ssh">{{__('settings-port-success')}}</button>
+                                                    <input type="text" class="form-control" name="port_ssh" id="port_ssh" placeholder="Port SSH" aria-label="Example text with button addon" aria-describedby="button-addon1" value="{{env('PORT_SSH')}}">
+                                                    <small>{{__('settings-port-ssh')}}</small>
+                                                    <div id="resultssh"></div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <div class="input-group mb-3">
+                                                    <button class="btn btn-success" type="button" id="change_port_ssh_tls">{{__('settings-port-success')}}</button>
+                                                    <input type="text" class="form-control" name="port_ssh_tls" id="port_ssh_tls" placeholder="Port SSH Tls" aria-label="Example text with button addon" aria-describedby="button-addon1" value="{{$tls_port}}">
+                                                    <small>{{__('settings-port-ssh-tls')}}</small>
+                                                    <div id="resultsshtls"></div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
 
@@ -128,6 +152,17 @@
                                             </div>
                                         </div>
                                     </li>
+
+                                    <li class="list-group-item px-0 pb-0">
+                                        <div class="d-flex align-items-center justify-content-between">
+                                            <div>
+                                                <p class="mb-1">{!! __('settings-custom-user') !!}</p>
+                                            </div>
+                                            <div class="form-check form-switch p-0">
+                                                <input class="form-check-input h4 position-relative m-0" type="checkbox" role="switch" name="anti_user" id="anti_user" @if(env('ANTI_USER')=='active')value="active" checked=""@else value="deactive"@endif>
+                                            </div>
+                                        </div>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
@@ -142,6 +177,74 @@
         </div>
     </div>
     <!-- [ Main Content ] end -->
+    <!-- افزودن jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
+    <script>
+        $(document).ready(function () {
+            $('#change_port_ssh').click(function () {
+                var newPortSSH = $('#port_ssh').val();
+
+                // ارسال درخواست به سمت سرور
+                $.ajax({
+                    url: '{{ route("settings.change.port.ssh") }}',
+                    type: 'POST',
+                    data: {
+                        port_ssh: newPortSSH,
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    success: function (response) {
+                        // نمایش پاسخ در داخل یک عنصر با شناسه resultContainer
+                        $('#resultssh').html('<div class="alert alert-success d-flex align-items-center" role="alert">' +
+                            '<i class="bi flex-shrink-0 me-2 ti ti-refresh" style="font-size: 30px"></i>' +
+                            '<div><small>' + response.message + '</small></div>' +
+                            '</div>');
+                        setTimeout(function () {
+                            $('#resultssh').empty(); // یا می‌توانید از hide() استفاده کنید
+                        }, 15000);
+                    },
+                    error: function (error) {
+                        // نمایش پیام خطا در داخل یک عنصر با شناسه resultContainer
+                        $('#resultssh').text('خطا: ' + error.statusText);
+                    }
+                });
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#change_port_ssh_tls').click(function () {
+                var newPortSSHtls = $('#port_ssh_tls').val();
+
+                // ارسال درخواست به سمت سرور
+                $.ajax({
+                    url: '{{ route("settings.change.port.ssh.tls") }}',
+                    type: 'POST',
+                    data: {
+                        port_ssh_tls: newPortSSHtls,
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                    },
+                    success: function (response) {
+                        // نمایش پاسخ در داخل یک عنصر با شناسه resultContainer
+                        $('#resultsshtls').html('<div class="alert alert-success d-flex align-items-center" role="alert">' +
+                            '<i class="bi flex-shrink-0 me-2 ti ti-refresh" style="font-size: 30px"></i>' +
+                            '<div><small>' + response.message + '</small></div>' +
+                            '</div>');
+                        setTimeout(function () {
+                            $('#resultsshtls').empty(); // یا می‌توانید از hide() استفاده کنید
+                        }, 15000);
+                    },
+                    error: function (error) {
+                        // نمایش پیام خطا در داخل یک عنصر با شناسه resultContainer
+                        $('#resultsshtls').text('خطا: ' + error.statusText);
+                    }
+                });
+            });
+        });
+    </script>
 
 @endsection

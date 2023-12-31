@@ -33,6 +33,7 @@ class DahboardController extends Controller
     public function index()
     {
         $this->check();
+        $high_usages = Traffic::activeUsers()->orderBy('total', 'desc')->limit(15)->get();
         $u_online=0;
         $u_online_drop=0;
         $list = Process::run("sudo lsof -i :" . env('PORT_SSH') . " -n | grep -v root | grep ESTABLISHED");
@@ -168,7 +169,7 @@ class DahboardController extends Controller
 
         $alluser=$all_user;
         $online_user=$u_online+$u_online_drop;
-        return view('dashboard.home', compact('alluser','active_user','expired_user','traffic_user','deactive_user','online_user','cpu_free','ram_free','disk_free','traffic_total','total'));
+        return view('dashboard.home', compact('alluser','active_user','expired_user','traffic_user','deactive_user','online_user','cpu_free','ram_free','disk_free','traffic_total','total','high_usages'));
     }
 
     public function usage()

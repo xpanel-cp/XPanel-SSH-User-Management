@@ -111,6 +111,15 @@
         <div class="ms-auto">
             <ul class="list-unstyled">
                 <li class="dropdown pc-h-item">
+                    <span class="badge p-1 color-block bg-blue-500 border me-1">
+                        @if(env('APP_LOCALE')=='fa')
+                            {{verta()->format('Y/m/d')}}
+                        @else
+                            {{date("Y/m/d")}}
+                        @endif
+                    </span>
+                </li>
+                <li class="dropdown pc-h-item">
                     <span class="badge p-1 color-block bg-gray-500 border me-1">CPU Load: <span id="cpuLoad">0%</span></span>
                 </li>
 

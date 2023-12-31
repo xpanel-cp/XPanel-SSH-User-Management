@@ -57,6 +57,11 @@ Route::prefix("$panel")->group(function()
     Route::get('/settings/mod/{name}',[SettingsController::class,'mod'])->name('mod');
     Route::get('/settings/lang/{name}',[SettingsController::class,'lang'])->name('lang');
     Route::post('/settings/general',[SettingsController::class,'update_general'])->name('settings.general');
+    Route::post('/settings/change/port/ssh',[SettingsController::class,'change_port_ssh'])->name('settings.change.port.ssh');
+    Route::post('/settings/change/port/sshtls',[SettingsController::class,'change_port_ssh_tls'])->name('settings.change.port.ssh.tls');
+    Route::post('/settings/xguard',[SettingsController::class,'xguard'])->name('settings.xguard');
+    Route::post('/settings/xguard/domain',[SettingsController::class,'xguard_domain'])->name('settings.xguard.domain');
+    Route::get('/settings/xguard/delete/{id}',[SettingsController::class,'delete_xguard'])->name('settings.xguard.delete');
     Route::post('/settings/user',[SettingsController::class,'update_multiuser'])->name('settings.multiuser');
     Route::post('/settings/telegram',[SettingsController::class,'update_telegram'])->name('settings.telegram');
     Route::post('/settings/backup',[SettingsController::class,'import_old'])->name('settings.backup.old');
