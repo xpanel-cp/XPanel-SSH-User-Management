@@ -48,10 +48,13 @@
                                                         <option value="fa">فارسی</option>
                                                     @elseif(env('APP_LOCALE')=='en')
                                                         <option value="en">English</option>
+                                                    @elseif(env('APP_LOCALE')=='ru')
+                                                        <option value="en">Russian</option>
                                                     @endif
                                                     <optgroup label="------">
                                                         <option value="fa">فارسی</option>
                                                         <option value="en">English</option>
+                                                        <option value="ru">Russian</option>
                                                     </optgroup>
                                                 </select>
                                                 <small>{{__('setting-general-lang')}}</small>

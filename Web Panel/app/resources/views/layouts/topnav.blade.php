@@ -169,6 +169,10 @@
                             <i class="fas fa-language"></i>
                             <span>English</span>
                         </a>
+                        <a href="{{ route('lang', ['name' => 'ru']) }}" class="dropdown-item">
+                            <i class="fas fa-language"></i>
+                            <span>Russian</span>
+                        </a>
                     </div>
                 </li>
 

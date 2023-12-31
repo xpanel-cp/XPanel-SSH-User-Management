@@ -56,7 +56,7 @@ class SettingsController extends Controller
         if (!is_string($name)) {
             abort(400, 'Not Valid Username');
         }
-        if($name=='fa' OR $name=='en')
+        if($name=='fa' OR $name=='en' OR $name=='ru')
         {
             Process::run("sed -i \"s/APP_LOCALE=.*/APP_LOCALE=$name/g\" /var/www/html/app/.env");
         }
@@ -228,7 +228,7 @@ class SettingsController extends Controller
         $fileContents = file_get_contents('/var/www/html/app/.env');
         $newContents = str_replace("TRAFFIC_BASE=".$traffic_base_old, "TRAFFIC_BASE=".$traffic_base_new, $fileContents);
         file_put_contents('/var/www/html/app/.env', $newContents);
-        if($request->lang=='fa' OR $request->lang=='en')
+        if($request->lang=='fa' OR $request->lang=='en' OR $request->lang=='ru')
         {
             Process::run("sed -i \"s/APP_LOCALE=.*/APP_LOCALE=$request->lang/g\" /var/www/html/app/.env");
         }
