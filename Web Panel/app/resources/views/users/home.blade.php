@@ -1017,20 +1017,7 @@ Password:{{$user->password}}&nbsp;
         });
 
     </script>
-    <!-- [ Main Content ] end -->
-    <script type="text/javascript">
-        $(document).on("click", ".qrs", function () {
-            var eventId = $(this).data('id');
-            var eventIdtls = $(this).data('tls');
-            var eventIddrop = $(this).data('drop');
-            var qr = "<img src=\"https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=" + eventId + "&choe=UTF-8\" title=" + eventId + " />";
-            var qrtls = "<img src=\"https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=" + eventIdtls + "&choe=UTF-8\" title=" + eventIdtls + " />";
-            var qrdrop = "<img src=\"https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=" + eventIddrop + "&choe=UTF-8\" title=" + eventIddrop + " />";
-            $('#idHolderSSH').html(qr);
-            $('#idHolderTLS').html(qrtls);
-            $('#idHolderDROP').html(qrdrop);
-        });
-    </script>
+    <script src="https://code.jquery.com/jquery.min.js"></script>
     <script type="text/javascript">
         $(document).on("click", ".re_user", function () {
             var username = $(this).data('user');
