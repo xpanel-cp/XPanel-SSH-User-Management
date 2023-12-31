@@ -6,6 +6,7 @@ use App\Models\Settings;
 use App\Models\Traffic;
 use App\Models\Users;
 use App\Models\LogConnection;
+use App\Models\Xguard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -20,9 +21,23 @@ class UserController extends Controller
     }
     public function index()
     {
+        $xguard = Xguard::all();
+        if(env('XGUARD')=='active' AND !empty($xguard[0]->domain))
+        {
+            $xguard_status='active';
+            $sshAddress=$xguard[0]->domain;
+            $port_ssh=$xguard[0]->port;
+            $websiteAddress = $_SERVER['HTTP_HOST'];
+            $websiteAddress = parse_url($websiteAddress, PHP_URL_HOST);
+        }
+        else {
+            $xguard_status='deactive';
+            $websiteAddress = $_SERVER['HTTP_HOST'];
+            $sshAddress = parse_url($websiteAddress, PHP_URL_HOST);
+            $websiteAddress = parse_url($websiteAddress, PHP_URL_HOST);
 
-        $websiteAddress = $_SERVER['HTTP_HOST'];
-        $websiteAddress = parse_url($websiteAddress, PHP_URL_HOST);
+            $port_ssh=env('PORT_SSH');
+        }
 
         $user = Auth::user();
         $password_auto = Str::random(8);
@@ -34,8 +49,7 @@ class UserController extends Controller
             $users = Users::where('customer_user', $user->username)->orderby('id', 'desc')->get();
         }
         $settings = Settings::all();
-
-        return view('users.home', compact('users', 'settings','password_auto','websiteAddress'));
+        return view('users.home', compact('users', 'settings','password_auto','websiteAddress','port_ssh','sshAddress','xguard_status'));
     }
     public function create()
     {
