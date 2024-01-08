@@ -201,6 +201,7 @@
     "detail-pop-user-link": "Copy Connection Link",
     "detail-pop-user-connect": "Last Connection",
     "detail-pop-user-togle": "Details",
+    "detail-pop-user-next": "Next",
     "user-from": "from",
     "settings-port-ssh": "By changing the connection port, the server will reboot once.",
     "settings-port-ssh-tls": "By changing the TLS connection port, the server will reboot once.",

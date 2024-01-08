@@ -203,6 +203,7 @@
     "detail-pop-user-link": "کپی لینک اتصال",
     "detail-pop-user-connect": "آخرین اتصال",
     "detail-pop-user-togle": "اطلاعات",
+    "detail-pop-user-next": "بعدی",
     "user-from": "از",
     "settings-port-ssh": "با تغییر پورت اتصال، سرور یکبار ریبوت خواهد شد",
     "settings-port-ssh-tls": "با تغییر پورت اتصالTLS، سرور یکبار ریبوت خواهد شد",

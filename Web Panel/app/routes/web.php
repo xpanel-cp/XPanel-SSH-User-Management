@@ -38,6 +38,8 @@ Route::prefix("$panel")->group(function()
     Route::get('/dashboard',[DahboardController::class,'index'])->name('dashboard');
     Route::get('/dashboard/usage',[DahboardController::class,'usage'])->name('usage');
     Route::get('/users',[UserController::class,'index'])->name('users');
+    Route::get('/users/sort/{status}',[UserController::class,'index_sort'])->name('users.sort');
+    Route::get('/users/qr/{data}',[UserController::class,'generateQRCode'])->name('qrimg');
     Route::post('/users',[UserController::class,'newuser'])->name('new.user');
     Route::post('/users/bulk',[UserController::class,'bulkuser'])->name('new.bulkuser');
     Route::get('/user/active/{username}',[UserController::class,'activeuser'])->name('user.active');

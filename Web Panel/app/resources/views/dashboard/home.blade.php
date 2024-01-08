@@ -92,28 +92,36 @@
                             </div>
                             <div class="row g-3 text-center">
                                 <div class="col-6 col-lg-3 col-xxl-3">
-                                    <div class="overview-product-legends">
-                                        <p class="text-dark mb-1"><span>{{__('dashboard-active-user')}}</span></p>
-                                        <h6 class="mb-0">{{$active_user}}</h6>
-                                    </div>
+                                    <a href="{{ route('users.sort', ['status' => 'active']) }}">
+                                        <div class="overview-product-legends">
+                                            <p class="text-dark mb-1"><i class="ti ti-filter"></i> <span>{{__('dashboard-active-user')}}</span></p>
+                                            <h6 class="mb-0">{{$active_user}}</h6>
+                                        </div>
+                                    </a>
                                 </div>
                                 <div class="col-6 col-lg-3 col-xxl-3">
-                                    <div class="overview-product-legends">
-                                        <p class="text-dark mb-1"><span>{{__('dashboard-expired-user')}}</span></p>
-                                        <h6 class="mb-0">{{$expired_user}}</h6>
-                                    </div>
+                                    <a href="{{ route('users.sort', ['status' => 'expired']) }}">
+                                        <div class="overview-product-legends">
+                                            <p class="text-dark mb-1"><i class="ti ti-filter"></i> <span>{{__('dashboard-expired-user')}}</span></p>
+                                            <h6 class="mb-0">{{$expired_user}}</h6>
+                                        </div>
+                                    </a>
                                 </div>
                                 <div class="col-6 col-lg-3 col-xxl-3">
-                                    <div class="overview-product-legends">
-                                        <p class="text-dark mb-1"><span>{{__('dashboard-traffic-user')}}</span></p>
-                                        <h6 class="mb-0">{{$traffic_user}}</h6>
-                                    </div>
+                                    <a href="{{ route('users.sort', ['status' => 'traffic']) }}">
+                                        <div class="overview-product-legends">
+                                            <p class="text-dark mb-1"><i class="ti ti-filter"></i> <span>{{__('dashboard-traffic-user')}}</span></p>
+                                            <h6 class="mb-0">{{$traffic_user}}</h6>
+                                        </div>
+                                    </a>
                                 </div>
                                 <div class="col-6 col-lg-3 col-xxl-3">
-                                    <div class="overview-product-legends">
-                                        <p class="text-dark mb-1"><span>{{__('dashboard-deactive-user')}}</span></p>
-                                        <h6 class="mb-0">{{$deactive_user}}</h6>
-                                    </div>
+                                    <a href="{{ route('users.sort', ['status' => 'deactive']) }}">
+                                        <div class="overview-product-legends">
+                                            <p class="text-dark mb-1"><i class="ti ti-filter"></i> <span>{{__('dashboard-deactive-user')}}</span></p>
+                                            <h6 class="mb-0">{{$deactive_user}}</h6>
+                                        </div>
+                                    </a>
                                 </div>
                                 <div class="col-12 col-lg-12 col-xxl-12">
                                     <div class="overview-product-legends">
@@ -147,14 +155,11 @@
                                     </thead>
                                     <tbody>
                                     @foreach($high_usages as $val)
-                                        @if (1024 <= $val->total)
 
-                                            @php
-                                                $trafficValue = floatval($val->total);
-                                                $total = round($trafficValue / 1024, 3) . ' GB';  @endphp
-                                        @else
-                                            @php $total = $val->total . ' MB'; @endphp
-                                        @endif
+                                        @php
+                                            $trafficValue = floatval($val->total);
+                                            $total = round($trafficValue / 1024, 3) . ' GB';  @endphp
+
                                         <tr>
                                             <td>{{$val->username}}</td>
                                             <td>{{$total}}</td>

@@ -13,6 +13,7 @@
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
         "laravel/ui": "^4.2",
+        "simplesoftwareio/simple-qrcode": "^4.0",
         "symfony/process": "^6.3"
     },
     "require-dev": {

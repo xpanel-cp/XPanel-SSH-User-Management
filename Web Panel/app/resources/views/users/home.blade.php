@@ -57,7 +57,6 @@
                                         <thead>
                                         <tr>
                                             <th>#ID</th>
-                                            <th>{{__('user-table-customer')}}</th>
                                             <th>{{__('user-table-username')}}/{{__('user-table-password')}}</th>
                                             <th>{{__('user-table-traffic')}}</th>
                                             <th>{{__('user-table-limit-user')}}</th>
@@ -67,7 +66,6 @@
                                             @else
                                                 <th>{{__('user-table-date')}}</th>
                                             @endif
-                                            <th>{{__('user-table-status')}}</th>
                                             <th>{{__('user-table-desc')}}</th>
                                             <th class="text-center">{{__('user-table-action')}}</th>
                                         </tr>
@@ -190,14 +188,42 @@
                                             @else
                                                 @php $connection = '0'; @endphp
                                                 @php $datecon = ''; @endphp
+                                                @php $st_date = ''; @endphp
+                                                @php $en_date = ''; @endphp
                                             @endif
+                                            @if (!empty($startdate))
+                                                @if(env('APP_LOCALE', 'en')=='fa')
+                                                    @php $st_date="StartTime:".Verta::instance($startdate)->format('Y/m/d');@endphp
+                                                @else
+                                                    @php $st_date="StartTime:$startdate";@endphp
+                                                @endif
+                                            @endif
+                                            @if (!empty($finishdate))
+                                                @if(env('APP_LOCALE', 'en')=='fa')
+                                                    @php $en_date="EndTime:".Verta::instance($finishdate)->format('Y/m/d');@endphp
+                                                @else
+                                                    @php $en_date="EndTime:$finishdate";@endphp
+                                                @endif  @endif
                                             <tr>
                                                 <td><input name="usernamed[]" id="checkItem" type="checkbox"
                                                            class="checkItem form-check-input"
                                                            value="{{$user->username}}"/> {{$uid}}
                                                 </td>
-                                                <td>{{$customer_user}}</td>
-                                                <td>{{$user->username}}<br><small>{{$user->password}}</small></td>
+                                                <td>
+                                                    <div class="d-flex align-items-center">
+                                                        <div class="flex-grow-1 ms-3">
+                                                            <div class="row g-1">
+                                                                <div class="col-12">
+                                                                    <h6 class="mb-0">{{$user->username}}</h6>
+                                                                    <p class="text-muted mb-0"><small>{{$user->password}}</small></p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="flex-shrink-0">
+                                                            {!! $status !!}
+                                                        </div>
+                                                    </div>
+                                                </td>
                                                 <td><small>{{$total}} {{__('user-from')}} {{$traffic_user}}</small><br>
                                                     <div class="progress" style="height: 7px">
                                                         <div class="progress-bar {{$percentageBG}}" role="progressbar" style="width: {{$percentageDifference}}%" aria-valuenow="{{$percentageDifference}}" aria-valuemin="0" aria-valuemax="100"></div>
@@ -229,9 +255,8 @@
                                                         </small>
                                                     @endif
                                                 </td>
-                                                <td>{!! $status !!}</td>
                                                 <td style="width: 50px"><small>
-                                                        <div style="text-wrap: pretty;">{{$user->desc}}</div>
+                                                        <div style="text-wrap: pretty;">{{__('user-table-customer')}}:{{$customer_user}}<br>{{$user->desc}}</div>
                                                     </small></td>
                                                 <td class="text-center">
                                                     <ul class="list-inline me-auto mb-0">
@@ -253,6 +278,74 @@
                                                                    href="{{ route('user.delete', ['username' => $user->username]) }}">{{__('user-table-delete')}}</a>
                                                             </div>
                                                         </li>
+                                                        <li class="list-inline-item align-bottom">
+                                                            <button
+                                                                class="avtar avtar-xs btn-link-success btn-pc-default"
+                                                                style="border:none" type="button"
+                                                                data-bs-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false"><i class="ti ti-share f-18"></i>
+                                                            </button>
+
+                                                            <div class="dropdown-menu">
+                                                                <a href="javascript:void(0);" class="dropdown-item copy-txt"
+                                                                   style="border:none"
+                                                                   data-clipboard="true"
+                                                                   data-clipboard-text="Host:{{$websiteAddress}}&nbsp;
+Port:{{env('PORT_SSH')}}&nbsp;
+Username:{{$user->username}}&nbsp;
+Password:{{$user->password}}&nbsp;
+{{$st_date}}
+{{$en_date}}
+">{{__('user-table-copy')}}
+                                                                    (Direct)</a>
+                                                                <a href="javascript:void(0);" class="dropdown-item copy-txt"
+                                                                   style="border:none"
+                                                                   data-clipboard="true"
+                                                                   data-clipboard-text="Host:{{$websiteAddress}}&nbsp;
+TLS Port:{{$tls_port}}&nbsp;
+Username:{{$user->username}}&nbsp;
+Password:{{$user->password}}&nbsp;
+{{$st_date}}
+{{$en_date}}
+">{{__('user-table-copy')}} (TLS)</a>
+                                                                <a href="javascript:void(0);" class="dropdown-item copy-txt"
+                                                                   style="border:none"
+                                                                   data-clipboard="true"
+                                                                   data-clipboard-text="Host:{{$websiteAddress}}&nbsp;
+Port:{{env('PORT_DROPBEAR')}}&nbsp;
+Username:{{$user->username}}&nbsp;
+Password:{{$user->password}}&nbsp;
+{{$st_date}}
+{{$en_date}}
+">{{__('user-table-copy')}}
+                                                                    (Dropbear)</a>
+                                                                @php
+                                                                    $at="@";
+                                                                @endphp
+
+                                                                <a href="javascript:void(0);" class="dropdown-item copy-txt"
+                                                                   style="border:none"
+                                                                   data-clipboard="true"
+                                                                   data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{env('PORT_SSH')}}/#{{$user->username}}">{{__('user-table-link')}}
+                                                                    SSH
+                                                                </a>
+                                                                <a href="javascript:void(0);" class="dropdown-item copy-txt"
+                                                                   style="border:none"
+                                                                   data-clipboard="true"
+                                                                   data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{$tls_port}}/#{{$user->username}}">{{__('user-table-link')}}
+                                                                    SSH TLS
+                                                                </a>
+                                                                <a href="javascript:void(0);" class="dropdown-item copy-txt"
+                                                                   style="border:none"
+                                                                   data-clipboard="true"
+                                                                   data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}">{{__('user-table-link')}}
+                                                                    SSH Dropbear
+                                                                </a>
+
+
+                                                            </div>
+                                                        </li>
+
                                                         <li class="list-inline-item align-bottom"
                                                             data-bs-toggle="tooltip"
                                                             title="{{__('user-table-tog-edit')}}">
@@ -274,218 +367,211 @@
                                                         <li class="list-inline-item align-bottom"
                                                             data-bs-toggle="tooltip"
                                                             title="{{__('detail-pop-user-togle')}}">
-                                                            <section>
-                                                                <div class="button hire{{$user->username}}">
-                                                                    <i class="bx bxs-envelope"></i>
-                                                                    <a class="avtar avtar-xs btn-link-success btn-pc-default" href="javascript:void(0);"><i class="ti ti-info-square f-18"></i></a>
-                                                                </div>
-
-                                                                <!-- popup box start -->
-                                                                <div class="modal fade bd-example-modal-lg popup-outer popup-outer-{{$user->username}}">
-                                                                    <div class="modal-dialog modal-lg">
-                                                                        <div class="modal-content">
-                                                                            <div class="modal-header">
-                                                                                <button type="button" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                                            </div>
-                                                                            <div class="modal-body">
-                                                                                <div class="row" style="margin-left:0;margin-right:0">
-
-                                                                                    <div class="col-sm-5 ms-auto">
-                                                                                        <i class="ti ti-copy"></i>{{__('detail-pop-user-config')}}
-                                                                                        <br><div class="btn-group" role="group" aria-label="button groups">
-                                                                                            <button type="button" class="btn copy-txt btn-light-secondary"
-                                                                                                    data-clipboard-text="Host:{{$sshAddress}}&nbsp;
-Port:{{$port_ssh}}&nbsp;
-Username:{{$user->username}}&nbsp;
-Password:{{$user->password}}&nbsp;
-@if (!empty($startdate))
-                                                                                                    @if(env('APP_LOCALE', 'en')=='fa')
-                                                                                                        StartTime:{{Verta::instance($startdate)->format('Y/m/d')}}
-                                                                                                    @else
-                                                                                                        StartTime:{{$startdate}}&nbsp;
-@endif
-                                                                                                    @endif
-                                                                                                    @if (!empty($finishdate))
-                                                                                                    @if(env('APP_LOCALE', 'en')=='fa')
-                                                                                                        EndTime:{{Verta::instance($finishdate)->format('Y/m/d')}}
-                                                                                                    @else
-                                                                                                        EndTime:{{$finishdate}}
-                                                                                                    @endif  @endif">@if($xguard_status=='active')<i class="ti ti-shield-check"></i> @endif Direct</button>
-                                                                                            <button type="button" class="btn copy-txt btn-light-secondary"
-                                                                                                    data-clipboard-text="Host:{{$websiteAddress}}&nbsp;
-TLS Port:{{$tls_port}}&nbsp;
-Username:{{$user->username}}&nbsp;
-Password:{{$user->password}}&nbsp;
-@if (!empty($startdate))
-                                                                                                    @if(env('APP_LOCALE', 'en')=='fa')
-                                                                                                        StartTime:{{Verta::instance($startdate)->format('Y/m/d')}}
-                                                                                                    @else
-                                                                                                        StartTime:{{$startdate}}&nbsp;
-@endif
-                                                                                                    @endif
-                                                                                                    @if (!empty($finishdate))
-                                                                                                    @if(env('APP_LOCALE', 'en')=='fa')
-                                                                                                        EndTime:{{Verta::instance($finishdate)->format('Y/m/d')}}
-                                                                                                    @else
-                                                                                                        EndTime:{{$finishdate}}
-                                                                                                    @endif  @endif">TLS</button>
-                                                                                            <button type="button" class="btn copy-txt btn-light-secondary"
-                                                                                                    data-clipboard-text="Host:{{$websiteAddress}}&nbsp;
-Port:{{env('PORT_DROPBEAR')}}&nbsp;
-Username:{{$user->username}}&nbsp;
-Password:{{$user->password}}&nbsp;
-@if (!empty($startdate))
-                                                                                                    @if(env('APP_LOCALE', 'en')=='fa')
-                                                                                                        StartTime:{{Verta::instance($startdate)->format('Y/m/d')}}
-                                                                                                    @else
-                                                                                                        StartTime:{{$startdate}}&nbsp;
-@endif
-                                                                                                    @endif
-                                                                                                    @if (!empty($finishdate))
-                                                                                                    @if(env('APP_LOCALE', 'en')=='fa')
-                                                                                                        EndTime:{{Verta::instance($finishdate)->format('Y/m/d')}}
-                                                                                                    @else
-                                                                                                        EndTime:{{$finishdate}}
-                                                                                                    @endif  @endif">Dropbear</button>
-                                                                                        </div><br><br>
-                                                                                        <i class="ti ti-copy"></i>{{__('detail-pop-user-link')}}
-                                                                                        @php
-                                                                                            $at="@";
-                                                                                        @endphp
-                                                                                        <br><div class="btn-group" role="group" aria-label="button groups">
-                                                                                            <button type="button" class="btn btn-light-primary copy-txt"
-                                                                                                    data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$sshAddress}}:{{$port_ssh}}/#{{$user->username}}">
-                                                                                                @if($xguard_status=='active')<i class="ti ti-shield-check"></i> @endif Direct
-                                                                                            </button>
-                                                                                            <button type="button" class="btn btn-light-primary copy-txt"
-                                                                                                    data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{$tls_port}}/#{{$user->username}}">
-                                                                                                TLS
-                                                                                            </button>
-                                                                                            <button type="button" class="btn btn-light-primary copy-txt"
-                                                                                                    data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}">
-                                                                                                Dropbear
-                                                                                            </button></div>
-                                                                                        <!-- Slideshow container -->
-                                                                                        <div class="slideshow-container">
-
-                                                                                            <!-- Full-width images with number and caption text -->
-                                                                                            <div class="mySlides">
-                                                                                                <img style="width:100%" src="https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$sshAddress}}:{{$port_ssh}}/#{{$user->username}}&choe=UTF-8" title="{{$user->username}}" />
-                                                                                                <div class="text" style="text-align: center;">QR Scan ssh Direct</div>
-                                                                                            </div>
-
-                                                                                            <div class="mySlides">
-                                                                                                <img style="width:100%" src="https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{$tls_port}}/#{{$user->username}}&choe=UTF-8" title="{{$user->username}}" />
-                                                                                                <div class="text" style="text-align: center;">QR Scan ssh Tls</div>
-                                                                                            </div>
-
-                                                                                            <div class="mySlides">
-                                                                                                <img style="width:100%" src="https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl=ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}&choe=UTF-8" title="{{$user->username}}" />
-                                                                                                <div class="text" style="text-align: center;">QR Scan ssh Dropbear</div>
-                                                                                            </div>
-
-                                                                                            <!-- Next and previous buttons -->
-                                                                                            <a class="next" onclick="plusSlides(-1)">&#10094;</a>
-                                                                                            <a class="prev" onclick="plusSlides(1)">&#10095;</a>
-                                                                                        </div>
-                                                                                        <br>
-
-                                                                                    </div>
-                                                                                    <div class="col-sm-7 ms-auto" style="text-align: start;">
-                                                                                        <div class="row" style="margin-left:0;margin-right:0">
-                                                                                            <div class="col-sm-6">
-                                                                                                <div class="form-group">
-                                                                                                    <div class="bg-body rounded fs-6 p-2 border text-body">
-                                                                                                        {{__('user-table-username')}}: {{$user->username}}
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div class="col-sm-6">
-                                                                                                <div class="form-group">
-                                                                                                    <div class="bg-body rounded fs-6 p-2 border text-body">
-                                                                                                        {{__('user-table-password')}}: {{$user->password}}
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div class="col-sm-12">
-                                                                                                <div class="form-group">
-                                                                                                    <div class="bg-body rounded fs-6 p-2 border text-body">
-                                                                                                        {{__('user-table-traffic')}}: {{$total}} {{__('user-from')}} {{$traffic_user}}
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div class="col-sm-12">
-                                                                                                <div class="form-group">
-                                                                                                    <div class="bg-body rounded fs-6 p-2 border text-body">
-                                                                                                        {{__('user-table-limit-user')}}: {{$connection}} {{__('user-from')}} {{$user->multiuser}}
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div class="col-sm-12">
-                                                                                                <div class="form-group">
-                                                                                                    <div class="bg-body rounded fs-6 p-2 border text-body">
-                                                                                                        {{__('detail-pop-user-connect')}}: {{$datecon}}
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div class="col-sm-12">
-                                                                                                <div class="form-group">
-                                                                                                    <div class="bg-body rounded fs-6 p-2 border text-body">
-                                                                                                        {{__('user-table-day')}}: {{$daysDifference_day}}
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div class="col-sm-12">
-                                                                                                <div class="form-group">
-                                                                                                    <div class="bg-body rounded fs-6 p-2 border text-body">
-                                                                                                        {{__('user-table-status')}}: {!! $status !!}
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-                                                                                            <div class="col-sm-12">
-                                                                                                <div class="form-group">
-                                                                                                    <div class="bg-body rounded fs-6 p-2 border text-body">
-                                                                                                        {{__('user-table-desc')}}: {{$user->desc}}
-                                                                                                    </div>
-                                                                                                </div>
-                                                                                            </div>
-
-                                                                                        </div>
-
-                                                                                    </div>
-                                                                                </div>
-
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </section>
-                                                            <script>
-                                                                document.addEventListener("DOMContentLoaded", function() {
-                                                                    const hireBtn = document.querySelector(".hire{{$user->username}}");
-                                                                    const closeBtns = document.querySelectorAll(".close, .cancel");
-                                                                    const section = document.querySelector(".popup-outer-{{$user->username}}");
-                                                                    const textArea = document.querySelector("textarea");
-
-                                                                    hireBtn.addEventListener("click", function() {
-                                                                        section.classList.add("show");
-                                                                    });
-
-                                                                    closeBtns.forEach(function(btn) {
-                                                                        btn.addEventListener("click", function() {
-                                                                            section.classList.remove("show");
-                                                                            textArea.value = "";
-                                                                        });
-                                                                    });
-                                                                });
-
-                                                            </script>
+                                                            <a href="javascript:void(0);"
+                                                               data-tls="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{$tls_port}}/#{{$user->username}}"
+                                                               data-id="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{env('PORT_SSH')}}/#{{$user->username}}"
+                                                               data-drop="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}"
+                                                               data-bs-toggle="modal"
+                                                               data-bs-target="#{{$user->username}}-modal"
+                                                               class="qrs  qr-container re_user avtar avtar-xs btn-link-success btn-pc-default">
+                                                                <i class="ti ti-info-square f-18"></i>
+                                                            </a>
                                                         </li>
 
                                                     </ul>
                                                 </td>
                                             </tr>
 
+                                            <!-- popup box start -->
+                                            <div id="{{$user->username}}-modal" class="modal fade">
+                                                <div class="modal-dialog modal-lg">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <button type="button" class="btn-close close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="row" style="margin-left:0;margin-right:0">
+                                                                <style>
+                                                                    #slider-container-outer-{{$user->username}} {
+                                                                        overflow: hidden;
+                                                                    }
+
+                                                                    #slider-container-{{$user->username}} {
+                                                                        display: flex;
+                                                                        flex-wrap: nowrap;
+                                                                        flex-direction: row;
+                                                                    }
+
+                                                                    /* CSS transition applied when translation of items happen */
+                                                                    .slider-container-transition-{{$user->username}} {
+                                                                        transition: transform 0.7s ease-in-out;
+                                                                    }
+
+                                                                    .slider-item-{{$user->username}} {
+                                                                        width: 100%;
+                                                                        flex-shrink: 0;
+                                                                    }
+                                                                </style>
+                                                                <div class="col-sm-5 ms-auto">
+                                                                    <div id="slider-container-outer-{{$user->username}}" style="direction: ltr">
+                                                                        <div id="slider-container-{{$user->username}}" class="slider-container-transition-{{$user->username}} qr-container" data-drop="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}">
+                                                                            <div class="slider-item-{{$user->username}}"  data-position="1">
+                                                                                <div class="idHolderSSH"></div>
+                                                                                <div class="rounded p-1 border text-center">SSH Direct</div>
+                                                                            </div>
+                                                                            <div class="slider-item-{{$user->username}}"  data-position="2">
+                                                                                <div class="idHolderTLS"></div>
+                                                                                <div class="rounded p-1 border text-center">SSH Tls</div>
+                                                                            </div>
+                                                                            <div class="slider-item-{{$user->username}}" data-position="3">
+                                                                                <div class="idHolderDROP"></div>
+                                                                                <div class="rounded p-1 border text-center">SSH Dropbear</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="text-center pt-2">
+                                                                        <button type="button" id="move-button-{{$user->username}}" class="btn btn-secondary btn-sm">{{__('detail-pop-user-next')}}</button>
+                                                                    </div>
+
+                                                                    <script>
+                                                                        const FlexSlider{{$user->username}} = {
+                                                                            // total no of items
+                                                                            num_items: document.querySelectorAll(".slider-item-{{$user->username}}").length,
+
+                                                                            // position of current item in view
+                                                                            current: 1,
+
+                                                                            init: function() {
+                                                                                // set CSS order of each item initially
+                                                                                document.querySelectorAll(".slider-item-{{$user->username}}").forEach(function(element, index) {
+                                                                                    element.style.order = index+1;
+                                                                                });
+
+                                                                                this.addEvents();
+                                                                            },
+
+                                                                            addEvents: function() {
+                                                                                var that = this;
+
+                                                                                // click on move item button
+                                                                                document.querySelector("#move-button-{{$user->username}}").addEventListener('click', () => {
+                                                                                    this.gotoNext();
+                                                                                });
+
+                                                                                // after each item slides in, slider container fires transitionend event
+                                                                                document.querySelector("#slider-container-{{$user->username}}").addEventListener('transitionend', () => {
+                                                                                    this.changeOrder();
+                                                                                });
+                                                                            },
+
+                                                                            changeOrder: function() {
+                                                                                // change current position
+                                                                                if(this.current == this.num_items)
+                                                                                    this.current = 1;
+                                                                                else
+                                                                                    this.current++;
+
+                                                                                let order = 1;
+
+                                                                                // change order from current position till last
+                                                                                for(let i=this.current; i<=this.num_items; i++) {
+                                                                                    document.querySelector(".slider-item-{{$user->username}}[data-position='" + i + "']").style.order = order;
+                                                                                    order++;
+                                                                                }
+
+                                                                                // change order from first position till current
+                                                                                for(let i=1; i<this.current; i++) {
+                                                                                    document.querySelector(".slider-item-{{$user->username}}[data-position='" + i + "']").style.order = order;
+                                                                                    order++;
+                                                                                }
+
+                                                                                // translate back to 0 from -100%
+                                                                                // we don't need transitionend to fire for this translation, so remove transition CSS
+                                                                                document.querySelector("#slider-container-{{$user->username}}").classList.remove('slider-container-transition-{{$user->username}}');
+                                                                                document.querySelector("#slider-container-{{$user->username}}").style.transform = 'translateX(0)';
+                                                                            },
+
+                                                                            gotoNext: function() {
+                                                                                // translate from 0 to -100%
+                                                                                // we need transitionend to fire for this translation, so add transition CSS
+                                                                                document.querySelector("#slider-container-{{$user->username}}").classList.add('slider-container-transition-{{$user->username}}');
+                                                                                document.querySelector("#slider-container-{{$user->username}}").style.transform = 'translateX(-100%)';
+                                                                            }
+                                                                        };
+
+                                                                        FlexSlider{{$user->username}}.init();
+                                                                    </script>
+                                                                </div>
+
+
+                                                                <div class="col-sm-7 ms-auto" style="text-align: start;">
+                                                                    <div class="row" style="margin-left:0;margin-right:0">
+                                                                        <div class="col-sm-6">
+                                                                            <div class="form-group">
+                                                                                <div class="bg-body rounded fs-6 p-2 border text-body">
+                                                                                    {{__('user-table-username')}}: {{$user->username}}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-sm-6">
+                                                                            <div class="form-group">
+                                                                                <div class="bg-body rounded fs-6 p-2 border text-body">
+                                                                                    {{__('user-table-password')}}: {{$user->password}}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-sm-12">
+                                                                            <div class="form-group">
+                                                                                <div class="bg-body rounded fs-6 p-2 border text-body">
+                                                                                    {{__('user-table-traffic')}}: {{$total}} {{__('user-from')}} {{$traffic_user}}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-sm-12">
+                                                                            <div class="form-group">
+                                                                                <div class="bg-body rounded fs-6 p-2 border text-body">
+                                                                                    {{__('user-table-limit-user')}}: {{$connection}} {{__('user-from')}} {{$user->multiuser}}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-sm-12">
+                                                                            <div class="form-group">
+                                                                                <div class="bg-body rounded fs-6 p-2 border text-body">
+                                                                                    {{__('detail-pop-user-connect')}}: {{$datecon}}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-sm-12">
+                                                                            <div class="form-group">
+                                                                                <div class="bg-body rounded fs-6 p-2 border text-body">
+                                                                                    {{__('user-table-day')}}: {{$daysDifference_day}}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-sm-12">
+                                                                            <div class="form-group">
+                                                                                <div class="bg-body rounded fs-6 p-2 border text-body">
+                                                                                    {{__('user-table-status')}}: {!! $status !!}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-sm-12">
+                                                                            <div class="form-group">
+                                                                                <div class="bg-body rounded fs-6 p-2 border text-body">
+                                                                                    {{__('user-table-desc')}}: {{$user->desc}}
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
 
                                         @endforeach
                                         </tbody>
@@ -504,22 +590,7 @@ Password:{{$user->password}}&nbsp;
 
     </div>
 
-    <!-- qr -->
-    <div class="modal fade" id="qr-modal" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-            <div class="modal-content" style="display: -webkit-inline-box; text-align: center;">
-                <div><br>
-                    SSH DIRECT<br><span id="idHolderSSH"></span>
-                </div>
-                <div><br>
-                    SSH TLS<br><span id="idHolderTLS"></span>
-                </div>
-                <div><br>
-                    SSH Dropbear<br><span id="idHolderDROP"></span>
-                </div>
-            </div>
-        </div>
-    </div>
+
     <!-- renewal -->
     <div class="modal fade" id="renewal-modal" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
@@ -933,6 +1004,8 @@ Password:{{$user->password}}&nbsp;
             </form>
         </div>
     </div>
+    <script src="/assets/js/jquery-2.2.4.min.js"></script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             const hireBtn = document.querySelector(".hireBtn");
@@ -952,43 +1025,6 @@ Password:{{$user->password}}&nbsp;
             });
         });
 
-    </script>
-    <script>
-        let slideIndex = 1;
-        showSlides(slideIndex);
-
-        function plusSlides(n) {
-            showSlides(slideIndex + n);
-        }
-
-        function currentSlide(n) {
-            showSlides(n);
-        }
-
-        function showSlides(n) {
-            let i;
-            let slides = document.getElementsByClassName("mySlides");
-            let dots = document.getElementsByClassName("dot");
-
-            if (n > slides.length) {
-                slideIndex = 1;
-            } else if (n < 1) {
-                slideIndex = slides.length;
-            } else {
-                slideIndex = n;
-            }
-
-            for (i = 0; i < slides.length; i++) {
-                slides[i].style.display = "none";
-            }
-
-            for (i = 0; i < dots.length; i++) {
-                dots[i].className = dots[i].className.replace(" active", "");
-            }
-
-            slides[slideIndex - 1].style.display = "block";
-            dots[slideIndex - 1].className += " active";
-        }
     </script>
 
     <script>
@@ -1017,7 +1053,36 @@ Password:{{$user->password}}&nbsp;
         });
 
     </script>
-    <script src="https://code.jquery.com/jquery.min.js"></script>
+    <script>
+        $(document).on("click", ".qrs", function () {
+            var container = $(this).closest('.qr-container');
+            var eventId = container.data('id');
+            var eventIdtls = container.data('tls');
+            var eventIddrop = container.data('drop');
+            container.find('.loading-container').show();
+
+            generateQRCode(eventId, '.idHolderSSH', container);
+            generateQRCode(eventIdtls, '.idHolderTLS', container);
+            generateQRCode(eventIddrop, '.idHolderDROP', container);
+        });
+
+        function generateQRCode(data, containerSelector, context) {
+            var base64Data = btoa(data);
+            $(containerSelector).html(`<div class="d-flex justify-content-center"><div class="spinner-border" role="status"><span class="sr-only">Loading...</span></div><br></div>`);
+            $.ajax({
+                url: '/{{env('PANEL_DIRECT')}}/users/qr/' + base64Data,
+                method: 'GET',
+                responseType: 'blob',
+            })
+                .done(function(response) {
+                    context.find('.loading-container').hide();
+                    $(containerSelector).html(`${response}`);
+                })
+                .fail(function(error) {
+                    console.error(error);
+                });
+        }
+    </script>
     <script type="text/javascript">
         $(document).on("click", ".re_user", function () {
             var username = $(this).data('user');
@@ -1025,22 +1090,6 @@ Password:{{$user->password}}&nbsp;
 
         });
     </script>
-    <script>
-        const section = document.querySelector("div"),
-            hireBtn = section.querySelector("#hireBtn"),
-            closeBtn = section.querySelectorAll("#close"),
-            textArea = section.querySelector("textarea");
 
-        hireBtn.addEventListener("click" , () =>{
-            section.classList.add("show");
-        });
-
-        closeBtn.forEach(cBtn => {
-            cBtn.addEventListener("click" , ()=>{
-                section.classList.remove("show");
-                textArea.value = "";
-            });
-        });
-    </script>
 
 @endsection

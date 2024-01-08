@@ -203,6 +203,7 @@
     "detail-pop-user-link": "Копировать ссылку подключения",
     "detail-pop-user-connect": "Последнее подключение",
     "detail-pop-user-togle": "Информация",
+    "detail-pop-user-next": "Далее",
     "user-from": "От",
     "settings-port-ssh": "При изменении порта подключения сервер будет перезагружен.",
     "settings-port-ssh-tls": "При изменении порта подключения по протоколу TLS сервер будет перезагружен.",

@@ -26,20 +26,19 @@
 <script src="/assets/js/fonts/custom-font.js"></script>
 @php $selectedLanguage = env('APP_MODE', 'light'); @endphp
 @if($selectedLanguage=='light')
-    <script src="/assets/js/config.js?v=3.8.8"></script>
+    <script src="/assets/js/config.js?v=3.8.9"></script>
 @elseif($selectedLanguage=='night')
-    <script src="/assets/js/config-night.js?v=3.8.8"></script>
+    <script src="/assets/js/config-night.js?v=3.8.9"></script>
 @endif
-<script src="/assets/js/plugins/tiny-slider.js"></script>
-<script src="/assets/js/pages/ac-slider.js"></script>
 <script src="/assets/js/pcoded.js"></script>
 <script src="/assets/js/plugins/feather.min.js"></script>
 <!-- [Page Specific JS] start -->
 <script src="/assets/js/plugins/simple-datatables-en-us.js"></script>
-
+<script src="/assets/js/clipboard.min.js"></script>
 <script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
 <script src="/assets/js/persian-date.js"></script>
 <script src="/assets/js/persian-datepicker.js"></script>
+
 <script type="text/javascript">
     $(document).ready(function() {
         $(".example1").persianDatepicker({
@@ -62,7 +61,7 @@
                 $("#ramUsage").text(data.ramUsage + '%');
             },
             complete: function() {
-                setTimeout(updateResourceUsage, 1000); // به صورت لحظه‌ای هر ثانیه اطلاعات را به روز کنید
+                setTimeout(updateResourceUsage, 5000); // به صورت لحظه‌ای هر ثانیه اطلاعات را به روز کنید
             }
         });
     }
@@ -70,7 +69,14 @@
     // شروع نمایش مصرف منابع
     updateResourceUsage();
 </script>
+<script>
 
+    // basic example
+    new ClipboardJS('[data-clipboard=true]').html()('success', function (e) {
+        e.clearSelection();
+        alert('Copied!');
+    });
+</script>
 <script>
     const dataTable = new simpleDatatables.DataTable('#pc-dt-simple', {
         sortable: true,
@@ -84,17 +90,6 @@
             status_log.value = "active";
         } else {
             status_log.value = "deactive";
-        }
-    });
-</script>
-
-<script type="text/javascript">
-    const anti_user = document.getElementById("anti_user");
-    anti_user.addEventListener("change", function() {
-        if (anti_user.checked) {
-            anti_user.value = "active";
-        } else {
-            anti_user.value = "deactive";
         }
     });
 </script>
@@ -129,17 +124,6 @@
         }
     });
 </script>
-<script>
-    $(document).ready(function () {
-        document.getElementById("btndl").disabled = true;
-    });
-    $(document).on("click", ".checkItem", function () {
-
-        document.getElementById("btndl").disabled = false;
-
-    });
-</script>
-
 <!-- [Page Specific JS] end -->
 </body>
 <!-- [Body] end -->

@@ -166,7 +166,7 @@ class FixerController extends Controller
                 $startdate = $row->start_date;
                 $finishdate_one_connect = $row->date_one_connect;
 
-                if (empty($startdate) && $onlinecount[$username] > 0) {
+                if (empty($startdate)) {
                     $start_inp = now()->toDateString();
                     $end_inp = now()->addDays($finishdate_one_connect)->toDateString();
                     Users::where('username', $username)->update(['start_date' => $start_inp, 'end_date' => $end_inp]);

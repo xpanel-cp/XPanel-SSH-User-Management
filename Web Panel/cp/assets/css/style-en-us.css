@@ -3789,7 +3789,10 @@ textarea.is-invalid.dataTable-input {
 }
 
 .dropdown-menu.show {
-    display: block;
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 5px;
+    font-size: 12px;
 }
 
 .dropdown-header {
@@ -18726,7 +18729,8 @@ a:not([href]) {
 }
 
 p {
-    font-size: 14px;
+    font-size: 11px;
+    font-weight: bold;
 }
 
 h6,

@@ -23,6 +23,7 @@ class Traffic extends Model
         return $query
             ->join('users', 'traffic.username', '=', 'users.username')
             ->where('users.status', 'active')
+            ->orderByRaw('CAST(traffic.total AS SIGNED) DESC')
             ->select('traffic.*');
     }
 }

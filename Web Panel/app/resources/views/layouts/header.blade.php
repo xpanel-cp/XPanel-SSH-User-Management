@@ -26,10 +26,12 @@
     <!-- [Template CSS Files] -->
     @php $selectedLanguage = env('APP_LOCALE', 'en'); @endphp
     @if($selectedLanguage=='fa')
-        <link rel="stylesheet" href="/assets/css/style-fa-ir.css?v=1" id="main-style-link" />
+        <link rel="stylesheet" href="/assets/css/style-fa-ir.css?v=3" id="main-style-link" />
     @else
-        <link rel="stylesheet" href="/assets/css/style-en-us.css?v=2" id="main-style-link" />
+        <link rel="stylesheet" href="/assets/css/style-en-us.css?v=3" id="main-style-link" />
     @endif
     <link rel="stylesheet" href="/assets/css/style-preset.css" />
     <link rel="stylesheet" href="/assets/css/persian-datepicker.css"/>
+    
+
 </head>

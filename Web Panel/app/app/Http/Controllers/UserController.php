@@ -13,14 +13,59 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Str;
 use Verta;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+
 
 class UserController extends Controller
 {
     public function __construct() {
         $this->middleware('auth:admins');
     }
+    public function generateQRCode($data)
+    {
+        $data=base64_decode($data);
+        return response(QrCode::size(300)->margin(5)->generate($data));
+    }
+    public function index_sort($status)
+    {
+        if (!empty($status) and !is_string($status)) {
+            abort(400, 'Not Valid Username');
+        }
+        $xguard = Xguard::all();
+        if(env('XGUARD')=='active' AND !empty($xguard[0]->domain))
+        {
+            $xguard_status='active';
+            $sshAddress=$xguard[0]->domain;
+            $port_ssh=$xguard[0]->port;
+            $websiteAddress = $_SERVER['HTTP_HOST'];
+            $websiteAddress = parse_url($websiteAddress, PHP_URL_HOST);
+        }
+        else {
+            $xguard_status='deactive';
+            $websiteAddress = $_SERVER['HTTP_HOST'];
+            $sshAddress = parse_url($websiteAddress, PHP_URL_HOST);
+            $websiteAddress = parse_url($websiteAddress, PHP_URL_HOST);
+
+            $port_ssh=env('PORT_SSH');
+        }
+
+        $user = Auth::user();
+        $password_auto = Str::random(8);
+        if($user->permission=='admin')
+        {
+            $users = Users::where('status',$status)->orderBy('id', 'desc')->get();
+
+        }
+        else{
+
+            $users = Users::where('status',$status)->where('customer_user', $user->username)->orderby('id', 'desc')->get();
+        }
+        $settings = Settings::all();
+        return view('users.home', compact('users', 'settings','password_auto','websiteAddress','port_ssh','sshAddress','xguard_status'));
+    }
     public function index()
     {
+
         $xguard = Xguard::all();
         if(env('XGUARD')=='active' AND !empty($xguard[0]->domain))
         {
