@@ -7,6 +7,7 @@ use App\Models\Settings;
 use App\Models\Traffic;
 use App\Models\Users;
 use App\Models\LogConnection;
+use App\Models\Xguard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Process;
@@ -98,6 +99,42 @@ class FixerController extends Controller
                 }
             }
 
+        }
+
+        $xguard_check = Xguard::all()->count();
+        $xguard = Xguard::all();
+        if($xguard_check>0)
+        {$email=$xguard[0]->email;}
+        else
+        {
+            $email=null;
+        }
+        if($xguard_check>0) {
+            $server_ip = $_SERVER['SERVER_ADDR'];
+            $portssh = env('PORT_SSH');
+            $post = [
+                'email' => $email,
+                'ip' => $server_ip,
+                'port' => $portssh,
+            ];
+            $ch = curl_init('https://xguard.xpanel.pro/api/validate');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POST, 1);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+            $response = curl_exec($ch);
+            $response = json_decode($response, true);
+            curl_close($ch);
+            if (isset($response[0]['message']) and $response[0]['message'] == 'access') {
+                DB::beginTransaction();
+                Xguard::where('email', $xguard[0]->email)->update([
+                    'port' => $response[0]['port_tunnel'],
+                    'expired' => $response[0]['end_license']
+                ]);
+                DB::commit();
+                Process::run("sed -i \"s/XGUARD=.*/XGUARD=active/g\" /var/www/html/app/.env");
+            } else {
+                Process::run("sed -i \"s/XGUARD=.*/XGUARD=deactive/g\" /var/www/html/app/.env");
+            }
         }
     }
 
