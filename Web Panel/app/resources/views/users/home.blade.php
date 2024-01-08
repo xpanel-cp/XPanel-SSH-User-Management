@@ -294,6 +294,7 @@
 Port:{{env('PORT_SSH')}}&nbsp;
 Username:{{$user->username}}&nbsp;
 Password:{{$user->password}}&nbsp;
+Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
 {{$st_date}}
 {{$en_date}}
 ">{{__('user-table-copy')}}
@@ -305,6 +306,7 @@ Password:{{$user->password}}&nbsp;
 TLS Port:{{$tls_port}}&nbsp;
 Username:{{$user->username}}&nbsp;
 Password:{{$user->password}}&nbsp;
+Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
 {{$st_date}}
 {{$en_date}}
 ">{{__('user-table-copy')}} (TLS)</a>
@@ -315,6 +317,7 @@ Password:{{$user->password}}&nbsp;
 Port:{{env('PORT_DROPBEAR')}}&nbsp;
 Username:{{$user->username}}&nbsp;
 Password:{{$user->password}}&nbsp;
+Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
 {{$st_date}}
 {{$en_date}}
 ">{{__('user-table-copy')}}
