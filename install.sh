@@ -409,6 +409,7 @@ server {
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
         fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
+        fastcgi_param PHP_VALUE "memory_limit=4096M";
     }
     location ~ /\.ht {
         deny all;
@@ -457,6 +458,7 @@ server {
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
         fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
+        fastcgi_param PHP_VALUE "memory_limit=4096M";
     }
 
     location ~ /\.ht {
@@ -503,6 +505,7 @@ server {
     location ~ \.php$ {
         include snippets/fastcgi-php.conf;
         fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
+        fastcgi_param PHP_VALUE "memory_limit=4096M";
     }
     location ~ /\.ht {
         deny all;
