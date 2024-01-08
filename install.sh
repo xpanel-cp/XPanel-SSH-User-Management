@@ -94,7 +94,7 @@ setCONFIG() {
 }
 wellcomeINSTALL() {
   echo -e "${YELLOW}************ Select XPanel Version Nginx Web Server************"
-  echo -e "${GREEN}  1)XPanel v3.8.8"
+  echo -e "${GREEN}  1)XPanel v3.8.9"
   echo -e "${GREEN}  2)XPanel v3.8.7"
   echo -e "${GREEN}  3)XPanel v3.8.6"
   echo -e "${GREEN}  4)XPanel v3.8.5"
@@ -103,7 +103,7 @@ wellcomeINSTALL() {
   read n
   if [ "$n" != "" ]; then
     if [ "$n" == "1" ]; then
-      linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-8
+      linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-9
     fi
     if [ "$n" == "2" ]; then
       linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-7
@@ -118,7 +118,7 @@ wellcomeINSTALL() {
       linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-9
     fi
   else
-    linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-8
+    linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-9
   fi
 }
 userINPU() {
@@ -611,6 +611,11 @@ checkDATABASE() {
     mysql -e "USE XPanel_plus; UPDATE admins SET username = '${adminusername}' where permission='admin';"
     mysql -e "USE XPanel_plus; UPDATE admins SET password = '${adminpassword}' where permission='admin';"
     mysql -e "USE XPanel_plus; UPDATE settings SET ssh_port = '${port}' where id='1';"
+    php artisan clear-compiled
+    php artisan cache:clear
+    php artisan config:clear
+    php artisan view:clear
+
   else
     mysql -e "USE XPanel_plus; INSERT INTO admins (username, password, permission, credit, status) VALUES ('${adminusername}', '${adminpassword}', 'admin', '', 'active');"
     home_url=$protcohttp://${defdomain}:$sshttp
@@ -619,6 +624,7 @@ checkDATABASE() {
 }
 moreCONFIG() {
   sed -i "s/PORT_SSH=.*/PORT_SSH=$port/g" /var/www/html/app/.env
+  sed -i "s/PORT_UDPGW=.*/PORT_UDPGW=$udpport/g" /var/www/html/app/.env
   sudo chown -R www-data:www-data /var/www/html/app
   crontab -r
   wait
