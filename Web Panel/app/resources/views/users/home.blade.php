@@ -274,17 +274,17 @@
                                                             @if(env('APP_LOCALE', 'en')=='fa')
                                                                 {{__('user-table-date-start')}}: @if(!empty($startdate))
                                                                     <span
-                                                                            style="display: inline-block;">{{Verta::instance($startdate)->format('Y-m-d')}}</span>@endif
+                                                                        style="display: inline-block;">{{Verta::instance($startdate)->format('Y-m-d')}}</span>@endif
                                                                 <br>
                                                                 {{__('user-table-date-end')}}: @if(!empty($finishdate))
                                                                     <span
-                                                                            style="display: inline-block;">{{Verta::instance($finishdate)->format('Y-m-d')}}</span>@endif
+                                                                        style="display: inline-block;">{{Verta::instance($finishdate)->format('Y-m-d')}}</span>@endif
                                                             @else
                                                                 {{__('user-table-date-start')}}: <span
-                                                                        style="display: inline-block;">{{$startdate}}</span>
+                                                                    style="display: inline-block;">{{$startdate}}</span>
                                                                 <br>
                                                                 {{__('user-table-date-end')}}: <span
-                                                                        style="display: inline-block;">{{$finishdate}}</span>
+                                                                    style="display: inline-block;">{{$finishdate}}</span>
                                                             @endif
                                                         </small>
                                                     @endif
@@ -296,11 +296,11 @@
                                                     <ul class="list-inline me-auto mb-0">
                                                         <li class="list-inline-item align-bottom">
                                                             <button
-                                                                    class="avtar avtar-xs btn-link-success btn-pc-default"
-                                                                    style="border:none" type="button"
-                                                                    data-bs-toggle="dropdown" aria-haspopup="true"
-                                                                    aria-expanded="false"><i
-                                                                        class="ti ti-adjustments f-18"></i></button>
+                                                                class="avtar avtar-xs btn-link-success btn-pc-default"
+                                                                style="border:none" type="button"
+                                                                data-bs-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false"><i
+                                                                    class="ti ti-adjustments f-18"></i></button>
                                                             <div class="dropdown-menu">
                                                                 <a class="dropdown-item"
                                                                    href="{{ route('user.active', ['username' => $user->username]) }}">{{__('user-table-active')}}</a>
@@ -314,10 +314,10 @@
                                                         </li>
                                                         <li class="list-inline-item align-bottom">
                                                             <button
-                                                                    class="avtar avtar-xs btn-link-success btn-pc-default"
-                                                                    style="border:none" type="button"
-                                                                    data-bs-toggle="dropdown" aria-haspopup="true"
-                                                                    aria-expanded="false"><i class="ti ti-share f-18"></i>
+                                                                class="avtar avtar-xs btn-link-success btn-pc-default"
+                                                                style="border:none" type="button"
+                                                                data-bs-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false"><i class="ti ti-share f-18"></i>
                                                             </button>
 
                                                             <div class="dropdown-menu">
@@ -611,6 +611,8 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                             </form>
                         </div>
                     </div>
+
+                    {{ $users->links() }}
                 </div>
                 <!-- [ sample-page ] end -->
             </div>
@@ -731,7 +733,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                                    onkeyup="if (/[^|a-z0-9]+/g.test(this.value)) this.value = this.value.replace(/[^-a-z0-9_]+/g,'')"
                                                    required>
                                             <small
-                                                    class="form-text text-muted">{{__('user-pop-newuser-username-desc')}}</small>
+                                                class="form-text text-muted">{{__('user-pop-newuser-username-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -746,7 +748,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                                        value="{{$password_auto}}" required>
                                             </div>
                                             <small
-                                                    class="form-text text-muted">{{__('user-pop-newuser-password-desc')}}</small>
+                                                class="form-text text-muted">{{__('user-pop-newuser-password-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -758,7 +760,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                             <input type="text" name="email" class="form-control"
                                                    placeholder="{{__('user-pop-newuser-email')}}">
                                             <small
-                                                    class="form-text text-muted">{{__('user-pop-newuser-email-desc')}}</small>
+                                                class="form-text text-muted">{{__('user-pop-newuser-email-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -770,7 +772,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                                        placeholder="{{__('user-pop-newuser-phone')}}">
                                             </div>
                                             <small
-                                                    class="form-text text-muted">{{__('user-pop-newuser-phone-desc')}}</small>
+                                                class="form-text text-muted">{{__('user-pop-newuser-phone-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -783,7 +785,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                             <input type="text" name="multiuser" class="form-control" value="1"
                                                    placeholder="{{__('user-pop-newuser-connect')}}" required>
                                             <small
-                                                    class="form-text text-muted">{{__('user-pop-newuser-connect-desc')}}</small>
+                                                class="form-text text-muted">{{__('user-pop-newuser-connect-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -795,9 +797,9 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                                        placeholder="30">
                                             </div>
                                             <small
-                                                    class="form-text text-muted">{{__('user-pop-newuser-connect-start-desc1')}}</small>
+                                                class="form-text text-muted">{{__('user-pop-newuser-connect-start-desc1')}}</small>
                                             <small
-                                                    style="color:red">{{__('user-pop-newuser-connect-start-desc2')}}</small>
+                                                style="color:red">{{__('user-pop-newuser-connect-start-desc2')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -822,7 +824,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                                        for="customCheckinl32">GB</label>
                                             </div>
                                             <small
-                                                    class="form-text text-muted">{{__('user-pop-newuser-traffic-desc')}}</small>
+                                                class="form-text text-muted">{{__('user-pop-newuser-traffic-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -831,7 +833,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                         <div class="col-lg-12">
                                             <div class="input-group">
                                                 <span class="input-group-text"><i
-                                                            class="ti ti-calendar-time"></i></span>
+                                                        class="ti ti-calendar-time"></i></span>
                                                 @if(env('APP_LOCALE', 'en')=='fa')
                                                     <input type="text" name="expdate" class="form-control example1"
                                                            autocomplete="off"/>
@@ -841,7 +843,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                                 @endif
                                             </div>
                                             <small
-                                                    class="form-text text-muted">{{__('user-pop-newuser-date-desc1')}}</small>
+                                                class="form-text text-muted">{{__('user-pop-newuser-date-desc1')}}</small>
                                             <small style="color:red">{{__('user-pop-newuser-date-desc2')}}</small>
                                         </div>
                                     </div>
@@ -893,7 +895,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                             <input type="text" name="count_user" class="form-control" value="5"
                                                    placeholder="{{__('user-pop-bulkuser-count')}}" required>
                                             <small
-                                                    class="form-text text-muted">{{__('user-pop-bulkuser-count-desc')}}</small>
+                                                class="form-text text-muted">{{__('user-pop-bulkuser-count-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -903,7 +905,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                             <input type="text" name="start_user" class="form-control" value="xpuser"
                                                    placeholder="{{__('user-pop-bulkuser-name')}}" required>
                                             <small
-                                                    class="form-text text-muted">{{__('user-pop-bulkuser-name-desc')}}</small>
+                                                class="form-text text-muted">{{__('user-pop-bulkuser-name-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -913,7 +915,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                             <input type="text" name="start_number" class="form-control" value="100"
                                                    placeholder="{{__('user-pop-bulkuser-start')}}" required>
                                             <small
-                                                    class="form-text text-muted">{{__('user-pop-bulkuser-start-desc')}}</small>
+                                                class="form-text text-muted">{{__('user-pop-bulkuser-start-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -928,7 +930,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                                        placeholder="{{__('user-pop-bulkuser-password')}}">
                                             </div>
                                             <small
-                                                    class="form-text text-muted">{{__('user-pop-bulkuser-password-desc')}}</small>
+                                                class="form-text text-muted">{{__('user-pop-bulkuser-password-desc')}}</small>
                                             <br>
                                             <div class="form-check form-check-inline">
                                                 <input type="radio" class="form-check-input input-primary"
@@ -953,7 +955,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                                        placeholder="{{__('user-pop-bulkuser-chars')}}" required>
                                             </div>
                                             <small
-                                                    class="form-text text-muted">{{__('user-pop-bulkuser-chars-desc')}}</small>
+                                                class="form-text text-muted">{{__('user-pop-bulkuser-chars-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -966,7 +968,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                             <input type="text" name="multiuser" class="form-control" value="1"
                                                    placeholder="{{__('user-pop-bulkuser-connect')}}" required>
                                             <small
-                                                    class="form-text text-muted">{{__('user-pop-bulkuser-connect-desc')}}</small>
+                                                class="form-text text-muted">{{__('user-pop-bulkuser-connect-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -978,7 +980,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                                        value="30" placeholder="30" required>
                                             </div>
                                             <small
-                                                    class="form-text text-muted">{{__('user-pop-bulkuser-date-desc1')}}</small>
+                                                class="form-text text-muted">{{__('user-pop-bulkuser-date-desc1')}}</small>
                                             <small style="color:red">{{__('user-pop-bulkuser-date-desc2')}}</small>
                                         </div>
                                     </div>
@@ -1004,7 +1006,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                                        for="customCheckinl32">GB</label>
                                             </div>
                                             <small
-                                                    class="form-text text-muted">{{__('user-pop-bulkuser-traffic')}}</small>
+                                                class="form-text text-muted">{{__('user-pop-bulkuser-traffic')}}</small>
                                         </div>
                                     </div>
                                 </div>
