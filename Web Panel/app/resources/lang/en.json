@@ -219,5 +219,13 @@
     "settings-xguard-doamin_lable": "Cname Record Type Domain Address",
     "settings-xguard-capacity": "The capacity of the anti-filter server is full",
     "settings-xguard-capacity-off": "Remaining capacity:",
-    "settings-xguard-amount": "Monthly Subscription <b>%s</b> USD"
+    "settings-xguard-amount": "Monthly Subscription <b>%s</b> USD",
+    "next": "Next",
+    "search": "Search",
+    "search-username": "Username",
+    "search-customer": "Representative",
+    "search-email": "Email",
+    "search-phone": "Phone Number",
+    "search-desc": "Description",
+    "settings-xguard-tamdid": "Subscription Renewal"
 }

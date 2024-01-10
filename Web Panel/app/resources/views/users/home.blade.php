@@ -25,6 +25,38 @@
             <div class="row">
                 <!-- [ sample-page ] start -->
                 <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>{{__('search')}}</h5>
+                        </div>
+                        <div class="card-body">
+                            <form action="{{route('users.search')}}" method="get" enctype="multipart/form-data" class="row row-cols-md-auto g-3 align-items-center">
+                                <div class="col-12">
+                                    <input type="text" name="keyword" class="form-control" id="inlineFormInputName" value="{{ request('keyword') }}" placeholder="{{__('search')}}...">
+                                </div>
+                                <div class="col-12">
+                                    <select class="form-select" id="inlineFormSelectPref" name="search_by">
+                                        <option value="username"{{ request('search_by') == 'username' ? ' selected' : '' }}>{{__('search-username')}}</option>
+                                        <option value="customer_user"{{ request('search_by') == 'customer_user' ? ' selected' : '' }}>{{__('search-customer')}}</option>
+                                        <option value="email"{{ request('search_by') == 'name' ? ' email' : '' }}>{{__('search-email')}}</option>
+                                        <option value="mobile"{{ request('search_by') == 'name' ? ' mobile' : '' }}>{{__('search-phone')}}</option>
+                                        <option value="desc"{{ request('search_by') == 'name' ? ' desc' : '' }}>{{__('search-desc')}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <select name="status" class="form-select" id="inlineFormSelectPref">
+                                        <option value="active"{{ request('status') == 'active' ? ' selected' : '' }}>{{__('user-table-status-active')}}</option>
+                                        <option value="deactive"{{ request('status') == 'deactive' ? ' selected' : '' }}>{{__('user-table-status-deactive')}}</option>
+                                        <option value="expired"{{ request('status') == 'expired' ? ' selected' : '' }}>{{__('user-table-status-exp')}}</option>
+                                        <option value="traffic"{{ request('status') == 'traffic' ? ' selected' : '' }}>{{__('user-table-status-traffic')}}</option>
+                                    </select>
+                                </div>
+                                <div class="col-12">
+                                    <button type="submit" class="btn btn-primary">{{__('search')}}</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
 
                     <div class="card table-card">
                         <div class="card-body">
@@ -50,7 +82,7 @@
                                             value="delete" name="delete">{{__('user-bulk-delete')}}
                                     </button>
                                 </div>
-
+                                <br>
 
                                 <div class="table-responsive">
                                     <table class="table table-hover" id="pc-dt-simple">
@@ -73,6 +105,7 @@
                                         <tbody id="online-table">
                                         @php
                                             $uid = 0;
+                                            $at='@';
                                         @endphp
                                         @foreach ($users as $user)
                                             @php
@@ -188,9 +221,10 @@
                                             @else
                                                 @php $connection = '0'; @endphp
                                                 @php $datecon = ''; @endphp
-                                                @php $st_date = ''; @endphp
-                                                @php $en_date = ''; @endphp
+
                                             @endif
+                                            @php $st_date = ''; @endphp
+                                            @php $en_date = ''; @endphp
                                             @if (!empty($startdate))
                                                 @if(env('APP_LOCALE', 'en')=='fa')
                                                     @php $st_date="StartTime:".Verta::instance($startdate)->format('Y/m/d');@endphp
@@ -240,17 +274,17 @@
                                                             @if(env('APP_LOCALE', 'en')=='fa')
                                                                 {{__('user-table-date-start')}}: @if(!empty($startdate))
                                                                     <span
-                                                                        style="display: inline-block;">{{Verta::instance($startdate)->format('Y-m-d')}}</span>@endif
+                                                                            style="display: inline-block;">{{Verta::instance($startdate)->format('Y-m-d')}}</span>@endif
                                                                 <br>
                                                                 {{__('user-table-date-end')}}: @if(!empty($finishdate))
                                                                     <span
-                                                                        style="display: inline-block;">{{Verta::instance($finishdate)->format('Y-m-d')}}</span>@endif
+                                                                            style="display: inline-block;">{{Verta::instance($finishdate)->format('Y-m-d')}}</span>@endif
                                                             @else
                                                                 {{__('user-table-date-start')}}: <span
-                                                                    style="display: inline-block;">{{$startdate}}</span>
+                                                                        style="display: inline-block;">{{$startdate}}</span>
                                                                 <br>
                                                                 {{__('user-table-date-end')}}: <span
-                                                                    style="display: inline-block;">{{$finishdate}}</span>
+                                                                        style="display: inline-block;">{{$finishdate}}</span>
                                                             @endif
                                                         </small>
                                                     @endif
@@ -262,11 +296,11 @@
                                                     <ul class="list-inline me-auto mb-0">
                                                         <li class="list-inline-item align-bottom">
                                                             <button
-                                                                class="avtar avtar-xs btn-link-success btn-pc-default"
-                                                                style="border:none" type="button"
-                                                                data-bs-toggle="dropdown" aria-haspopup="true"
-                                                                aria-expanded="false"><i
-                                                                    class="ti ti-adjustments f-18"></i></button>
+                                                                    class="avtar avtar-xs btn-link-success btn-pc-default"
+                                                                    style="border:none" type="button"
+                                                                    data-bs-toggle="dropdown" aria-haspopup="true"
+                                                                    aria-expanded="false"><i
+                                                                        class="ti ti-adjustments f-18"></i></button>
                                                             <div class="dropdown-menu">
                                                                 <a class="dropdown-item"
                                                                    href="{{ route('user.active', ['username' => $user->username]) }}">{{__('user-table-active')}}</a>
@@ -280,47 +314,41 @@
                                                         </li>
                                                         <li class="list-inline-item align-bottom">
                                                             <button
-                                                                class="avtar avtar-xs btn-link-success btn-pc-default"
-                                                                style="border:none" type="button"
-                                                                data-bs-toggle="dropdown" aria-haspopup="true"
-                                                                aria-expanded="false"><i class="ti ti-share f-18"></i>
+                                                                    class="avtar avtar-xs btn-link-success btn-pc-default"
+                                                                    style="border:none" type="button"
+                                                                    data-bs-toggle="dropdown" aria-haspopup="true"
+                                                                    aria-expanded="false"><i class="ti ti-share f-18"></i>
                                                             </button>
 
                                                             <div class="dropdown-menu">
                                                                 <a href="javascript:void(0);" class="dropdown-item copy-txt"
                                                                    style="border:none"
                                                                    data-clipboard="true"
-                                                                   data-clipboard-text="Host:{{$websiteAddress}}&nbsp;
-Port:{{env('PORT_SSH')}}&nbsp;
+                                                                   data-clipboard-text="Host:{{$websiteaddress}}&nbsp;
+Port:{{$port_ssh}}&nbsp;
 Username:{{$user->username}}&nbsp;
 Password:{{$user->password}}&nbsp;
 Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
-{{$st_date}}
-{{$en_date}}
-">{{__('user-table-copy')}}
+{{$st_date}}&nbsp;{{$en_date}}">{{__('user-table-copy')}}
                                                                     (Direct)</a>
                                                                 <a href="javascript:void(0);" class="dropdown-item copy-txt"
                                                                    style="border:none"
                                                                    data-clipboard="true"
-                                                                   data-clipboard-text="Host:{{$websiteAddress}}&nbsp;
+                                                                   data-clipboard-text="Host:{{$websiteaddress}}&nbsp;
 TLS Port:{{$tls_port}}&nbsp;
 Username:{{$user->username}}&nbsp;
 Password:{{$user->password}}&nbsp;
 Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
-{{$st_date}}
-{{$en_date}}
-">{{__('user-table-copy')}} (TLS)</a>
+{{$st_date}}&nbsp;{{$en_date}}">{{__('user-table-copy')}} (TLS)</a>
                                                                 <a href="javascript:void(0);" class="dropdown-item copy-txt"
                                                                    style="border:none"
                                                                    data-clipboard="true"
-                                                                   data-clipboard-text="Host:{{$websiteAddress}}&nbsp;
+                                                                   data-clipboard-text="Host:{{$websiteaddress}}&nbsp;
 Port:{{env('PORT_DROPBEAR')}}&nbsp;
 Username:{{$user->username}}&nbsp;
 Password:{{$user->password}}&nbsp;
 Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
-{{$st_date}}
-{{$en_date}}
-">{{__('user-table-copy')}}
+{{$st_date}}&nbsp;{{$en_date}}">{{__('user-table-copy')}}
                                                                     (Dropbear)</a>
                                                                 @php
                                                                     $at="@";
@@ -329,19 +357,19 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                                                 <a href="javascript:void(0);" class="dropdown-item copy-txt"
                                                                    style="border:none"
                                                                    data-clipboard="true"
-                                                                   data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{env('PORT_SSH')}}/#{{$user->username}}">{{__('user-table-link')}}
+                                                                   data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteaddress}}:{{$port_ssh}}/#{{$user->username}}">{{__('user-table-link')}}
                                                                     SSH
                                                                 </a>
                                                                 <a href="javascript:void(0);" class="dropdown-item copy-txt"
                                                                    style="border:none"
                                                                    data-clipboard="true"
-                                                                   data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{$tls_port}}/#{{$user->username}}">{{__('user-table-link')}}
+                                                                   data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteaddress}}:{{$tls_port}}/#{{$user->username}}">{{__('user-table-link')}}
                                                                     SSH TLS
                                                                 </a>
                                                                 <a href="javascript:void(0);" class="dropdown-item copy-txt"
                                                                    style="border:none"
                                                                    data-clipboard="true"
-                                                                   data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}">{{__('user-table-link')}}
+                                                                   data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteaddress}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}">{{__('user-table-link')}}
                                                                     SSH Dropbear
                                                                 </a>
 
@@ -371,9 +399,9 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                                             data-bs-toggle="tooltip"
                                                             title="{{__('detail-pop-user-togle')}}">
                                                             <a href="javascript:void(0);"
-                                                               data-tls="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{$tls_port}}/#{{$user->username}}"
-                                                               data-id="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{env('PORT_SSH')}}/#{{$user->username}}"
-                                                               data-drop="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}"
+                                                               data-tls="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteaddress}}:{{$tls_port}}/#{{$user->username}}"
+                                                               data-id="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteaddress}}:{{$port_ssh}}/#{{$user->username}}"
+                                                               data-drop="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteaddress}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}"
                                                                data-bs-toggle="modal"
                                                                data-bs-target="#{{$user->username}}-modal"
                                                                class="qrs  qr-container re_user avtar avtar-xs btn-link-success btn-pc-default">
@@ -417,7 +445,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                                                 </style>
                                                                 <div class="col-sm-5 ms-auto">
                                                                     <div id="slider-container-outer-{{$user->username}}" style="direction: ltr">
-                                                                        <div id="slider-container-{{$user->username}}" class="slider-container-transition-{{$user->username}} qr-container" data-drop="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteAddress}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}">
+                                                                        <div id="slider-container-{{$user->username}}" class="slider-container-transition-{{$user->username}} qr-container" data-drop="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteaddress}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}">
                                                                             <div class="slider-item-{{$user->username}}"  data-position="1">
                                                                                 <div class="idHolderSSH"></div>
                                                                                 <div class="rounded p-1 border text-center">SSH Direct</div>
@@ -703,7 +731,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                                    onkeyup="if (/[^|a-z0-9]+/g.test(this.value)) this.value = this.value.replace(/[^-a-z0-9_]+/g,'')"
                                                    required>
                                             <small
-                                                class="form-text text-muted">{{__('user-pop-newuser-username-desc')}}</small>
+                                                    class="form-text text-muted">{{__('user-pop-newuser-username-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -718,7 +746,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                                        value="{{$password_auto}}" required>
                                             </div>
                                             <small
-                                                class="form-text text-muted">{{__('user-pop-newuser-password-desc')}}</small>
+                                                    class="form-text text-muted">{{__('user-pop-newuser-password-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -730,7 +758,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                             <input type="text" name="email" class="form-control"
                                                    placeholder="{{__('user-pop-newuser-email')}}">
                                             <small
-                                                class="form-text text-muted">{{__('user-pop-newuser-email-desc')}}</small>
+                                                    class="form-text text-muted">{{__('user-pop-newuser-email-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -742,7 +770,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                                        placeholder="{{__('user-pop-newuser-phone')}}">
                                             </div>
                                             <small
-                                                class="form-text text-muted">{{__('user-pop-newuser-phone-desc')}}</small>
+                                                    class="form-text text-muted">{{__('user-pop-newuser-phone-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -755,7 +783,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                             <input type="text" name="multiuser" class="form-control" value="1"
                                                    placeholder="{{__('user-pop-newuser-connect')}}" required>
                                             <small
-                                                class="form-text text-muted">{{__('user-pop-newuser-connect-desc')}}</small>
+                                                    class="form-text text-muted">{{__('user-pop-newuser-connect-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -767,9 +795,9 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                                        placeholder="30">
                                             </div>
                                             <small
-                                                class="form-text text-muted">{{__('user-pop-newuser-connect-start-desc1')}}</small>
+                                                    class="form-text text-muted">{{__('user-pop-newuser-connect-start-desc1')}}</small>
                                             <small
-                                                style="color:red">{{__('user-pop-newuser-connect-start-desc2')}}</small>
+                                                    style="color:red">{{__('user-pop-newuser-connect-start-desc2')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -794,7 +822,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                                        for="customCheckinl32">GB</label>
                                             </div>
                                             <small
-                                                class="form-text text-muted">{{__('user-pop-newuser-traffic-desc')}}</small>
+                                                    class="form-text text-muted">{{__('user-pop-newuser-traffic-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -803,7 +831,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                         <div class="col-lg-12">
                                             <div class="input-group">
                                                 <span class="input-group-text"><i
-                                                        class="ti ti-calendar-time"></i></span>
+                                                            class="ti ti-calendar-time"></i></span>
                                                 @if(env('APP_LOCALE', 'en')=='fa')
                                                     <input type="text" name="expdate" class="form-control example1"
                                                            autocomplete="off"/>
@@ -813,7 +841,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                                 @endif
                                             </div>
                                             <small
-                                                class="form-text text-muted">{{__('user-pop-newuser-date-desc1')}}</small>
+                                                    class="form-text text-muted">{{__('user-pop-newuser-date-desc1')}}</small>
                                             <small style="color:red">{{__('user-pop-newuser-date-desc2')}}</small>
                                         </div>
                                     </div>
@@ -865,7 +893,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                             <input type="text" name="count_user" class="form-control" value="5"
                                                    placeholder="{{__('user-pop-bulkuser-count')}}" required>
                                             <small
-                                                class="form-text text-muted">{{__('user-pop-bulkuser-count-desc')}}</small>
+                                                    class="form-text text-muted">{{__('user-pop-bulkuser-count-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -875,7 +903,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                             <input type="text" name="start_user" class="form-control" value="xpuser"
                                                    placeholder="{{__('user-pop-bulkuser-name')}}" required>
                                             <small
-                                                class="form-text text-muted">{{__('user-pop-bulkuser-name-desc')}}</small>
+                                                    class="form-text text-muted">{{__('user-pop-bulkuser-name-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -885,7 +913,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                             <input type="text" name="start_number" class="form-control" value="100"
                                                    placeholder="{{__('user-pop-bulkuser-start')}}" required>
                                             <small
-                                                class="form-text text-muted">{{__('user-pop-bulkuser-start-desc')}}</small>
+                                                    class="form-text text-muted">{{__('user-pop-bulkuser-start-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -900,7 +928,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                                        placeholder="{{__('user-pop-bulkuser-password')}}">
                                             </div>
                                             <small
-                                                class="form-text text-muted">{{__('user-pop-bulkuser-password-desc')}}</small>
+                                                    class="form-text text-muted">{{__('user-pop-bulkuser-password-desc')}}</small>
                                             <br>
                                             <div class="form-check form-check-inline">
                                                 <input type="radio" class="form-check-input input-primary"
@@ -925,7 +953,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                                        placeholder="{{__('user-pop-bulkuser-chars')}}" required>
                                             </div>
                                             <small
-                                                class="form-text text-muted">{{__('user-pop-bulkuser-chars-desc')}}</small>
+                                                    class="form-text text-muted">{{__('user-pop-bulkuser-chars-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -938,7 +966,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                             <input type="text" name="multiuser" class="form-control" value="1"
                                                    placeholder="{{__('user-pop-bulkuser-connect')}}" required>
                                             <small
-                                                class="form-text text-muted">{{__('user-pop-bulkuser-connect-desc')}}</small>
+                                                    class="form-text text-muted">{{__('user-pop-bulkuser-connect-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -950,7 +978,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                                        value="30" placeholder="30" required>
                                             </div>
                                             <small
-                                                class="form-text text-muted">{{__('user-pop-bulkuser-date-desc1')}}</small>
+                                                    class="form-text text-muted">{{__('user-pop-bulkuser-date-desc1')}}</small>
                                             <small style="color:red">{{__('user-pop-bulkuser-date-desc2')}}</small>
                                         </div>
                                     </div>
@@ -976,7 +1004,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                                        for="customCheckinl32">GB</label>
                                             </div>
                                             <small
-                                                class="form-text text-muted">{{__('user-pop-bulkuser-traffic')}}</small>
+                                                    class="form-text text-muted">{{__('user-pop-bulkuser-traffic')}}</small>
                                         </div>
                                     </div>
                                 </div>

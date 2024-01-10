@@ -1,0 +1,12 @@
+Adding local address: 38.60.196.164
+Adding local address: fe80::4732:b2d8:fb12:1250
+Ethernet link detected
+Adding local address: 172.16.1.163
+Adding local address: fe80::45f4:13e0:d621:2caf
+Ethernet link detected
+[{"name":"unknown TCP","PID":0,"UID":0,"RX":0.000000,"TX":0.000000 }]
+[{"name":"sshd: root@pts/0","PID":852,"UID":0,"RX":0.000206,"TX":0.014931 },{"name":"unknown TCP","PID":0,"UID":0,"RX":0.000000,"TX":0.000000 }]
+[{"name":"sshd: root@pts/0","PID":852,"UID":0,"RX":0.003399,"TX":0.122034 },{"name":"nginx: worker process","PID":646,"UID":33,"RX":0.002876,"TX":0.018855 },{"name":"unknown TCP","PID":0,"UID":0,"RX":0.000000,"TX":0.000000 }]
+[{"name":"sshd: root@pts/0","PID":852,"UID":0,"RX":0.007725,"TX":0.255157 },{"name":"nginx: worker process","PID":646,"UID":33,"RX":0.004734,"TX":0.037779 },{"name":"unknown TCP","PID":0,"UID":0,"RX":0.000000,"TX":0.000000 }]
+[{"name":"sshd: root@pts/0","PID":852,"UID":0,"RX":0.008394,"TX":0.348997 },{"name":"nginx: worker process","PID":646,"UID":33,"RX":0.004734,"TX":0.037779 },{"name":"unknown TCP","PID":0,"UID":0,"RX":0.000000,"TX":0.000000 }]
+[{"name":"sshd: root@pts/0","PID":852,"UID":0,"RX":0.014626,"TX":0.556652 },{"name":"nginx: worker process","PID":646,"UID":33,"RX":0.004734,"TX":0.037779 },{"name":"unknown TCP","PID":0,"UID":0,"RX":0.000051,"TX":0.000051 }]

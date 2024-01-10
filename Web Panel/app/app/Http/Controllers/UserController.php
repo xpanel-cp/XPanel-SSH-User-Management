@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Str;
 use Verta;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Yajra\DataTables\Facades\DataTables;
+
 
 
 class UserController extends Controller
@@ -26,6 +28,54 @@ class UserController extends Controller
         $data=base64_decode($data);
         return response(QrCode::size(300)->margin(5)->generate($data));
     }
+    public function search(Request $request)
+    {
+        $keyword = $request->input('keyword');
+        $searchBy = $request->input('search_by');
+        $status = $request->input('status');
+
+        $keyword = $request->input('keyword');
+        $searchBy = $request->input('search_by');
+        $status = $request->input('status');
+
+        $query = Users::orderBy('id', 'desc');
+
+        if ($keyword) {
+            $query->where(function ($query) use ($keyword, $searchBy) {
+                $query->where($searchBy, 'like', "%$keyword%");
+            });
+        }
+
+        if ($status !== null) {
+            $query->where('status', $status);
+        }
+
+        $users = $query->paginate(25);
+
+        $xguard = Xguard::all();
+        if(env('XGUARD')=='active' AND !empty($xguard[0]->domain))
+        {
+            $xguard_status='active';
+            $sshaddress=$xguard[0]->domain;
+            $port_ssh=$xguard[0]->port;
+            $websiteaddress = $_SERVER['HTTP_HOST'];
+            $websiteaddress = parse_url($websiteaddress, PHP_URL_HOST);
+        }
+        else {
+            $xguard_status='deactive';
+            $websiteaddress = $_SERVER['HTTP_HOST'];
+            $sshaddress = parse_url($websiteaddress, PHP_URL_HOST);
+            $websiteaddress = parse_url($websiteaddress, PHP_URL_HOST);
+
+            $port_ssh=env('PORT_SSH');
+        }
+
+        $user = Auth::user();
+        $password_auto = Str::random(8);
+
+        $settings = Settings::all();
+        return view('users.home', compact('users', 'settings','password_auto','websiteaddress','port_ssh','sshaddress','xguard_status'));
+    }
     public function index_sort($status)
     {
         if (!empty($status) and !is_string($status)) {
@@ -35,16 +85,16 @@ class UserController extends Controller
         if(env('XGUARD')=='active' AND !empty($xguard[0]->domain))
         {
             $xguard_status='active';
-            $sshAddress=$xguard[0]->domain;
+            $sshaddress=$xguard[0]->domain;
             $port_ssh=$xguard[0]->port;
-            $websiteAddress = $_SERVER['HTTP_HOST'];
-            $websiteAddress = parse_url($websiteAddress, PHP_URL_HOST);
+            $websiteaddress = $_SERVER['HTTP_HOST'];
+            $websiteaddress = parse_url($websiteaddress, PHP_URL_HOST);
         }
         else {
             $xguard_status='deactive';
-            $websiteAddress = $_SERVER['HTTP_HOST'];
-            $sshAddress = parse_url($websiteAddress, PHP_URL_HOST);
-            $websiteAddress = parse_url($websiteAddress, PHP_URL_HOST);
+            $websiteaddress = $_SERVER['HTTP_HOST'];
+            $sshaddress = parse_url($websiteaddress, PHP_URL_HOST);
+            $websiteaddress = parse_url($websiteaddress, PHP_URL_HOST);
 
             $port_ssh=env('PORT_SSH');
         }
@@ -53,16 +103,84 @@ class UserController extends Controller
         $password_auto = Str::random(8);
         if($user->permission=='admin')
         {
-            $users = Users::where('status',$status)->orderBy('id', 'desc')->get();
+            $users = Users::where('status',$status)->orderBy('id', 'desc')->paginate(25);
 
         }
         else{
 
-            $users = Users::where('status',$status)->where('customer_user', $user->username)->orderby('id', 'desc')->get();
+            $users = Users::where('status',$status)->where('customer_user', $user->username)->orderby('id', 'desc')->paginate(25);
         }
         $settings = Settings::all();
-        return view('users.home', compact('users', 'settings','password_auto','websiteAddress','port_ssh','sshAddress','xguard_status'));
+        return view('users.home', compact('users', 'settings','password_auto','websiteaddress','port_ssh','sshaddress','xguard_status'));
     }
+    public function getUsersData(Request $request)
+    {
+        $xguard = Xguard::all();
+        $xguard_status = (env('XGUARD') == 'active' && !empty($xguard[0]->domain)) ? 'active' : 'deactive';
+        $sshaddress = ($xguard_status == 'active') ? $xguard[0]->domain : parse_url($_SERVER['HTTP_HOST'], PHP_URL_HOST);
+        $port_ssh = ($xguard_status == 'active') ? $xguard[0]->port : env('PORT_SSH');
+
+        $user = Auth::user();
+        $password_auto = Str::random(8);
+
+        $uid = 0; // افزودن متغیر $uid اینجا
+        $users = ($user->permission == 'admin') ? Users::orderBy('id', 'desc')->paginate(25) : Users::where('customer_user', $user->username)->orderBy('id', 'desc')->paginate(25);
+        $settings = Settings::all();
+
+        $users = $users->map(function ($user) use ($settings, &$uid) { // اضافه کردن &$uid به تابع مپ
+
+            $total_exo = 0;
+            foreach ($user->traffics as $traffic) {
+                $total_exo = $traffic->total;
+            }
+
+            $total = ($total_exo >= 1024) ? round($total_exo / 1024, 3) . ' GB' : $total_exo . ' MB';
+
+            $traffic_user = ($user->traffic > 0) ? (($user->traffic >= 1024) ? round($user->traffic / 1024, 3) . ' GB' : $user->traffic . ' MB') : 'Unlimited';
+
+            $value2 = $user->traffic;
+            $value1 = $total_exo;
+            $percentageDifference = ($value2 > 0) ? intval(($value1 / $value2) * 100) : 100;
+            $percentageBG = ($value2 > 0) ? '' : 'bg-success';
+
+            $customer_user = (empty($user->customer_user) or $user->customer_user == 'NULL') ? env('DB_USERNAME') : $user->customer_user;
+            $tls_port = (empty($settings->tls_port) or $settings->tls_port == 'NULL') ? '444' : $settings->tls_port;
+
+            $startdate = (!empty($user->start_date) and $user->start_date != 'NULL') ? $user->start_date : '';
+            $finishdate = (!empty($user->end_date) and $user->end_date != 'NULL') ? $user->end_date : '';
+
+            $today = strtotime(date("Y-m-d"));
+            $futureDate = strtotime($finishdate);
+            $daysDifference_day = ($futureDate > $today) ? round(($futureDate - $today) / (60 * 60 * 24)) : -round(($today - $futureDate) / (60 * 60 * 24));
+
+            $connection = (!empty($user->conections)) ? $user->conections->connection : '0';
+            $datecon = (!empty($user->conections) and !empty($user->conections->datecon)) ? $user->conections->datecon : '';
+
+            $st_date = (!empty($startdate)) ? (app()->getLocale() == 'fa' ? "StartTime:" . Verta::instance($startdate)->format('Y/m/d') : "StartTime:$startdate") : '';
+            $en_date = (!empty($finishdate)) ? (app()->getLocale() == 'fa' ? "EndTime:" . Verta::instance($finishdate)->format('Y/m/d') : "EndTime:$finishdate") : '';
+
+            return [
+                'uid' => ++$uid,
+                'total' => $total,
+                'traffic_user' => $traffic_user,
+                'percentageDifference' => $percentageDifference,
+                'percentageBG' => $percentageBG,
+                'status' => $user->status,
+                'customer_user' => $customer_user,
+                'tls_port' => $tls_port,
+                'startdate' => $startdate,
+                'finishdate' => $finishdate,
+                'daysDifference_day' => $daysDifference_day,
+                'connection' => $connection,
+                'datecon' => $datecon,
+                'st_date' => $st_date,
+                'en_date' => $en_date,
+            ];
+        });
+
+        return response()->json(['users' => $users, 'settings' => $settings, 'password_auto' => $password_auto, 'websiteaddress' => $sshaddress, 'port_ssh' => $port_ssh, 'xguard_status' => $xguard_status]);
+    }
+
     public function index()
     {
 
@@ -70,16 +188,16 @@ class UserController extends Controller
         if(env('XGUARD')=='active' AND !empty($xguard[0]->domain))
         {
             $xguard_status='active';
-            $sshAddress=$xguard[0]->domain;
+            $sshaddress=$xguard[0]->domain;
             $port_ssh=$xguard[0]->port;
-            $websiteAddress = $_SERVER['HTTP_HOST'];
-            $websiteAddress = parse_url($websiteAddress, PHP_URL_HOST);
+            $websiteaddress = $_SERVER['HTTP_HOST'];
+            $websiteaddress = parse_url($websiteaddress, PHP_URL_HOST);
         }
         else {
             $xguard_status='deactive';
-            $websiteAddress = $_SERVER['HTTP_HOST'];
-            $sshAddress = parse_url($websiteAddress, PHP_URL_HOST);
-            $websiteAddress = parse_url($websiteAddress, PHP_URL_HOST);
+            $websiteaddress = $_SERVER['HTTP_HOST'];
+            $sshaddress = parse_url($websiteaddress, PHP_URL_HOST);
+            $websiteaddress = parse_url($websiteaddress, PHP_URL_HOST);
 
             $port_ssh=env('PORT_SSH');
         }
@@ -88,13 +206,13 @@ class UserController extends Controller
         $password_auto = Str::random(8);
         if($user->permission=='admin')
         {
-            $users = Users::orderBy('id', 'desc')->get();
+            $users = Users::orderBy('id', 'desc')->paginate(25);
         }
         else{
-            $users = Users::where('customer_user', $user->username)->orderby('id', 'desc')->get();
+            $users = Users::where('customer_user', $user->username)->orderby('id', 'desc')->paginate(25);
         }
         $settings = Settings::all();
-        return view('users.home', compact('users', 'settings','password_auto','websiteAddress','port_ssh','sshAddress','xguard_status'));
+        return view('users.home', compact('users', 'settings','password_auto','websiteaddress','port_ssh','sshaddress','xguard_status'));
     }
     public function create()
     {

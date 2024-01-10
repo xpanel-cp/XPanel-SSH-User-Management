@@ -46,6 +46,10 @@
                                         @else
                                             <li class="list-inline-item"><span class="bg-body rounded fs-6 p-2 border text-body">Expired: <b>{{$response[0]['end_license']}}</b></span></li>
                                         @endif
+                                        <li class="list-inline-item">
+                                            <a href="https://xguard.xpanel.pro/api/repay?domain={{$response[0]['domain']}}" class="btn btn-primary color-block bg-blue-500 border" >{{__('settings-xguard-tamdid')}}</a>
+
+                                        </li>
                                     </ul><br>
                                     <div class="form-group row">
                                         <div class="col-lg-6">

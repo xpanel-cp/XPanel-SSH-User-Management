@@ -221,5 +221,13 @@
     "settings-xguard-doamin_lable": "Адрес домена типа CNAME Record",
     "settings-xguard-capacity": "Емкость сервера антифильтра заполнена",
     "settings-xguard-capacity-off": "Оставшаяся емкость:",
-    "settings-xguard-amount": "Ежемесячная подписка <b>%s</b> долларов"
+    "settings-xguard-amount": "Ежемесячная подписка <b>%s</b> долларов",
+    "next": "Следующий",
+    "search": "Поиск",
+    "search-username": "Имя пользователя",
+    "search-customer": "Представитель",
+    "search-email": "Электронная почта",
+    "search-phone": "Номер телефона",
+    "search-desc": "Описание",
+    "settings-xguard-tamdid": "Продление подписки"
 }

@@ -26,16 +26,16 @@
 <script src="/assets/js/fonts/custom-font.js"></script>
 @php $selectedLanguage = env('APP_MODE', 'light'); @endphp
 @if($selectedLanguage=='light')
-    <script src="/assets/js/config.js?v=3.8.9"></script>
+    <script src="/assets/js/config.js?v=3.9.0"></script>
 @elseif($selectedLanguage=='night')
-    <script src="/assets/js/config-night.js?v=3.8.9"></script>
+    <script src="/assets/js/config-night.js?v=3.9.0"></script>
 @endif
 <script src="/assets/js/pcoded.js"></script>
 <script src="/assets/js/plugins/feather.min.js"></script>
 <!-- [Page Specific JS] start -->
 <script src="/assets/js/plugins/simple-datatables-en-us.js"></script>
 <script src="/assets/js/clipboard.min.js"></script>
-<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="/assets/js/jquery-2.2.4.min.js"></script>
 <script src="/assets/js/persian-date.js"></script>
 <script src="/assets/js/persian-datepicker.js"></script>
 
@@ -77,12 +77,7 @@
         alert('Copied!');
     });
 </script>
-<script>
-    const dataTable = new simpleDatatables.DataTable('#pc-dt-simple', {
-        sortable: true,
-        perPage: 25
-    });
-</script>
+
 <script type="text/javascript">
     const status_log = document.getElementById("status_log");
     status_log.addEventListener("change", function() {

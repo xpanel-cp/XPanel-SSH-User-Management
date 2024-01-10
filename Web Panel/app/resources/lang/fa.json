@@ -221,5 +221,13 @@
     "settings-xguard-doamin_lable": "آدرس دامنه از نوع رکورد cname",
     "settings-xguard-capacity": "ضرفیت سرور ضد فیلتر تکمیل می باشد",
     "settings-xguard-capacity-off": "طرفیت باقی مانده:",
-    "settings-xguard-amount": "اشتراک ماهانه <b>%s</b> دلار"
+    "settings-xguard-amount": "اشتراک ماهانه <b>%s</b> دلار",
+    "next": "بعدی",
+    "search": "جستجو",
+    "search-username": "نام کاربری",
+    "search-customer": "نماینده",
+    "search-email": "ایمیل",
+    "search-phone": "شماره تماس",
+    "search-desc": "توضیحات",
+    "settings-xguard-tamdid": "تمدید اشتراک"
 }
