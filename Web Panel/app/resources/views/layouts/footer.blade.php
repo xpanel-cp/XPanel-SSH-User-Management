@@ -138,6 +138,10 @@
         lengthChange: false,
         info: false,
     });
+    const firstTh = document.querySelector('#example th:first-child');
+    if (firstTh) {
+        firstTh.setAttribute('data-sortable', 'false');
+    }
 
 </script>
 <!-- [Page Specific JS] end -->
