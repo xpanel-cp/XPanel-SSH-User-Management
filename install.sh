@@ -58,6 +58,7 @@ configSSH() {
   port=$(grep -oE 'Port [0-9]+' /etc/ssh/sshd_config | cut -d' ' -f2)
 }
 setCONFIG() {
+cp /var/www/html/example/index.php /var/www/
   # Check if MySQL is installed
   if dpkg-query -W -f='${Status}' mariadb-server 2>/dev/null | grep -q "install ok installed"; then
     adminuser=$(mysql -N -e "use XPanel_plus; select username from admins where permission='admin';")
@@ -94,7 +95,7 @@ setCONFIG() {
 }
 wellcomeINSTALL() {
   echo -e "${YELLOW}************ Select XPanel Version Nginx Web Server************"
-  echo -e "${GREEN}  1)XPanel v3.9.0"
+  echo -e "${GREEN}  1)XPanel v3.9.1"
   echo -e "${GREEN}  2)XPanel v3.8.7"
   echo -e "${GREEN}  3)XPanel v3.8.6"
   echo -e "${GREEN}  4)XPanel v3.8.5"
@@ -103,7 +104,7 @@ wellcomeINSTALL() {
   read n
   if [ "$n" != "" ]; then
     if [ "$n" == "1" ]; then
-      linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-9-0
+      linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-9-1
     fi
     if [ "$n" == "2" ]; then
       linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-7
@@ -118,7 +119,7 @@ wellcomeINSTALL() {
       linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-9
     fi
   else
-    linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-9-0
+    linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-9-1
   fi
 }
 userINPU() {
@@ -778,6 +779,7 @@ ENDOFFILE
   sudo systemctl disable apache2
   sudo apt-get remove apache2 -y
   sudo apt autoremove -y
+  cp /var/www/index.php /var/www/html/example/
   clear
 }
 endINSTALL() {
