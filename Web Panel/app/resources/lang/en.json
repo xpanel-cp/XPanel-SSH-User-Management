@@ -215,6 +215,7 @@
     "settings-xguard-ip": "Your server's IP",
     "settings-xguard-desc": "The entered information must be accurate. Please note that if the entered information is incorrect and a payment is made from your side, it will not be traceable.",
     "settings-xguard-desc2": "Note that the server can still connect even if it is filtered, so do not change the IP of your server because it is not possible to change in the anti-filter system.",
+    "settings-xguard-desc3": "By obtaining the anti-filter, the connection address and connection port will change. First, make sure to obtain the anti-filter, and then proceed to obtain it.",
     "settings-xguard-domain": "<b>Anti-Filter is active, please follow the steps below</b><br>Create a Cname record in Cloudflare and connect it to your personal anti-filter address.<br>Make sure the proxy or orange cdn cloud is off.<br><b>After completing the mentioned steps, set your domain in the corresponding field.</b>",
     "settings-xguard-doamin_lable": "Cname Record Type Domain Address",
     "settings-xguard-capacity": "The capacity of the anti-filter server is full",
