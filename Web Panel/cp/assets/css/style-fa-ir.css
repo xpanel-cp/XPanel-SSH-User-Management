@@ -27849,3 +27849,31 @@ File: style.css
 .auth-main ~ .pct-offcanvas .pc-boxcontainer {
   display: none;
 }
+.table-btn
+{
+  padding: 9px 9px 0px 9px;
+  display: flex;
+  margin-bottom: -7.5%;
+}
+@media (max-width: 575.98px)
+{
+  .table-btn
+  {
+    padding: 9px 9px 0px 9px;
+    margin-bottom: -7.5%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+  }
+}
+
+@media (max-width: 348.98px)
+{
+  .table-btn
+  {
+    padding: 9px 9px 0px 9px;
+    margin-bottom: -7.5%;
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}

@@ -26,14 +26,20 @@
 <script src="/assets/js/fonts/custom-font.js"></script>
 @php $selectedLanguage = env('APP_MODE', 'light'); @endphp
 @if($selectedLanguage=='light')
-    <script src="/assets/js/config.js?v=3.9.1"></script>
+    <script src="/assets/js/config.js?v=3.9.0"></script>
 @elseif($selectedLanguage=='night')
-    <script src="/assets/js/config-night.js?v=3.9.1"></script>
+    <script src="/assets/js/config-night.js?v=3.9.0"></script>
 @endif
 <script src="/assets/js/pcoded.js"></script>
 <script src="/assets/js/plugins/feather.min.js"></script>
 <!-- [Page Specific JS] start -->
-<script src="/assets/js/plugins/simple-datatables-en-us.js"></script>
+@php $selectedLanguage = env('APP_LOCALE', 'en'); @endphp
+@if($selectedLanguage=='fa')
+    <script src="/assets/js/plugins/simple-datatables-fa-ir.js"></script>
+@else
+    <script src="/assets/js/plugins/simple-datatables-en-us.js"></script>
+@endif
+
 <script src="/assets/js/clipboard.min.js"></script>
 <script src="/assets/js/jquery-2.2.4.min.js"></script>
 <script src="/assets/js/persian-date.js"></script>
@@ -120,10 +126,19 @@
     });
 </script>
 <script>
-    const dataTable = new simpleDatatables.DataTable('#pc-dt-simple', {
+    const dataTable1 = new simpleDatatables.DataTable('#pc-dt-simple', {
         sortable: true,
         perPage: 25
     });
+</script>
+<script>
+    const dataTable2 = new simpleDatatables.DataTable('#example', {
+        paging: false,
+        searching: false,
+        lengthChange: false,
+        info: false,
+    });
+
 </script>
 <!-- [Page Specific JS] end -->
 </body>

@@ -64,29 +64,29 @@
                                   onkeydown="return event.key != 'Enter';" onsubmit="return confirm('{{__('allert-submit')}}');">
                                 @csrf
 
-                                <div class="p-4 pb-0 d-flex flex-wrap gap-2">
+                                <div class="table-btn gap-2">
                                     <a href="javascript:void(0);"
-                                       class="btn btn-primary d-inline-flex align-items-center"
+                                       class="btn btn-primary d-inline-flex text-center"
                                        data-bs-toggle="modal"
                                        data-bs-target="#customer_add-modal">
                                         <i class="ti ti-plus f-18"></i>{{__('user-modal-user')}}
                                     </a>
 
                                     <a href="javascript:void(0);"
-                                       class="btn btn-primary d-inline-flex align-items-center"
+                                       class="btn btn-primary d-inline-flex text-center"
                                        data-bs-toggle="modal"
                                        data-bs-target="#customer_bulk-modal">
                                         <i class="ti ti-plus f-18"></i>{{__('user-modal-bulkuser')}}</a>
                                     <button type="submit" id="btndl"
-                                            class="btn btn-danger d-inline-flex align-items-center"
+                                            class="btn btn-danger d-inline-flex text-center"
                                             value="delete" name="action">{{__('user-bulk-delete')}}
                                     </button>
                                     <button type="submit" id="btnactive"
-                                            class="btn btn-success d-inline-flex align-items-center"
+                                            class="btn btn-success d-inline-flex text-center"
                                             value="active" name="action">{{__('user-table-active')}}
                                     </button>
                                     <button type="submit" id="btndeactive"
-                                            class="btn btn-warning d-inline-flex align-items-center"
+                                            class="btn btn-warning d-inline-flex text-center"
                                             value="deactive" name="action">{{__('user-table-deactive')}}
                                     </button>
 
@@ -98,7 +98,7 @@
                                 <br>
 
                                 <div class="table-responsive">
-                                    <table class="table table-hover" >
+                                    <table class="table table-hover" id="example" >
                                         <thead>
                                         <tr>
                                             <th><input class="form-check-input" type="checkbox" id="selectAll"> #</th>
@@ -1044,7 +1044,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                 data-bs-dismiss="modal">{{__('user-pop-bulkuser-cancel')}}
                         </button>
                         <button type="submit" class="btn btn-primary" value="bulk"
-                                name="bulk">{{__('user-pop-newuser-submit')}}</button>
+                                name="bulk">{{__('user-pop-bulkuser-submit')}}</button>
                     </div>
                 </div>
             </form>
