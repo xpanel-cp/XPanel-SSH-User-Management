@@ -1044,7 +1044,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                 data-bs-dismiss="modal">{{__('user-pop-bulkuser-cancel')}}
                         </button>
                         <button type="submit" class="btn btn-primary" value="bulk"
-                                name="bulk">{{__('user-pop-bulkuser-submit')}}</button>
+                                name="bulk">{{__('user-pop-newuser-submit')}}</button>
                     </div>
                 </div>
             </form>
