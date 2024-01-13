@@ -230,5 +230,6 @@
     "search-email": "Электронная почта",
     "search-phone": "Номер телефона",
     "search-desc": "Описание",
-    "settings-xguard-tamdid": "Продление подписки"
+    "settings-xguard-tamdid": "Продление подписки",
+    "allert-submit": "Вы уверены, что хотите продолжить это действие?"
 }

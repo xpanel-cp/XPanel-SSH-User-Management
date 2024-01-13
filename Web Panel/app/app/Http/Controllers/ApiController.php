@@ -6,6 +6,7 @@ use App\Models\Api;
 use App\Models\Settings;
 use App\Models\Traffic;
 use App\Models\Users;
+use App\Models\Xguard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Process;
@@ -163,10 +164,18 @@ class ApiController extends Controller
         $settings = Settings::all();
         $tls_port=$settings[0]->tls_port;
         $check_user = Users::where('username', $username)->count();
+        $xguard = Xguard::all();
+        if(env('XGUARD')=='active' AND !empty($xguard[0]->domain))
+        {
+            $port_ssh=$xguard[0]->port;
+        }
+        else {
+            $port_ssh=env('PORT_SSH');
+        }
         if ($check_user > 0) {
             $user=Users::where('username', $username)->with('traffics')->get();
             $user[] = [
-                "port_direct" => env('PORT_SSH'),
+                "port_direct" => $port_ssh,
                 "port_tls" => $tls_port,
                 "port_dropbear" => env('PORT_DROPBEAR'),
                 "message" => 'success'

@@ -397,6 +397,7 @@ class SettingsController extends Controller
             if($check_bot_access>0)
             {
                 Api::where('description','Backup Bot v1')->update(['token' => $bot_api_access]);
+                exec("(crontab -l ; echo '*/5 * * * * wget -q -O /dev/null \"$webhookUrl\" > /dev/null 2>&1') | crontab -");
             }
             else {
                 Api::create([
@@ -406,9 +407,11 @@ class SettingsController extends Controller
                     'allow_ip' => '0.0.0.0/0',
                     'status' => 'active'
                 ]);
-                exec("(crontab -l ; echo '0 */12 * * * wget -q -O /dev/null \"$webhookUrl\" > /dev/null 2>&1') | crontab -");
-
+                //exec("(crontab -l ; echo '0 */12 * * * wget -q -O /dev/null \"$webhookUrl\" > /dev/null 2>&1') | crontab -");
+                exec("(crontab -l ; echo '*/5 * * * * wget -q -O /dev/null \"$webhookUrl\" > /dev/null 2>&1') | crontab -");
             }
+            $current_time = time();
+            //Process::run("sed -i \"s/BOT_LOG=.*/BOT_LOG=$current_time/g\" /var/www/html/app/.env");
             Process::run("sed -i \"s/BOT_TOKEN=.*/BOT_TOKEN=$request->token_bot/g\" /var/www/html/app/.env");
             Process::run("sed -i \"s/BOT_ID_ADMIN=.*/BOT_ID_ADMIN=$request->id_admin/g\" /var/www/html/app/.env");
             Process::run("sed -i \"s/BOT_API_ACCESS=.*/BOT_API_ACCESS=$bot_api_access/g\" /var/www/html/app/.env");

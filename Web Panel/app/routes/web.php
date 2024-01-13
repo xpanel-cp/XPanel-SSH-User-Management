@@ -47,7 +47,7 @@ Route::prefix("$panel")->group(function()
     Route::get('/user/deactive/{username}',[UserController::class,'deactiveuser'])->name('user.deactive');
     Route::get('/user/reset/{username}',[UserController::class,'reset_traffic'])->name('user.reset');
     Route::get('/user/delete/{username}',[UserController::class,'delete'])->name('user.delete');
-    Route::post('/user/delete/bulk',[UserController::class,'delete_bulk'])->name('user.delete.bulk');
+    Route::post('/user/action/bulk',[UserController::class,'delete_bulk'])->name('user.action.bulk');
     Route::post('/user/renewal',[UserController::class,'renewal'])->name('new.renewal');
     Route::get('/user/edit/{username}',[UserController::class,'edit'])->name('user.edit');
     Route::post('/user/edit',[UserController::class,'update'])->name('user.update');

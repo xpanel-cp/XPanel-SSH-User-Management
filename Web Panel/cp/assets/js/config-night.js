@@ -5,4 +5,4 @@ var preset_theme = 'preset-1'; // [ preset-1 to preset-10 ]
 var dark_layout = 'true'; // [ false , true , default ]
 var rtl_layout = 'false'; // [ false , true ]
 var box_container = 'false'; // [ false , true ]
-var version = 'XPanel v3.9.0';
+var version = 'XPanel v3.9.1';

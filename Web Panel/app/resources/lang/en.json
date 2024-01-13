@@ -228,5 +228,6 @@
     "search-email": "Email",
     "search-phone": "Phone Number",
     "search-desc": "Description",
-    "settings-xguard-tamdid": "Subscription Renewal"
+    "settings-xguard-tamdid": "Subscription Renewal",
+    "allert-submit": "Are you sure you want to proceed with this action?"
 }

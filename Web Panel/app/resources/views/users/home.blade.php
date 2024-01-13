@@ -60,8 +60,8 @@
 
                     <div class="card table-card">
                         <div class="card-body">
-                            <form action="{{route('user.delete.bulk')}}" method="post" enctype="multipart/form-data"
-                                  onkeydown="return event.key != 'Enter';">
+                            <form action="{{route('user.action.bulk')}}" method="post" enctype="multipart/form-data"
+                                  onkeydown="return event.key != 'Enter';" onsubmit="return confirm('{{__('allert-submit')}}');">
                                 @csrf
 
                                 <div class="p-4 pb-0 d-flex flex-wrap gap-2">
@@ -79,16 +79,29 @@
                                         <i class="ti ti-plus f-18"></i>{{__('user-modal-bulkuser')}}</a>
                                     <button type="submit" id="btndl"
                                             class="btn btn-danger d-inline-flex align-items-center"
-                                            value="delete" name="delete">{{__('user-bulk-delete')}}
+                                            value="delete" name="action">{{__('user-bulk-delete')}}
+                                    </button>
+                                    <button type="submit" id="btnactive"
+                                            class="btn btn-success d-inline-flex align-items-center"
+                                            value="active" name="action">{{__('user-table-active')}}
+                                    </button>
+                                    <button type="submit" id="btndeactive"
+                                            class="btn btn-warning d-inline-flex align-items-center"
+                                            value="deactive" name="action">{{__('user-table-deactive')}}
+                                    </button>
+
+                                    <button type="submit" id="retraffic"
+                                            class="btn btn-info d-inline-flex align-items-center"
+                                            value="retraffic" name="action">{{__('user-table-reset')}}
                                     </button>
                                 </div>
                                 <br>
 
                                 <div class="table-responsive">
-                                    <table class="table table-hover" id="pc-dt-simple">
+                                    <table class="table table-hover" >
                                         <thead>
                                         <tr>
-                                            <th>#ID</th>
+                                            <th><input class="form-check-input" type="checkbox" id="selectAll"> #</th>
                                             <th>{{__('user-table-username')}}/{{__('user-table-password')}}</th>
                                             <th>{{__('user-table-traffic')}}</th>
                                             <th>{{__('user-table-limit-user')}}</th>
@@ -628,7 +641,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
     <div class="modal fade" id="renewal-modal" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <form class="modal-content" action="{{route('new.renewal')}}" method="POST" enctype="multipart/form-data"
-                  onsubmit="return confirm('Are you sure you want to perform this operation?');">
+                  onsubmit="return confirm('{{__('allert-submit')}}');">
                 <div class="modal-header">
                     <h5 class="mb-0">{{__('user-pop-renewal-title')}}</h5>
                     <a href="javascript:void(0);" class="avtar avtar-s btn-link-danger btn-pc-default"
@@ -711,7 +724,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
     <div class="modal fade" id="customer_add-modal" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <form class="modal-content" action="{{route('new.user')}}" method="POST" enctype="multipart/form-data"
-                  onsubmit="return confirm('Are you sure you want to perform this operation?');">
+                  onsubmit="return confirm('{{__('allert-submit')}}');">
 
                 <div class="modal-header">
                     <h5 class="mb-0">{{__('user-pop-newuser-title')}}</h5>
@@ -875,7 +888,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
     <div class="modal fade" id="customer_bulk-modal" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <form class="modal-content" action="{{route('new.bulkuser')}}" method="POST" enctype="multipart/form-data"
-                  onsubmit="return confirm('Are you sure you want to perform this operation?');">
+                  onsubmit="return confirm('{{__('allert-submit')}}');">
 
                 <div class="modal-header">
                     <h5 class="mb-0">{{__('user-pop-bulkuser-title')}}</h5>
@@ -1121,6 +1134,40 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
             var username = $(this).data('user');
             $('input[name=username_re]').val(username);
 
+        });
+    </script>
+
+    <script>
+        $(document).ready(function(){
+            $("#selectAll").change(function(){
+                var isChecked = $(this).is(":checked");
+
+                $(".checkItem").prop("checked", isChecked);
+                updateButtonState();
+            });
+
+            $(".checkItem").change(function(){
+                updateButtonState();
+            });
+            document.getElementById("btndl").disabled = true;
+            document.getElementById("btnactive").disabled = true;
+            document.getElementById("btndeactive").disabled = true;
+            document.getElementById("retraffic").disabled = true;
+            function updateButtonState() {
+                var anyChecked = $(".checkItem:checked").length > 0;
+
+                if (anyChecked) {
+                    document.getElementById("btndl").disabled = false;
+                    document.getElementById("btnactive").disabled = false;
+                    document.getElementById("btndeactive").disabled = false;
+                    document.getElementById("retraffic").disabled = false;
+                } else {
+                    document.getElementById("btndl").disabled = true;
+                    document.getElementById("btnactive").disabled = true;
+                    document.getElementById("btndeactive").disabled = true;
+                    document.getElementById("retraffic").disabled = true;
+                }
+            }
         });
     </script>
 

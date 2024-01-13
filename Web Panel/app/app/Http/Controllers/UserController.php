@@ -639,40 +639,94 @@ class UserController extends Controller
     }
     public function delete_bulk(Request $request)
     {
-
         $user = Auth::user();
         if ($user->permission == 'admin') {
             foreach ($request->usernamed as $username) {
                 $check_user = Users::where('username',$username)->count();
                 $status_user = Users::where('username',$username)->get();
                 if ($check_user > 0) {
-                    if (file_exists("/var/www/html/app/storage/banner/{$username}-detail")) {
-                        $linesToRemove = ["Match User {$username}", "Banner /var/www/html/app/storage/banner/{$username}-detail"];
-                        $filename = "/etc/ssh/sshd_config";
-                        $fileContent = file($filename);
-                        $newFileContent = [];
-                        foreach ($fileContent as $line) {
-                            if (!in_array(trim($line), $linesToRemove) && trim($line) !== '') {
-                                $newFileContent[] = $line;
+                    if($request->action=='delete') {
+                        if (file_exists("/var/www/html/app/storage/banner/{$username}-detail")) {
+                            $linesToRemove = ["Match User {$username}", "Banner /var/www/html/app/storage/banner/{$username}-detail"];
+                            $filename = "/etc/ssh/sshd_config";
+                            $fileContent = file($filename);
+                            $newFileContent = [];
+                            foreach ($fileContent as $line) {
+                                if (!in_array(trim($line), $linesToRemove) && trim($line) !== '') {
+                                    $newFileContent[] = $line;
+                                }
                             }
+                            file_put_contents($filename, implode('', $newFileContent));
+                            Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$username}-detail");
                         }
-                        file_put_contents($filename, implode('', $newFileContent));
-                        Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$username}-detail");
-                    }
-                    if ($status_user[0]->status == 'active') {
-                        Process::run("sudo killall -u {$username}");
-                        Process::run("sudo pkill -u {$username}");
-                        Process::run("sudo timeout 10 pkill -u {$username}");
-                        Process::run("sudo timeout 10 killall -u {$username}");
-                        $userdelProcess = Process::run("sudo userdel -r {$username}");
-                        if ($userdelProcess->successful()) {
+                        if ($status_user[0]->status == 'active') {
+                            Process::run("sudo killall -u {$username}");
+                            Process::run("sudo pkill -u {$username}");
+                            Process::run("sudo timeout 10 pkill -u {$username}");
+                            Process::run("sudo timeout 10 killall -u {$username}");
+                            $userdelProcess = Process::run("sudo userdel -r {$username}");
+                            if ($userdelProcess->successful()) {
+                                Users::where('username', $username)->delete();
+                                Traffic::where('username', $username)->delete();
+                            }
+                        } else {
                             Users::where('username', $username)->delete();
                             Traffic::where('username', $username)->delete();
                         }
                     }
-                    else {
-                        Users::where('username', $username)->delete();
-                        Traffic::where('username', $username)->delete();
+                    if($request->action=='active') {
+
+                        Users::where('username', $username)->update(['status' => 'active']);
+
+                        $user = Users::where('username',$username)->get();
+                        $password=$user[0]->password;
+                        if (env('STATUS_LOG', 'deactive') == 'active') {
+                            $replacement = "Match User {$username}\nBanner /var/www/html/app/storage/banner/{$username}-detail\nMatch all";
+                            $file = fopen("/etc/ssh/sshd_config", "r+");
+                            $fileContent = fread($file, filesize("/etc/ssh/sshd_config"));
+                            if (strpos($fileContent, "#Match all") !== false) {
+                                $modifiedContent = str_replace("#Match all", $replacement, $fileContent);
+                                rewind($file);
+                                fwrite($file, $modifiedContent);
+                            } elseif (strpos($fileContent, "Match User {$username}\n") === false and strpos($fileContent, "#Match all\n") === false) {
+                                $modifiedContent = str_replace("Match all", $replacement, $fileContent);
+                                rewind($file);
+                                fwrite($file, $modifiedContent);
+                            }
+                            fclose($file);
+                            Process::run("sudo service ssh restart");
+                        }
+                        Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$username}");
+                        Process::input($password."\n".$password."\n")->timeout(120)->run("sudo passwd {$username}");
+                    }
+                    if($request->action=='deactive') {
+                        if (file_exists("/var/www/html/app/storage/banner/{$username}-detail")) {
+                            $linesToRemove = ["Match User {$username}", "Banner /var/www/html/app/storage/banner/{$username}-detail"];
+                            $filename = "/etc/ssh/sshd_config";
+                            $fileContent = file($filename);
+                            $newFileContent = [];
+                            foreach ($fileContent as $line) {
+                                if (!in_array(trim($line), $linesToRemove) && trim($line) !== '') {
+                                    $newFileContent[] = $line;
+                                }
+                            }
+                            file_put_contents($filename, implode('', $newFileContent));
+
+                            Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$username}-detail");
+                            Process::run("sudo service ssh restart");
+                        }
+                        Users::where('username', $username)->update(['status' => 'deactive']);
+                        Process::run("sudo killall -u {$username}");
+                        Process::run("sudo pkill -u {$username}");
+                        Process::run("sudo timeout 10 pkill -u {$username}");
+                        Process::run("sudo timeout 10 killall -u {$username}");
+                        Process::run("sudo userdel -r {$username}");
+                    }
+                    if($request->action=='retraffic') {
+                        Traffic::where('username', $username)->update(['download' => '0', 'upload' => '0', 'total' => '0']);
+                        if (file_exists("/var/www/html/app/storage/banner/{$username}-detail")) {
+                            Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$username}-detail");
+                        }
                     }
                 }
             }
@@ -681,33 +735,88 @@ class UserController extends Controller
                 $status_user = Users::where('username', $username)->get();
                 $check_user = Users::where('username', $username)->where('customer_user', $user->username)->count();
                 if ($check_user > 0) {
-                    if (file_exists("/var/www/html/app/storage/banner/{$username}-detail")) {
-                        $linesToRemove = ["Match User {$username}", "Banner /var/www/html/app/storage/banner/{$username}-detail"];
-                        $filename = "/etc/ssh/sshd_config";
-                        $fileContent = file($filename);
-                        $newFileContent = [];
-                        foreach ($fileContent as $line) {
-                            if (!in_array(trim($line), $linesToRemove) && trim($line) !== '') {
-                                $newFileContent[] = $line;
+                    if($request->action=='delete') {
+                        if (file_exists("/var/www/html/app/storage/banner/{$username}-detail")) {
+                            $linesToRemove = ["Match User {$username}", "Banner /var/www/html/app/storage/banner/{$username}-detail"];
+                            $filename = "/etc/ssh/sshd_config";
+                            $fileContent = file($filename);
+                            $newFileContent = [];
+                            foreach ($fileContent as $line) {
+                                if (!in_array(trim($line), $linesToRemove) && trim($line) !== '') {
+                                    $newFileContent[] = $line;
+                                }
                             }
+                            file_put_contents($filename, implode('', $newFileContent));
+                            Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$username}-detail");
                         }
-                        file_put_contents($filename, implode('', $newFileContent));
-                        Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$username}-detail");
-                    }
-                    if ($status_user[0]->status == 'active') {
-                        Process::run("sudo killall -u {$username}");
-                        Process::run("sudo pkill -u {$username}");
-                        Process::run("sudo timeout 10 pkill -u {$username}");
-                        Process::run("sudo timeout 10 killall -u {$username}");
-                        $userdelProcess = Process::run("sudo userdel -r {$username}");
-                        if ($userdelProcess->successful()) {
+                        if ($status_user[0]->status == 'active') {
+                            Process::run("sudo killall -u {$username}");
+                            Process::run("sudo pkill -u {$username}");
+                            Process::run("sudo timeout 10 pkill -u {$username}");
+                            Process::run("sudo timeout 10 killall -u {$username}");
+                            $userdelProcess = Process::run("sudo userdel -r {$username}");
+                            if ($userdelProcess->successful()) {
+                                Users::where('username', $username)->delete();
+                                Traffic::where('username', $username)->delete();
+                            }
+                        } else {
                             Users::where('username', $username)->delete();
                             Traffic::where('username', $username)->delete();
                         }
                     }
-                    else {
-                        Users::where('username', $username)->delete();
-                        Traffic::where('username', $username)->delete();
+                    if($request->action=='active') {
+
+                        Users::where('username', $username)->update(['status' => 'active']);
+
+                        $user = Users::where('username',$username)->get();
+                        $password=$user[0]->password;
+                        if (env('STATUS_LOG', 'deactive') == 'active') {
+                            $replacement = "Match User {$username}\nBanner /var/www/html/app/storage/banner/{$username}-detail\nMatch all";
+                            $file = fopen("/etc/ssh/sshd_config", "r+");
+                            $fileContent = fread($file, filesize("/etc/ssh/sshd_config"));
+                            if (strpos($fileContent, "#Match all") !== false) {
+                                $modifiedContent = str_replace("#Match all", $replacement, $fileContent);
+                                rewind($file);
+                                fwrite($file, $modifiedContent);
+                            } elseif (strpos($fileContent, "Match User {$username}\n") === false and strpos($fileContent, "#Match all\n") === false) {
+                                $modifiedContent = str_replace("Match all", $replacement, $fileContent);
+                                rewind($file);
+                                fwrite($file, $modifiedContent);
+                            }
+                            fclose($file);
+                            Process::run("sudo service ssh restart");
+                        }
+                        Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$username}");
+                        Process::input($password."\n".$password."\n")->timeout(120)->run("sudo passwd {$username}");
+                    }
+                    if($request->action=='deactive') {
+                        if (file_exists("/var/www/html/app/storage/banner/{$username}-detail")) {
+                            $linesToRemove = ["Match User {$username}", "Banner /var/www/html/app/storage/banner/{$username}-detail"];
+                            $filename = "/etc/ssh/sshd_config";
+                            $fileContent = file($filename);
+                            $newFileContent = [];
+                            foreach ($fileContent as $line) {
+                                if (!in_array(trim($line), $linesToRemove) && trim($line) !== '') {
+                                    $newFileContent[] = $line;
+                                }
+                            }
+                            file_put_contents($filename, implode('', $newFileContent));
+
+                            Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$username}-detail");
+                            Process::run("sudo service ssh restart");
+                        }
+                        Users::where('username', $username)->update(['status' => 'deactive']);
+                        Process::run("sudo killall -u {$username}");
+                        Process::run("sudo pkill -u {$username}");
+                        Process::run("sudo timeout 10 pkill -u {$username}");
+                        Process::run("sudo timeout 10 killall -u {$username}");
+                        Process::run("sudo userdel -r {$username}");
+                    }
+                    if($request->action=='retraffic') {
+                        Traffic::where('username', $username)->update(['download' => '0', 'upload' => '0', 'total' => '0']);
+                        if (file_exists("/var/www/html/app/storage/banner/{$username}-detail")) {
+                            Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$username}-detail");
+                        }
                     }
                 }
             }

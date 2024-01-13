@@ -26,9 +26,9 @@
 <script src="/assets/js/fonts/custom-font.js"></script>
 @php $selectedLanguage = env('APP_MODE', 'light'); @endphp
 @if($selectedLanguage=='light')
-    <script src="/assets/js/config.js?v=3.9.0"></script>
+    <script src="/assets/js/config.js?v=3.9.1"></script>
 @elseif($selectedLanguage=='night')
-    <script src="/assets/js/config-night.js?v=3.9.0"></script>
+    <script src="/assets/js/config-night.js?v=3.9.1"></script>
 @endif
 <script src="/assets/js/pcoded.js"></script>
 <script src="/assets/js/plugins/feather.min.js"></script>
@@ -117,6 +117,12 @@
         } else {
             status_day.value = "deactive";
         }
+    });
+</script>
+<script>
+    const dataTable = new simpleDatatables.DataTable('#pc-dt-simple', {
+        sortable: true,
+        perPage: 25
     });
 </script>
 <!-- [Page Specific JS] end -->
