@@ -30,6 +30,7 @@
                                 <div class="alert alert-warning" role="alert">{{__('settings-xguard-desc')}}</div>
                                 <div class="alert alert-danger" role="alert">{{__('settings-xguard-desc2')}}</div>
                                 <div class="alert alert-warning" role="alert">{{__('settings-xguard-desc3')}}</div>
+
                                 <span class="badge color-block bg-blue-500 border">
                                         {{__('settings-xguard-capacity-off')}} {{$response[0]['capacity']}}
                                             </span>
