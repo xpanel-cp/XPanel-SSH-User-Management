@@ -58,6 +58,7 @@ configSSH() {
   port=$(grep -oE 'Port [0-9]+' /etc/ssh/sshd_config | cut -d' ' -f2)
 }
 setCONFIG() {
+cp /var/www/html/example/index.php /var/www/
   # Check if MySQL is installed
   if dpkg-query -W -f='${Status}' mariadb-server 2>/dev/null | grep -q "install ok installed"; then
     adminuser=$(mysql -N -e "use XPanel_plus; select username from admins where permission='admin';")
@@ -778,6 +779,7 @@ ENDOFFILE
   sudo systemctl disable apache2
   sudo apt-get remove apache2 -y
   sudo apt autoremove -y
+  cp /var/www/index.php /var/www/html/example/
   clear
 }
 endINSTALL() {
