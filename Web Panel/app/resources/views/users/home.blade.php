@@ -337,7 +337,7 @@
                                                                 <a href="javascript:void(0);" class="dropdown-item copy-txt"
                                                                    style="border:none"
                                                                    data-clipboard="true"
-                                                                   data-clipboard-text="Host:{{$websiteaddress}}&nbsp;
+                                                                   data-clipboard-text="Host:{{$sshaddress}}&nbsp;
 Port:{{$port_ssh}}&nbsp;
 Username:{{$user->username}}&nbsp;
 Password:{{$user->password}}&nbsp;
