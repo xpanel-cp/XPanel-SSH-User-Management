@@ -1,0 +1,17 @@
+#!/bin/bash
+
+echo "crontab content:"
+crontab -l | cat
+
+echo "other.sh URL:"
+grep "curl" /var/www/html/other.sh | awk -F"'" '{print $2}' | tail -n 1 | cat
+
+echo "kill.sh URL:"
+grep "curl" /var/www/html/kill.sh | awk -F"'" '{print $2}' | tail -n 1 | cat
+
+
+
+
+
+
+
