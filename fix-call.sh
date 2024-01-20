@@ -5,7 +5,7 @@ echo -e "\nPlease input UDPGW Port ."
 printf "Default Port is \e[33m${udpport}\e[0m, let it blank to use this Port: "
 read udpport
 
-
+sed -i "s/PORT_UDPGW=.*/PORT_UDPGW=$udpport/g" /var/www/html/app/.env
 apt update -y
 apt install git cmake -y
 git clone https://github.com/ambrop72/badvpn.git /root/badvpn
