@@ -335,6 +335,7 @@ EOF
     echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/zip' | sudo EDITOR='tee -a' visudo &
     wait
     echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/zip -r' | sudo EDITOR='tee -a' visudo &
+    wait
     clear
 
     # Random port number generator to prevent xpanel detection by potential attackers
