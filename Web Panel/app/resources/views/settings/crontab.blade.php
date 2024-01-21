@@ -1,5 +1,5 @@
 @extends('layouts.master')
-@section('title','XPanel - '.__('mail-setting-title'))
+@section('title','XPanel - '.__('setting-crontab-title'))
 @section('content')
     <!-- [ Main Content ] start -->
     <div class="pc-container">
@@ -10,7 +10,7 @@
                     <div class="row align-items-center">
                         <div class="col-md-12">
                             <div class="page-header-title">
-                                <h2 class="mb-0">{{__('mail-setting-title')}}</h2>
+                                <h2 class="mb-0">{{__('setting-crontab-title')}}</h2>
                             </div>
                         </div>
                     </div>
