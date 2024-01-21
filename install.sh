@@ -278,6 +278,13 @@ EOF
     sudo wget -O /var/www/html/update.zip $link
     sudo unzip -o /var/www/html/update.zip -d /var/www/html/ &
     wait
+    sudo wget -4 -O /usr/local/bin/cronx https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/cronx
+    sudo wget -4 -O /usr/local/bin/cronxfixed https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/cronxfixed
+    wait
+    echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/local/bin/cronx' | sudo EDITOR='tee -a' visudo &
+    wait
+    echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/local/bin/cronxfixed' | sudo EDITOR='tee -a' visudo &
+    wait
     echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/sbin/adduser' | sudo EDITOR='tee -a' visudo &
     wait
     echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/sbin/userdel' | sudo EDITOR='tee -a' visudo &
@@ -720,6 +727,17 @@ ENDOFFILE
   DEFAULT_BOT_TOKEN=
   DEFAULT_BOT_ID_ADMIN=
   DEFAULT_BOT_API_ACCESS= 
+  DEFAULT_ANTI_USER= 
+  DEFAULT_TRAFFIC_SERVER= 
+  DEFAULT_BOT_LOG=
+  DEFAULT_PORT_UDPGW=
+  DEFAULT_MAIL_STATUS=
+  DEFAULT_MAIL_HOST=
+  DEFAULT_MAIL_PORT=
+  DEFAULT_MAIL_USERNAME=
+  DEFAULT_MAIL_PASSWORD=
+  DEFAULT_MAIL_FROM_ADDRESS=
+  DEFAULT_MAIL_FROM_NAME=
 
   if [ -f /var/www/html/.env_copy ]; then
     while IFS= read -r line; do
@@ -748,6 +766,28 @@ ENDOFFILE
         BOT_ID_ADMIN="$value"
       elif [ "$key" = "BOT_API_ACCESS" ]; then
         BOT_API_ACCESS="$value"
+      elif [ "$key" = "ANTI_USER" ]; then
+        ANTI_USER="$value"
+      elif [ "$key" = "TRAFFIC_SERVER" ]; then
+        TRAFFIC_SERVER="$value"
+      elif [ "$key" = "BOT_LOG" ]; then
+        BOT_LOG="$value"
+      elif [ "$key" = "PORT_UDPGW" ]; then
+        PORT_UDPGW="$value"
+      elif [ "$key" = "MAIL_STATUS" ]; then
+        MAIL_STATUS="$value"
+      elif [ "$key" = "MAIL_HOST" ]; then
+        MAIL_HOST="$value"  
+      elif [ "$key" = "MAIL_PORT" ]; then
+        MAIL_PORT="$value" 
+      elif [ "$key" = "MAIL_USERNAME" ]; then
+        MAIL_USERNAME="$value" 
+      elif [ "$key" = "MAIL_PASSWORD" ]; then
+        MAIL_PASSWORD="$value" 
+      elif [ "$key" = "MAIL_FROM_ADDRESS" ]; then
+        MAIL_FROM_ADDRESS="$value" 
+      elif [ "$key" = "MAIL_FROM_NAME" ]; then
+        MAIL_FROM_NAME="$value"   
       fi
     done </var/www/html/.env_copy
   fi
@@ -763,6 +803,17 @@ ENDOFFILE
   BOT_TOKEN="${BOT_TOKEN:-$DEFAULT_BOT_TOKEN}"
   BOT_ID_ADMIN="${BOT_ID_ADMIN:-$DEFAULT_BOT_ID_ADMIN}"
   BOT_API_ACCESS="${BOT_API_ACCESS:-$DEFAULT_BOT_API_ACCESS}"
+  ANTI_USER="${ANTI_USER:-$DEFAULT_ANTI_USER}"
+  TRAFFIC_SERVER="${TRAFFIC_SERVER:-$DEFAULT_TRAFFIC_SERVER}"
+  BOT_LOG="${BOT_LOG:-$DEFAULT_BOT_LOG}"
+  PORT_UDPGW="${PORT_UDPGW:-$DEFAULT_PORT_UDPGW}"
+  MAIL_STATUS="${MAIL_STATUS:-$DEFAULT_MAIL_STATUS}"
+  MAIL_HOST="${BOT_MAIL_HOST:-$DEFAULT_MAIL_HOST}"
+  MAIL_PORT="${BOT_MAIL_PORT:-$DEFAULT_MAIL_PORT}"
+  MAIL_USERNAME="${BOT_MAIL_USERNAME:-$DEFAULT_MAIL_USERNAME}"
+  MAIL_PASSWORD="${MAIL_PASSWORD:-$DEFAULT_MAIL_PASSWORD}"
+  MAIL_FROM_ADDRESS="${MAIL_FROM_ADDRESS:-$DEFAULT_MAIL_FROM_ADDRESS}"
+  MAIL_FROM_NAME="${MAIL_FROM_NAME:-$DEFAULT_MAIL_FROM_NAME}"
 
   sed -i "s/APP_LOCALE=.*/APP_LOCALE=$APP_LOCALE/g" /var/www/html/app/.env
   sed -i "s/APP_MODE=.*/APP_MODE=$APP_MODE/g" /var/www/html/app/.env
@@ -775,6 +826,17 @@ ENDOFFILE
   sed -i "s/BOT_TOKEN=.*/BOT_TOKEN=$BOT_TOKEN/g" /var/www/html/app/.env
   sed -i "s/BOT_ID_ADMIN=.*/BOT_ID_ADMIN=$BOT_ID_ADMIN/g" /var/www/html/app/.env
   sed -i "s/BOT_API_ACCESS=.*/BOT_API_ACCESS=$BOT_API_ACCESS/g" /var/www/html/app/.env
+  sed -i "s/ANTI_USER=.*/ANTI_USER=$ANTI_USER/g" /var/www/html/app/.env
+  sed -i "s/TRAFFIC_SERVER=.*/TRAFFIC_SERVER=$TRAFFIC_SERVER/g" /var/www/html/app/.env
+  sed -i "s/BOT_LOG=.*/BOT_LOG=$BOT_LOG/g" /var/www/html/app/.env
+  sed -i "s/PORT_UDPGW=.*/PORT_UDPGW=$PORT_UDPGW/g" /var/www/html/app/.env
+  sed -i "s/MAIL_STATUS=.*/MAIL_STATUS=$MAIL_STATUS/g" /var/www/html/app/.env
+  sed -i "s/MAIL_HOST=.*/MAIL_HOST=$MAIL_HOST/g" /var/www/html/app/.env
+  sed -i "s/MAIL_PORT=.*/MAIL_PORT=$MAIL_PORT/g" /var/www/html/app/.env
+  sed -i "s/MAIL_USERNAME=.*/MAIL_USERNAME=$MAIL_USERNAME/g" /var/www/html/app/.env
+  sed -i "s/MAIL_PASSWORD=.*/MAIL_PASSWORD=$MAIL_PASSWORD/g" /var/www/html/app/.env
+  sed -i "s/MAIL_FROM_ADDRESS=.*/MAIL_FROM_ADDRESS=$MAIL_FROM_ADDRESS/g" /var/www/html/app/.env
+  sed -i "s/MAIL_FROM_NAME=.*/MAIL_FROM_NAME=$MAIL_FROM_NAME/g" /var/www/html/app/.env
   sudo systemctl stop apache2
   sudo systemctl disable apache2
   sudo apt-get remove apache2 -y
