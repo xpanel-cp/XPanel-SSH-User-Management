@@ -95,34 +95,36 @@ cp /var/www/html/example/index.php /var/www/
 }
 wellcomeINSTALL() {
   echo -e "${YELLOW}************ Select XPanel Version Nginx Web Server************"
-  echo -e "${GREEN}  1)XPanel v3.9.1"
-  echo -e "${GREEN}  2)XPanel v3.8.7"
-  echo -e "${GREEN}  3)XPanel v3.8.6"
-  echo -e "${GREEN}  4)XPanel v3.8.5"
-  echo -e "${GREEN}  5)XPanel v3.7.9"
+  echo -e "${GREEN}  1)XPanel v3.9.2"
+  echo -e "${GREEN}  2)XPanel v3.9.1"
+  echo -e "${GREEN}  3)XPanel v3.8.7"
+  echo -e "${GREEN}  4)XPanel v3.8.6"
+  echo -e "${GREEN}  5)XPanel v3.8.5"
+  echo -e "${GREEN}  6)XPanel v3.7.9"
   echo -ne "${GREEN}\nSelect Version : ${ENDCOLOR}"
   read n
   if [ "$n" != "" ]; then
     if [ "$n" == "1" ]; then
-      linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-9-1
-    fi
-    if [ "$n" == "2" ]; then
-      linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-7
-    fi
-    if [ "$n" == "3" ]; then
-      linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-6
-    fi
-    if [ "$n" == "4" ]; then
-      linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-5
-    fi
-    if [ "$n" == "5" ]; then
-      linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-9
-    fi
-    if [ "$n" == "6" ]; then
       linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-9-2
     fi
+    if [ "$n" == "2" ]; then
+      linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-9-1
+    fi
+    if [ "$n" == "3" ]; then
+      linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-7
+    fi
+    if [ "$n" == "4" ]; then
+      linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-6
+    fi
+    if [ "$n" == "5" ]; then
+      linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-8-5
+    fi
+    if [ "$n" == "6" ]; then
+      linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-9
+    fi
+  
   else
-    linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-9-1
+    linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-9-2
   fi
 }
 userINPU() {
@@ -282,7 +284,9 @@ EOF
     sudo unzip -o /var/www/html/update.zip -d /var/www/html/ &
     wait
     sudo wget -4 -O /usr/local/bin/cronx https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/cronx
+    chmod +x /usr/local/bin/cronx
     sudo wget -4 -O /usr/local/bin/cronxfixed https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/cronxfixed
+    chmod +x /usr/local/bin/cronxfixed
     sed -i 's@zend_extension = /usr/local/ioncube/ioncube_loader_lin_8.1.so@@' /etc/php/8.1/cli/php.ini
     bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/ioncube.sh --ipv4)
     wait
