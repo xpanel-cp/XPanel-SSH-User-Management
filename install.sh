@@ -118,6 +118,9 @@ wellcomeINSTALL() {
     if [ "$n" == "5" ]; then
       linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-9
     fi
+    if [ "$n" == "5" ]; then
+      linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-9-2
+    fi
   else
     linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-9-1
   fi
@@ -701,6 +704,9 @@ ENDOFFILE
   (crontab -l | grep . ; echo -e "* * * * * /var/www/html/other.sh") | crontab -
   (crontab -l | grep . ; echo -e "0 */1 * * * /var/www/html/killlog.sh") | crontab -
   (crontab -l ; echo "* * * * * wget -q -O /dev/null '$protcohttp://${defdomain}:$sshttp/fixer/exp' > /dev/null 2>&1") | crontab -
+  (crontab -l ; echo "0 * * * * wget -q -O /dev/null '$protcohttp://${defdomain}:$sshttp/fixer/checkhurly' > /dev/null 2>&1") | crontab -
+  (crontab -l ; echo "*/10 * * * * wget -q -O /dev/null '$protcohttp://${defdomain}:$sshttp/fixer/checktraffic' > /dev/null 2>&1") | crontab -
+  (crontab -l ; echo "*/15 * * * * wget -q -O /dev/null '$protcohttp://${defdomain}:$sshttp/fixer/checkfilter' > /dev/null 2>&1") | crontab -
   if dpkg -l | grep -q dropbear; then
   (crontab -l | grep . ; echo -e "* * * * * /var/www/html/dropbear.sh") | crontab -
   fi
