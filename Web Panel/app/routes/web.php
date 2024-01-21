@@ -132,5 +132,7 @@ Route::prefix('fixer')->group(function() {
     Route::get('/checkfilter', [FixerController::class, 'check_filter'])->name('checkfilter');
     Route::get('/checktraffic', [FixerController::class, 'check_traffic'])->name('checktraffic');
     Route::get('/checkhurly', [FixerController::class, 'check_hourly'])->name('checkhurly');
+    Route::get('/send/email/3day', [FixerController::class, 'send_email_detail_acc_3day'])->name('send.email.3day');
+    Route::get('/send/email/24h', [FixerController::class, 'send_email_detail_acc'])->name('send.email.24h');
 });
 Auth::routes();
