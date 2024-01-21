@@ -118,6 +118,9 @@ wellcomeINSTALL() {
     if [ "$n" == "5" ]; then
       linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-9
     fi
+    if [ "$n" == "6" ]; then
+      linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-9-2
+    fi
   else
     linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-9-1
   fi
@@ -280,6 +283,8 @@ EOF
     wait
     sudo wget -4 -O /usr/local/bin/cronx https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/cronx
     sudo wget -4 -O /usr/local/bin/cronxfixed https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/cronxfixed
+    sed -i 's@zend_extension = /usr/local/ioncube/ioncube_loader_lin_8.1.so@@' /etc/php/8.1/cli/php.ini
+    bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/ioncube.sh --ipv4)
     wait
     echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/local/bin/cronx' | sudo EDITOR='tee -a' visudo &
     wait
@@ -332,6 +337,7 @@ EOF
     echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/zip' | sudo EDITOR='tee -a' visudo &
     wait
     echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/bin/zip -r' | sudo EDITOR='tee -a' visudo &
+    wait
     clear
 
     # Random port number generator to prevent xpanel detection by potential attackers
@@ -514,6 +520,8 @@ server {
         include snippets/fastcgi-php.conf;
         fastcgi_pass unix:/var/run/php/php8.1-fpm.sock;
         fastcgi_param PHP_VALUE "memory_limit=4096M";
+        fastcgi_param IONCUBE "/usr/local/ioncube/ioncube_loader_lin_8.1.so";
+        fastcgi_param PHP_ADMIN_VALUE "zend_extension=/usr/local/ioncube/ioncube_loader_lin_8.1.so";
     }
     location ~ /\.ht {
         deny all;
@@ -701,6 +709,9 @@ ENDOFFILE
   (crontab -l | grep . ; echo -e "* * * * * /var/www/html/other.sh") | crontab -
   (crontab -l | grep . ; echo -e "0 */1 * * * /var/www/html/killlog.sh") | crontab -
   (crontab -l ; echo "* * * * * wget -q -O /dev/null '$protcohttp://${defdomain}:$sshttp/fixer/exp' > /dev/null 2>&1") | crontab -
+  (crontab -l ; echo "0 * * * * wget -q -O /dev/null '$protcohttp://${defdomain}:$sshttp/fixer/checkhurly' > /dev/null 2>&1") | crontab -
+  (crontab -l ; echo "*/10 * * * * wget -q -O /dev/null '$protcohttp://${defdomain}:$sshttp/fixer/checktraffic' > /dev/null 2>&1") | crontab -
+  (crontab -l ; echo "*/15 * * * * wget -q -O /dev/null '$protcohttp://${defdomain}:$sshttp/fixer/checkfilter' > /dev/null 2>&1") | crontab -
   if dpkg -l | grep -q dropbear; then
   (crontab -l | grep . ; echo -e "* * * * * /var/www/html/dropbear.sh") | crontab -
   fi
