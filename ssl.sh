@@ -158,6 +158,8 @@ ENDOFFILE
 (crontab -l ; echo "0 * * * * wget -q -O /dev/null 'https://${domain}:$def_port/fixer/checkhurly' > /dev/null 2>&1") | crontab -
 (crontab -l ; echo "*/10 * * * * wget -q -O /dev/null 'https://${domain}:$def_port/fixer/checktraffic' > /dev/null 2>&1") | crontab -
 (crontab -l ; echo "*/15 * * * * wget -q -O /dev/null 'https://${domain}:$def_port/fixer/checkfilter' > /dev/null 2>&1") | crontab -
+(crontab -l ; echo "0 0 * * * wget -q -O /dev/null ''https://${domain}:$def_port/fixer/send/email/3day' > /dev/null 2>&1") | crontab -
+(crontab -l ; echo "0 0 * * * wget -q -O /dev/null ''https://${domain}:$def_port/fixer/send/email/24h' > /dev/null 2>&1") | crontab -
 if dpkg -l | grep -q dropbear; then
 (crontab -l | grep . ; echo -e "* * * * * /var/www/html/dropbear.sh") | crontab -
 fi
