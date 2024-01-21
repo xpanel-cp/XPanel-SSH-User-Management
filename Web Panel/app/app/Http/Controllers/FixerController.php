@@ -8,6 +8,8 @@ use App\Models\Traffic;
 use App\Models\Users;
 use App\Models\LogConnection;
 use App\Models\Xguard;
+use App\Models\Ipadapter;
+use App\Models\Adapterlist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Process;
@@ -519,6 +521,8 @@ $day
                                         'total' => $lasttotal,
                                     ]);
                                 }
+                                $total=env('TRAFFIC_SERVER')+$lasttotal;
+                                Process::run("sed -i \"s/TRAFFIC_SERVER=.*/TRAFFIC_SERVER=$total/g\" /var/www/html/app/.env");
                             }
                         }
                     }
@@ -529,6 +533,7 @@ $day
 
     public function synstraffics()
     {
+
         // Retrieve NetHogs process ID
         $nethogsPID = trim(Process::run("pgrep nethogs")->output());
 
@@ -602,7 +607,11 @@ $day
                         } else {
                             Traffic::where('username', $username)
                                 ->update(['download' => $lastdownload, 'upload' => $lastupload, 'total' => $lasttotal]);
+
                         }
+
+                        $total=env('TRAFFIC_SERVER')+$lasttotal;
+                        Process::run("sed -i \"s/TRAFFIC_SERVER=.*/TRAFFIC_SERVER=$total/g\" /var/www/html/app/.env");
                     }
                 }
             }
@@ -674,6 +683,27 @@ $day
         }, array_keys($onlineUsers), array_values($onlineUsers));
     }
 
+    public function check_filter()
+    {
+        ProController::check_filter();
+    }
 
+    public function check_traffic()
+    {
+        ProController::check_traffic();
+    }
+    public function check_hourly()
+    {
+        ProController::check_hourly();
+    }
+    public function send_email_detail_acc_3day()
+    {
+        ProController::detail_acc();
+    }
+
+    public function send_email_detail_acc()
+    {
+        ProController::detail2_acc();
+    }
 
 }

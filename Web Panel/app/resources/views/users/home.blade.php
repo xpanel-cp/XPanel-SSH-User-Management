@@ -45,6 +45,7 @@
                                 </div>
                                 <div class="col-12">
                                     <select name="status" class="form-select" id="inlineFormSelectPref">
+                                        <option value="all"{{ request('status') == 'all' ? ' selected' : '' }}>{{__('search-user-all')}}</option>
                                         <option value="active"{{ request('status') == 'active' ? ' selected' : '' }}>{{__('user-table-status-active')}}</option>
                                         <option value="deactive"{{ request('status') == 'deactive' ? ' selected' : '' }}>{{__('user-table-status-deactive')}}</option>
                                         <option value="expired"{{ request('status') == 'expired' ? ' selected' : '' }}>{{__('user-table-status-exp')}}</option>
@@ -94,6 +95,8 @@
                                             class="btn btn-info d-inline-flex align-items-center"
                                             value="retraffic" name="action">{{__('user-table-reset')}}
                                     </button>
+                                    <button type="button" id="renewbulk" class="btn btn-primary" onclick="openModal()">{{__('user-table-tog-renewal')}}</button>
+
                                 </div>
                                 <br>
 
@@ -638,6 +641,88 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
 
 
     <!-- renewal -->
+    <div class="modal fade" id="renewalbulk-modal" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <form class="modal-content" action="{{route('new.renewal.bulk')}}" method="POST" enctype="multipart/form-data"
+                  onsubmit="return confirm('{{__('allert-submit')}}');">
+                <div class="modal-header">
+                    <h5 class="mb-0">{{__('user-pop-renewal-title')}}</h5>
+                    <a href="javascript:void(0);" class="avtar avtar-s btn-link-danger btn-pc-default"
+                       data-bs-dismiss="modal">
+                        <i class="ti ti-x f-20"></i>
+                    </a>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="input-group">
+                                        @csrf
+                                        <spa  id="selectedUsersList"></spa>
+                                        <input type="text" name="day_date" class="form-control" placeholder="30">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <small>{{__('user-pop-renewal-today')}}</small>
+                                    <div class="input-group">
+
+                                        <div class="form-check form-check-inline">
+                                            <input type="radio" name="re_date" value="yes"
+                                                   class="form-check-input input-primary" checked>
+                                            <label class="form-check-label"
+                                                   for="customCheckinl311">{{__('user-pop-renewal-yes')}}</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input type="radio" name="re_date" value="no"
+                                                   class="form-check-input input-primary">
+                                            <label class="form-check-label"
+                                                   for="customCheckinl311">{{__('user-pop-renewal-no')}}</label>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <small>{{__('user-pop-renewal-reset')}}</small>
+                                    <div class="input-group">
+
+                                        <div class="form-check form-check-inline">
+                                            <input type="radio" name="re_traffic" value="yes"
+                                                   class="form-check-input input-primary" checked>
+                                            <label class="form-check-label"
+                                                   for="customCheckinl311">{{__('user-pop-renewal-yes')}}</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input type="radio" name="re_traffic" value="no"
+                                                   class="form-check-input input-primary">
+                                            <label class="form-check-label"
+                                                   for="customCheckinl311">{{__('user-pop-renewal-no')}}</label>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <div class="flex-grow-1 text-end">
+                        <button type="button" class="btn btn-link-danger btn-pc-default"
+                                data-bs-dismiss="modal">{{__('user-pop-renewal-cancel')}}
+                        </button>
+                        <button type="submit" class="btn btn-primary" value="submit"
+                                name="renewal_date">{{__('user-pop-renewal-submit')}}</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div class="modal fade" id="renewal-modal" data-bs-keyboard="false" tabindex="-1" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
             <form class="modal-content" action="{{route('new.renewal')}}" method="POST" enctype="multipart/form-data"
@@ -1153,6 +1238,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
             document.getElementById("btnactive").disabled = true;
             document.getElementById("btndeactive").disabled = true;
             document.getElementById("retraffic").disabled = true;
+            document.getElementById("renewbulk").disabled = true;
             function updateButtonState() {
                 var anyChecked = $(".checkItem:checked").length > 0;
 
@@ -1161,15 +1247,49 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                     document.getElementById("btnactive").disabled = false;
                     document.getElementById("btndeactive").disabled = false;
                     document.getElementById("retraffic").disabled = false;
+                    document.getElementById("renewbulk").disabled = false;
                 } else {
                     document.getElementById("btndl").disabled = true;
                     document.getElementById("btnactive").disabled = true;
                     document.getElementById("btndeactive").disabled = true;
                     document.getElementById("retraffic").disabled = true;
+                    document.getElementById("renewbulk").disabled = true;
                 }
             }
         });
     </script>
 
+    <script>
+        // تابع باز کردن Modal
+        function openModal() {
+            // جمع‌آوری اطلاعات کاربران انتخاب شده
+            var selectedUsers = getSelectedUsers();
 
+            // نمایش کاربران انتخاب شده در Modal
+            showSelectedUsers(selectedUsers);
+
+            // باز کردن Modal
+            $('#renewalbulk-modal').modal('show');
+        }
+
+        // تابع جمع‌آوری اطلاعات کاربران انتخاب شده
+        function getSelectedUsers() {
+            var selectedUsers = [];
+            $('input[name="usernamed[]"]:checked').each(function() {
+                var userId = $(this).val();
+                var username = $(this).closest('tr').find('td:nth-child(2)').text(); // دریافت نام کاربر از ستون دوم
+                selectedUsers.push({ id: userId, name: username });
+            });
+            return selectedUsers;
+        }
+
+        // تابع نمایش کاربران انتخاب شده در Modal
+        function showSelectedUsers(users) {
+            var html = '';
+            for (var i = 0; i < users.length; i++) {
+                html += '<input type="hidden" name="bulkrenew[]" value="'+users[i].id+'" >';
+            }
+            $('#selectedUsersList').html(html);
+        }
+    </script>
 @endsection

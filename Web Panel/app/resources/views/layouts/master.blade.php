@@ -22,7 +22,7 @@
             $obj = json_decode($json);
             $github='https://github.com/xpanel-cp/XPanel-SSH-User-Management/blob/master/README-EN.md#installation-guide';
         @endphp
-        @if($obj->last_version>391)
+        @if($obj->last_version>392)
 
             <div class="p-4 mb-2" style="position: fixed;z-index: 9999;left: 0;">
                 <div class="toast fade show" role="alert" aria-live="assertive" aria-atomic="true">
@@ -32,6 +32,18 @@
                         <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
                     </div>
                     <div class="toast-body">New Version XPanel <a href="{!! $github !!}" target="_blank">Github</a> </div>
+                </div>
+            </div>
+        @endif
+        @if(!empty(session('alert')))
+            <div class="p-4 mb-2" style="position: fixed;z-index: 9999;left: 0;">
+                <div class="toast fade show" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header">
+                        <img src="/assets/images/xlogo.png" class="img-fluid m-r-5" alt="xpanel" style="width: 17px">
+                        <strong class="me-auto">XPanel</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                    <div class="toast-body">{{ session('alert') }} </div>
                 </div>
             </div>
         @endif

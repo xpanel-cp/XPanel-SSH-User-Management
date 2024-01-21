@@ -18729,7 +18729,7 @@ a:not([href]) {
 }
 
 p {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: bold;
 }
 
@@ -21030,6 +21030,7 @@ pre[class*=language-] > code {
   color: var(--bs-body-color);
   display: inline-flex;
   align-items: center;
+  font-size: 13px;
 }
 .analytics-tab .nav-item .nav-link:after {
   content: "";

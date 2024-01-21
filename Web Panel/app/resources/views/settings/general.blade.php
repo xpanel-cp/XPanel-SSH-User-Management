@@ -103,6 +103,14 @@
                                             </div>
                                         </div>
 
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <div class="input-group mb-3">
+                                                    <a href="{{route('user.all.delete')}}"  class="btn btn-danger" style="color: white" value="submit" name="submit">{{__('setting-user-all-remove')}}</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
 

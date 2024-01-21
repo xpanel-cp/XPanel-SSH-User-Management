@@ -15,6 +15,8 @@ use Illuminate\Support\Str;
 use Verta;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 use Yajra\DataTables\Facades\DataTables;
+use App\Http\Controllers\ProController;
+
 
 
 
@@ -30,9 +32,7 @@ class UserController extends Controller
     }
     public function search(Request $request)
     {
-        $keyword = $request->input('keyword');
-        $searchBy = $request->input('search_by');
-        $status = $request->input('status');
+
 
         $keyword = $request->input('keyword');
         $searchBy = $request->input('search_by');
@@ -46,7 +46,7 @@ class UserController extends Controller
             });
         }
 
-        if ($status !== null) {
+        if ($status !== null and $status !== 'all') {
             $query->where('status', $status);
         }
 
@@ -303,8 +303,25 @@ class UserController extends Controller
 
             DB::commit();
         }
+        if (!empty($request->email) && $request->email !== null && env('MAIL_STATUS')== 'on') {
+            $validatedData = $request->validate([
+                'username' => 'required|string',
+                'password' => 'required|string',
+                'email' => 'nullable|string',
+                'multiuser' => 'required|numeric',
+                'connection_start' => 'nullable|numeric',
+                'traffic' => 'required|numeric',
+                'expdate' => 'nullable|string',
+                'type_traffic' => 'required|string'
+            ]);
 
-        return redirect()->intended(route('users'));
+            $result = ProController::accountmail($validatedData);
+            return redirect()->intended(route('users'))->with('alert', $result);
+        }
+        else
+        {
+            return redirect()->intended(route('users'));
+        }
     }
 
     public function bulkuser(Request $request)
@@ -824,7 +841,93 @@ class UserController extends Controller
         Process::run("sudo service ssh restart");
         return redirect()->back()->with('success', 'Deleted');
     }
+    public function renew_bulk(Request $request)
+    {
+        $request->validate([
+            'day_date' => 'required|numeric',
+            're_date' => 'required|string',
+            're_traffic' => 'required|string'
+        ]);
+        $newdate = date("Y-m-d");
+        $newdate = date('Y-m-d', strtotime($newdate . " + $request->day_date days"));
+        $user = Auth::user();
+        if ($user->permission == 'admin') {
+            foreach ($request->bulkrenew as $username) {
+                $check_user = Users::where('username', $username)->count();
+                if ($check_user > 0) {
+                    if (env('STATUS_LOG', 'deactive') == 'active') {
+                        $replacement = "Match User {$username}\nBanner /var/www/html/app/storage/banner/{$username}-detail\nMatch all";
+                        $file = fopen("/etc/ssh/sshd_config", "r+");
+                        $fileContent = fread($file, filesize("/etc/ssh/sshd_config"));
+                        if (strpos($fileContent, "#Match all") !== false) {
+                            $modifiedContent = str_replace("#Match all", $replacement, $fileContent);
+                            rewind($file);
+                            fwrite($file, $modifiedContent);
+                        } elseif (strpos($fileContent, "Match User {$username}\n") === false and strpos($fileContent, "#Match all\n") === false) {
+                            $modifiedContent = str_replace("Match all", $replacement, $fileContent);
+                            rewind($file);
+                            fwrite($file, $modifiedContent);
+                        }
+                        fclose($file);
+                        Process::run("sudo service ssh restart");
+                    }
+                    Users::where('username', $username)->update(['status' => 'active', 'end_date' => $newdate]);
 
+                    $user = Users::where('username', $username)->get();
+                    $username=$user[0]->username;
+                    $password=$user[0]->password;
+                    Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$username}");
+                    Process::input($password."\n".$password."\n")->timeout(120)->run("sudo passwd {$username}");
+                    if ($request->re_date == 'yes') {
+                        Users::where('username', $username)->update(['start_date' => date("Y-m-d")]);
+                    }
+                    if ($request->re_traffic == 'yes') {
+                        Traffic::where('username', $username)->update(['download' => '0', 'upload' => '0', 'total' => '0']);
+
+                    }
+                }
+            }
+        } else {
+            foreach ($request->bulkrenew as $username) {
+                $check_user = Users::where('username', $username)->where('customer_user', $user->username)->count();
+                if ($check_user > 0) {
+                    if (env('STATUS_LOG', 'deactive') == 'active') {
+                        $replacement = "Match User {$username}\nBanner /var/www/html/app/storage/banner/{$username}-detail\nMatch all";
+                        $file = fopen("/etc/ssh/sshd_config", "r+");
+                        $fileContent = fread($file, filesize("/etc/ssh/sshd_config"));
+                        if (strpos($fileContent, "#Match all") !== false) {
+                            $modifiedContent = str_replace("#Match all", $replacement, $fileContent);
+                            rewind($file);
+                            fwrite($file, $modifiedContent);
+                        } elseif (strpos($fileContent, "Match User {$username}\n") === false and strpos($fileContent, "#Match all\n") === false) {
+                            $modifiedContent = str_replace("Match all", $replacement, $fileContent);
+                            rewind($file);
+                            fwrite($file, $modifiedContent);
+                        }
+                        fclose($file);
+                        Process::run("sudo service ssh restart");
+                    }
+                    Users::where('username', $username)->update(['status' => 'active', 'end_date' => $newdate]);
+
+                    $user = Users::where('username', $username)->get();
+                    $username=$user[0]->username;
+                    $password=$user[0]->password;
+                    Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$username}");
+                    Process::input($password."\n".$password."\n")->timeout(120)->run("sudo passwd {$username}");
+                    if ($request->re_date == 'yes') {
+                        Users::where('username', $username)->update(['start_date' => date("Y-m-d")]);
+
+                    }
+                    if ($request->re_traffic == 'yes') {
+                        Traffic::where('username', $username)->update(['download' => '0', 'upload' => '0', 'total' => '0']);
+
+                    }
+                }
+            }
+        }
+        Process::run("sudo service ssh restart");
+        return redirect()->back()->with('success', 'Deleted');
+    }
     public function renewal(Request $request)
     {
         $request->validate([
@@ -1058,6 +1161,13 @@ class UserController extends Controller
             }
         }
         return redirect()->back()->with('success', 'Update Success');
+    }
+    public function user_all_delete(Request $request)
+    {
+        DB::table('users')->truncate();
+        DB::table('traffic')->truncate();
+        return redirect()->intended(route('settings', ['name' => 'general']))->with('alert', __('allert-success'));
+
     }
     public function englishToPersianNumbers($input)
     {

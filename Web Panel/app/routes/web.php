@@ -47,8 +47,10 @@ Route::prefix("$panel")->group(function()
     Route::get('/user/deactive/{username}',[UserController::class,'deactiveuser'])->name('user.deactive');
     Route::get('/user/reset/{username}',[UserController::class,'reset_traffic'])->name('user.reset');
     Route::get('/user/delete/{username}',[UserController::class,'delete'])->name('user.delete');
+    Route::get('/user/all/delete',[UserController::class,'user_all_delete'])->name('user.all.delete');
     Route::post('/user/action/bulk',[UserController::class,'delete_bulk'])->name('user.action.bulk');
     Route::post('/user/renewal',[UserController::class,'renewal'])->name('new.renewal');
+    Route::post('/user/renewal/bulk',[UserController::class,'renew_bulk'])->name('new.renewal.bulk');
     Route::get('/user/edit/{username}',[UserController::class,'edit'])->name('user.edit');
     Route::post('/user/edit',[UserController::class,'update'])->name('user.update');
     Route::get('/online',[OnlineController::class,'index'])->name('online');
@@ -62,6 +64,8 @@ Route::prefix("$panel")->group(function()
     Route::post('/settings/general',[SettingsController::class,'update_general'])->name('settings.general');
     Route::post('/settings/change/port/ssh',[SettingsController::class,'change_port_ssh'])->name('settings.change.port.ssh');
     Route::post('/settings/change/port/sshtls',[SettingsController::class,'change_port_ssh_tls'])->name('settings.change.port.ssh.tls');
+    Route::post('/settings/license',[SettingsController::class,'license'])->name('settings.license');
+    Route::post('/settings/mail',[SettingsController::class,'mail_smtp'])->name('settings.mail');
     Route::post('/settings/xguard',[SettingsController::class,'xguard'])->name('settings.xguard');
     Route::post('/settings/xguard/domain',[SettingsController::class,'xguard_domain'])->name('settings.xguard.domain');
     Route::get('/settings/xguard/delete/{id}',[SettingsController::class,'delete_xguard'])->name('settings.xguard.delete');
@@ -79,6 +83,14 @@ Route::prefix("$panel")->group(function()
     Route::get('/settings/api/delete/{id}',[SettingsController::class,'delete_api'])->name('settings.token.delete');
     Route::post('/settings/block',[SettingsController::class,'block'])->name('settings.block');
     Route::post('/settings/fake',[SettingsController::class,'fakeurl'])->name('settings.fakeurl');
+    Route::post('/settings/crontab/fixed',[SettingsController::class,'crontab_fixed'])->name('settings.crontab.fixed');
+    Route::post('/settings/ipadapter/update',[SettingsController::class,'ipadapter_update'])->name('settings.ipadapter.update');
+    Route::post('/settings/ipadapter/add',[SettingsController::class,'ipadapter_add'])->name('settings.ipadapter.add');
+    Route::get('/settings/ipadapter/active/{id}',[SettingsController::class,'ipadapter_active'])->name('settings.ipadapter.active');
+    Route::get('/settings/ipadapter/access/{id}',[SettingsController::class,'ipadapter_access'])->name('settings.ipadapter.access');
+    Route::get('/settings/ipadapter/filter/{id}',[SettingsController::class,'ipadapter_filter'])->name('settings.ipadapter.filter');
+    Route::get('/settings/ipadapter/filter2/{id}',[SettingsController::class,'ipadapter_filter2'])->name('settings.ipadapter.filter2');
+    Route::get('/settings/license/delete/{id}',[SettingsController::class,'license_delete'])->name('settings.license.delete');
     Route::get('/managers',[AdminsController::class,'index'])->name('admins');
     Route::post('/managers',[AdminsController::class,'insert'])->name('admin.new');
     Route::get('/managers/active/{username}',[AdminsController::class,'activeadmin'])->name('admin.active');
@@ -117,5 +129,8 @@ Route::prefix('fixer')->group(function() {
     Route::get('/exp', [FixerController::class, 'cronexp'])->name('exp');
     Route::get('/multiuser', [FixerController::class, 'multiuser'])->name('multiuser');
     Route::get('/other', [FixerController::class, 'other'])->name('other');
+    Route::get('/checkfilter', [FixerController::class, 'check_filter'])->name('checkfilter');
+    Route::get('/checktraffic', [FixerController::class, 'check_traffic'])->name('checktraffic');
+    Route::get('/checkhurly', [FixerController::class, 'check_hourly'])->name('checkhurly');
 });
 Auth::routes();

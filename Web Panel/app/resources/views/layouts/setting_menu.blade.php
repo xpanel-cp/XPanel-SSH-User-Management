@@ -25,5 +25,17 @@
         <li class="nav-item" role="presentation">
             <a href="xguard" class="nav-link {{ request()->segment(3) === 'xguard' ? 'active' : '' }}" type="button" role="tab" aria-selected="false" tabindex="-1"><i class="ti ti-shield"></i>&nbsp;&nbsp;{{__('settings-xguard-title')}}</a>
         </li>
+        <li class="nav-item" role="presentation">
+            <a href="ip-adapter" class="nav-link {{ request()->segment(3) === 'ip-adapter' ? 'active' : '' }}" type="button" role="tab" aria-selected="false" tabindex="-1"><i class="material-icons-two-tone text-warning pc-icon-check" style="font-size: 15px;">star</i> &nbsp;{{__('ip-adapter-change')}} </a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a href="mail" class="nav-link {{ request()->segment(3) === 'mail' ? 'active' : '' }}" type="button" role="tab" aria-selected="false" tabindex="-1"><i class="material-icons-two-tone text-warning pc-icon-check" style="font-size: 15px;">star</i> &nbsp;{{__('mail-setting-title')}} </a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a href="license" class="nav-link {{ request()->segment(3) === 'license' ? 'active' : '' }}" type="button" role="tab" aria-selected="false" tabindex="-1"><i class="material-icons-two-tone text-warning pc-icon-check" style="font-size: 15px;">star</i> &nbsp;{{__('premium')}} </a>
+        </li>
+        <li class="nav-item" role="presentation">
+            <a href="cronjob" class="nav-link {{ request()->segment(3) === 'cronjob' ? 'active' : '' }}" type="button" role="tab" aria-selected="false" tabindex="-1"><i class="ti ti-recharging"></i>&nbsp;{{__('setting-crontab-title')}}</a>
+        </li>
     </ul>
 </div>

@@ -10,12 +10,17 @@ use Auth;
 use App\Models\Settings;
 use App\Models\Traffic;
 use App\Models\Xguard;
+use App\Models\Ipadapter;
+use App\Models\Adapterlist;
+use App\Models\License;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Illuminate\Support\Process\ProcessResult;
 use Illuminate\Support\Facades\Http;
+use App\Http\Controllers\ProController;
+use Verta;
 
 
 class SettingsController extends Controller
@@ -65,11 +70,14 @@ class SettingsController extends Controller
     }
     public function index(Request $request,$name)
     {
+
         $this->check();
         if (!is_string($name)) {
             abort(400, 'Not Valid Username');
         }
         $setting = Settings::all();
+        $ipadapter = Ipadapter::all();
+        $iplist = Adapterlist::all();
         $apis =Api::all();
         if($name=='xguard') {
             $xguard_check = Xguard::all()->count();
@@ -171,6 +179,83 @@ class SettingsController extends Controller
             $output=$protocol.'://'.$output[0];
             $address=$output;
             return view('settings.wordpress', compact('address'));
+        }
+        if($name=='ip-adapter') {
+            return view('settings.ip', compact('ipadapter','iplist'));
+        }
+        if($name=='license') {
+            $response='';
+            $fullDomain = $_SERVER['HTTP_HOST'];
+            $parsedUrl = parse_url($fullDomain);
+            $domainWithoutPort = $parsedUrl['host'];
+            $license = License::first();
+
+            if($license) {
+                $post = [
+                    'email' => $license->email,
+                    'domain' => $license->domain
+                ];
+                $ch = curl_init('https://xguard.xpanel.pro/api/license/validate');
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_POST, 1);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+                $response = curl_exec($ch);
+                $response = json_decode($response, true);
+                curl_close($ch);
+                if (isset($response[0]['message']) and $response[0]['message'] == 'access') {
+                    DB::beginTransaction();
+                    License::where('email', $license->email)->update([
+                        'end_license' => $response[0]['end_license']
+                    ]);
+                    DB::commit();
+                } else {
+                    DB::beginTransaction();
+                    License::where('email', $license->email)->update([
+                        'status' => 'not_access'
+                    ]);
+                    DB::commit();
+                }
+            }
+            else
+            {
+                $post = [
+                    'email' => 'null',
+                    'domain' => 'null'
+                ];
+                $ch = curl_init('https://xguard.xpanel.pro/api/license/validate');
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_POST, 1);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+                $response = curl_exec($ch);
+                $response = json_decode($response, true);
+                curl_close($ch);
+            }
+            return view('settings.license', compact('license','response','domainWithoutPort'));
+        }
+
+        if($name=='mail') {
+            return view('settings.mail');
+        }
+        if($name=='cronjob') {
+
+            function is_https() {
+                return (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) === 'on') ||
+                    (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443) ||
+                    (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https') ||
+                    (isset($_SERVER['HTTP_X_FORWARDED_SSL']) && $_SERVER['HTTP_X_FORWARDED_SSL'] === 'on');
+            }
+
+            function displayServerURL() {
+                $protocol = is_https() ? "https" : "http";
+                $serverURL = $protocol . "://" . $_SERVER['HTTP_HOST'];
+                return $serverURL;
+            }
+
+            $address= displayServerURL();
+
+
+            exec("sudo cronx", $outputs, $returnVar);
+            return view('settings.crontab', compact('outputs','address'));
         }
 
     }
@@ -615,6 +700,164 @@ echo curl_get_contents("$site");
         file_put_contents("/var/www/html/example/index.php", $txt);
         return redirect()->intended(route('settings', ['name' => 'fakeaddress']));
     }
+    public function mail_smtp(Request $request)
+    {
+        $this->check();
+        $validatedData = $request->validate([
+            'host'=>'required|string',
+            'port'=>'required|string',
+            'username'=>'required|string',
+            'password'=>'required|string',
+            'email'=>'required|string',
+            'name'=>'required|string',
+            'status_service'=>'required|string',
+        ]);
+
+        ProController::setting_mail($validatedData);
+        return redirect()->intended(route('settings', ['name' => 'mail']))->with('alert', __('allert-success'));
+    }
+    public function ipadapter_update(Request $request)
+    {
+        $this->check();
+        $validatedData = $request->validate([
+            'email'=>'required|string',
+            'token'=>'required|string',
+            'sub'=>'required|string',
+            'change'=>'required|string',
+            'status_service'=>'required|string'
+        ]);
+
+        $result = ProController::submit_cf($validatedData);
+        return redirect()->intended(route('settings', ['name' => 'ip-adapter']))->with('alert', $result);
+    }
+    public function ipadapter_add(Request $request)
+    {
+        $this->check();
+        $request->validate([
+            'ip'=>'required|string'
+        ]);
+        $check_ip = Adapterlist::where('ip',$request->ip)->count();
+        if($check_ip>0)
+        {
+            $msg=__('ip-adapter-change-popup-ip-rep');
+        }
+        else
+        {
+            DB::beginTransaction();
+            Adapterlist::create([
+                'ip' => $request->ip,
+                'status_active' => 'pending',
+                'status_service' => 'access'
+            ]);
+            DB::commit();
+            $msg=__('ip-adapter-change-popup-ip-add');
+        }
+        return redirect()->intended(route('settings', ['name' => 'ip-adapter']))->with('alert', $msg);
+    }
+    public function ipadapter_active(Request $request,$id)
+    {
+        $this->check();
+        if (!is_numeric($id)) {
+            abort(400, 'Not Valid Username');
+        }
+        $result = ProController::set_cf($id);
+        return redirect()->intended(route('settings', ['name' => 'ip-adapter']))->with('alert', $result);
+    }
+    public function ipadapter_access(Request $request,$id)
+    {
+        $this->check();
+        if (!is_numeric($id)) {
+            abort(400, 'Not Valid Username');
+        }
+        DB::beginTransaction();
+        Adapterlist::where('id', $id)->update([
+            'status_service' => 'access'
+        ]);
+        DB::commit();
+        return redirect()->intended(route('settings', ['name' => 'ip-adapter']))->with('alert', __('allert-success'));
+    }
+    public function ipadapter_filter(Request $request,$id)
+    {
+        $this->check();
+        if (!is_numeric($id)) {
+            abort(400, 'Not Valid Username');
+        }
+        DB::beginTransaction();
+        Adapterlist::where('id', $id)->update([
+            'status_service' => 'filter'
+        ]);
+        DB::commit();
+        return redirect()->intended(route('settings', ['name' => 'ip-adapter']))->with('alert', __('allert-success'));
+    }
+    public function ipadapter_filter2(Request $request,$id)
+    {
+        $this->check();
+        if (!is_numeric($id)) {
+            abort(400, 'Not Valid Username');
+        }
+        DB::beginTransaction();
+        Adapterlist::where('id', $id)->update([
+            'status_service' => 'filter2'
+        ]);
+        DB::commit();
+        return redirect()->intended(route('settings', ['name' => 'ip-adapter']))->with('alert', __('allert-success'));
+    }
+    public function license(Request $request)
+    {
+        $this->check();
+        $request->validate([
+            'email' => 'required|string',
+            'domain' => 'required|string',
+        ]);
+
+        $check_lic = License::all()->count();
+        if($check_lic<1)
+        {
+            DB::beginTransaction();
+            License::create([
+                'email' => $request->email,
+                'domain' => $request->domain,
+                'end_license' => '',
+                'status' => 'not_access'
+            ]);
+            DB::commit();
+        }
+        else
+        {
+            $lic = License::first();
+            DB::beginTransaction();
+            License::where('id',$lic->id)->update([
+                'email' => $request->email,
+                'domain' => $request->domain
+            ]);
+            DB::commit();
+        }
+        return view('license', [
+            'email' => $request->email,
+            'domain' => $request->domain
+        ]);
+
+    }
+    public function license_delete(Request $request,$id)
+    {
+        $this->check();
+        if (!is_numeric($id)) {
+            abort(400, 'Not Valid Username');
+        }
+        License::where('id', $id)->delete();
+        return redirect()->intended(route('settings', ['name' => 'license']))->with('alert', __('allert-success'));
+    }
+
+    public function crontab_fixed(Request $request)
+    {
+        $this->check();
+        $request->validate([
+            'address' => 'required|string'
+        ]);
+        exec("sudo cronxfixed $request->address", $outputs, $returnVar);
+        return redirect()->intended(route('settings', ['name' => 'cronjob']))->with('alert', __('allert-success'));
+    }
+
 
 
 
