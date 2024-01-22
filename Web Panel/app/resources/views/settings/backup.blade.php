@@ -70,10 +70,18 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-lg-6">
+                                            <div class="col-lg-3">
                                                 <div class="UppyInput form">
                                                     <div class="uppy-Root uppy-FileInput-container">
                                                         <input type="submit" class="btn btn-primary" value="{{__('setting-backup-upload')}}">
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <div class="UppyInput form">
+                                                    <div class="uppy-Root uppy-FileInput-container">
+                                                        <a href="{{route('proccess.active.all')}}" type="submit" class="btn btn-success" >{{__('setting-user-all-fixed')}}</a>
 
                                                     </div>
                                                 </div>

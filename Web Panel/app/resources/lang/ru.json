@@ -302,5 +302,7 @@
     "setting-crontab-title": "Cronjob",
     "setting-crontab-submit": "Исправить Cronjob",
     "setting-crontab-desc": "Ниже отображаются активные cronjob на вашем сервере. Проверьте, если адрес различается, и используйте опцию Исправить Cronjob при необходимости.",
-    "setting-user-all-remove": "Удалить всех пользователей"
+    "setting-user-all-remove": "Удалить всех пользователей",
+    "setting-user-all-fixed": "Після імпорту налаштування всіх користувачів",
+    "user-pop-bulkuser-submit": "Додати користувачів"
 }

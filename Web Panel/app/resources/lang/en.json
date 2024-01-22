@@ -300,5 +300,7 @@
     "setting-crontab-title": "Cronjob",
     "setting-crontab-submit": "Fix Cronjob",
     "setting-crontab-desc": "The active cronjobs on your server are displayed below. Check if the address is different and use the Fix Cronjob option if necessary.",
-    "setting-user-all-remove": "Remove All Users"
+    "setting-user-all-remove": "Remove All Users",
+    "setting-user-all-fixed": "Fixing users after import",
+    "user-pop-bulkuser-submit": "Add Users"
 }

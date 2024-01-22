@@ -302,5 +302,8 @@
     "setting-crontab-title": "کرونجاب",
     "setting-crontab-submit": "فیکس کرونجاب",
     "setting-crontab-desc": "لیست کرون های فعال روی سرور شما در زیر قابل نمایش می باشد. بررسی کنید اگر آدرس متفاوت بود از گزینه فیکس کرونجاب استفاده کنید.",
-    "setting-user-all-remove": "حذف تمامی کاربران"
+    "setting-user-all-remove": "حذف تمامی کاربران",
+    "setting-user-all-fixed": "فیکس کردن کاربران بعد از درون ریزی",
+    "user-pop-bulkuser-submit": "افزودن کاربران"
+
 }

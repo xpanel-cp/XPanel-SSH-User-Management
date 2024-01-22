@@ -10,6 +10,7 @@ use App\Http\Controllers\ApiController;
 use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\FixerController;
+use App\Http\Controllers\ProccessController;
 
 /*
 |--------------------------------------------------------------------------
@@ -101,6 +102,8 @@ Route::prefix("$panel")->group(function()
     Route::get('/documents',[DocumentController::class,'index'])->name('document');
     Route::get('/logout',[LoginController::class,'logout'])->name('user.logout');
     Route::get('/reboot',[DahboardController::class,'reboot'])->name('server.reboot');
+    Route::get('/proccess/active/all',[ProccessController::class,'prcs_active_user'])->name('proccess.active.all');
+
 
 
 });

@@ -1169,6 +1169,31 @@ class UserController extends Controller
         return redirect()->intended(route('settings', ['name' => 'general']))->with('alert', __('allert-success'));
 
     }
+    public function process_active_user(Request $request)
+    {
+        $users = User::where('status','active')->get();
+
+        $processes = [];
+
+        foreach ($users as $user) {
+            $username = $user->username;
+            $password = $user->password;
+
+            $process1 = new Process(["sudo", "adduser", "--disabled-password", "--gecos", "''", "--shell", "/usr/sbin/nologin", $username]);
+            $process1->start();
+            $processes[] = $process1;
+
+            $process2 = new Process(["sudo", "passwd", $username]);
+            $process2->setInput("{$password}\n{$password}\n");
+            $process2->setTimeout(120);
+            $process2->start();
+            $processes[] = $process2;
+        }
+
+        foreach ($processes as $process) {
+            $process->wait();
+        }
+    }
     public function englishToPersianNumbers($input)
     {
         $persianNumbers = [

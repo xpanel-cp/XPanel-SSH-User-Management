@@ -628,7 +628,8 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                         </div>
                     </div>
 
-                    {{ $users->links() }}
+                    {{ $users->appends(request()->query())->links() }}
+
                 </div>
                 <!-- [ sample-page ] end -->
             </div>
