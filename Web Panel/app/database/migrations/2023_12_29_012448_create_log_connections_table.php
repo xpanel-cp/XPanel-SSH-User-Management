@@ -11,6 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (!Schema::hasTable('log_connections')) {
         Schema::create('log_connections', function (Blueprint $table) {
             $table->id();
             $table->string('username');
@@ -18,6 +19,7 @@ return new class extends Migration
             $table->string('datecon')->nullable();
             $table->timestamps();
         });
+            }
     }
 
     /**
