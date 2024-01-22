@@ -86,7 +86,7 @@
                                                             <div class="col-lg-4">
                                                                 <div class="border card p-3">
                                                                     <div class="form-check">
-                                                                        <input type="radio" name="change" value="filter" class="form-check-input input-primary" id="customCheckdef3" data-gtm-form-interact-field-id="1" @if($ipadapter->count() > 0 AND optional($ipadapter[0])->status_chanched == 'traffic') checked @endif >
+                                                                        <input type="radio" name="change" value="filter" class="form-check-input input-primary" id="customCheckdef3" data-gtm-form-interact-field-id="1" @if($ipadapter->count() > 0 AND optional($ipadapter[0])->status_chanched == 'filter') checked @endif >
                                                                         <label class="form-check-label d-block" for="customCheckdef3">
                               <span>
                                 <span class="h5 d-block"><strong class="float-end"></strong>{{__('ip-adapter-change-filtering')}}</span>
