@@ -521,7 +521,8 @@ $day
                                         'total' => $lasttotal,
                                     ]);
                                 }
-                                $total=env('TRAFFIC_SERVER')+$lasttotal;
+                                $totalInEnv = floatval(env('TRAFFIC_SERVER', 0));
+                                $total = $totalInEnv + $lasttotal;
                                 Process::run("sed -i \"s/TRAFFIC_SERVER=.*/TRAFFIC_SERVER=$total/g\" /var/www/html/app/.env");
                             }
                         }
