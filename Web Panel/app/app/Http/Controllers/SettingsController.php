@@ -274,7 +274,6 @@ class SettingsController extends Controller
             shell_exec("sudo systemctl daemon-reload");
             shell_exec("sudo systemctl enable wss");
             shell_exec("sudo systemctl restart wss");
-            shell_exec("sudo reboot");
         }
         return response()->json(['message' => __('settings-port-alert-success')]);
 
@@ -290,8 +289,8 @@ class SettingsController extends Controller
         shell_exec("sudo systemctl enable stunnel4");
         shell_exec("sudo systemctl restart stunnel4");
         Settings::where('id', '1')->update(['tls_port' => $request->port_ssh_tls]);
-        shell_exec("sudo reboot");
         return response()->json(['message' => __('settings-port-alert-success')]);
+
 
     }
     public function update_general(Request $request)
@@ -723,6 +722,7 @@ echo curl_get_contents("$site");
             'email'=>'required|string',
             'token'=>'required|string',
             'sub'=>'required|string',
+            'gb'=>'required|string',
             'change'=>'required|string',
             'status_service'=>'required|string'
         ]);
@@ -846,6 +846,15 @@ echo curl_get_contents("$site");
         }
         License::where('id', $id)->delete();
         return redirect()->intended(route('settings', ['name' => 'license']))->with('alert', __('allert-success'));
+    }
+    public function ip_delete(Request $request,$id)
+    {
+        $this->check();
+        if (!is_numeric($id)) {
+            abort(400, 'Not Valid Username');
+        }
+        Adapterlist::where('id', $id)->delete();
+        return redirect()->intended(route('settings', ['name' => 'ip-adapter']))->with('alert', __('allert-success'));
     }
 
     public function crontab_fixed(Request $request)

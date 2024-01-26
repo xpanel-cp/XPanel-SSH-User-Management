@@ -189,14 +189,11 @@
     </div>
     <!-- [ Main Content ] end -->
     <!-- افزودن jQuery -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
+    <script src="/assets/js/jquery-2.2.4.min.js"></script>
     <script>
         $(document).ready(function () {
             $('#change_port_ssh').click(function () {
                 var newPortSSH = $('#port_ssh').val();
-
-                // ارسال درخواست به سمت سرور
                 $.ajax({
                     url: '{{ route("settings.change.port.ssh") }}',
                     type: 'POST',
@@ -207,17 +204,22 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                     },
                     success: function (response) {
-                        // نمایش پاسخ در داخل یک عنصر با شناسه resultContainer
                         $('#resultssh').html('<div class="alert alert-success d-flex align-items-center" role="alert">' +
                             '<i class="bi flex-shrink-0 me-2 ti ti-refresh" style="font-size: 30px"></i>' +
                             '<div><small>' + response.message + '</small></div>' +
                             '</div>');
+                        $.ajax({
+                            url: '{{route('server.reboot')}}',
+                            type: 'GET',
+                            error: function (xhr, status, error) {
+                                console.error('خطا در اجرای دستور ریبوت:', error);
+                            }
+                        });
                         setTimeout(function () {
-                            $('#resultssh').empty(); // یا می‌توانید از hide() استفاده کنید
+                            $('#resultssh').empty();
                         }, 15000);
                     },
                     error: function (error) {
-                        // نمایش پیام خطا در داخل یک عنصر با شناسه resultContainer
                         $('#resultssh').text('خطا: ' + error.statusText);
                     }
                 });
@@ -228,8 +230,6 @@
         $(document).ready(function () {
             $('#change_port_ssh_tls').click(function () {
                 var newPortSSHtls = $('#port_ssh_tls').val();
-
-                // ارسال درخواست به سمت سرور
                 $.ajax({
                     url: '{{ route("settings.change.port.ssh.tls") }}',
                     type: 'POST',
@@ -240,18 +240,23 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
                     },
                     success: function (response) {
-                        // نمایش پاسخ در داخل یک عنصر با شناسه resultContainer
                         $('#resultsshtls').html('<div class="alert alert-success d-flex align-items-center" role="alert">' +
                             '<i class="bi flex-shrink-0 me-2 ti ti-refresh" style="font-size: 30px"></i>' +
                             '<div><small>' + response.message + '</small></div>' +
                             '</div>');
+                        $.ajax({
+                            url: '{{route('server.reboot')}}',
+                            type: 'GET',
+                            error: function (xhr, status, error) {
+                                console.error('خطا در اجرای دستور ریبوت:', error);
+                            }
+                        });
                         setTimeout(function () {
-                            $('#resultsshtls').empty(); // یا می‌توانید از hide() استفاده کنید
+                            $('#resultsshtls').empty();
                         }, 15000);
                     },
-                    error: function (error) {
-                        // نمایش پیام خطا در داخل یک عنصر با شناسه resultContainer
-                        $('#resultsshtls').text('خطا: ' + error.statusText);
+                    error: function (response) {
+                        $('#resultsshtls').text('خطا: ' + response);
                     }
                 });
             });

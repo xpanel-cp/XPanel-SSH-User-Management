@@ -36,7 +36,7 @@
                                                     <input type="text" name="email" class="form-control" value="@if($ipadapter->count() > 0) {{ optional($ipadapter[0])->email_cf }} @endif" placeholder="mail@example.com" required>
                                                     <small>{{__('ip-adapter-change-email-cf')}}</small>
                                                 </div>
-                                                <div class="col-sm-6">
+                                                <div class="col-sm-4">
                                                     <div class="form-group">
                                                         <input type="text" name="token" class="form-control" value="@if($ipadapter->count() > 0) {{ optional($ipadapter[0])->token_cf }} @endif">
                                                         <small>{{__('ip-adapter-change-token-cf')}}</small>
@@ -47,6 +47,12 @@
                                                     <div class="form-group">
                                                         <input type="text" name="sub" class="form-control" value="@if($ipadapter->count() > 0) {{ optional($ipadapter[0])->sub_cf }} @endif" placeholder="sub.example.com">
                                                         <small>{{__('ip-adapter-change-sub-cf')}}</small>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <div class="form-group">
+                                                        <input type="text" name="gb" class="form-control" value="{{env('GB_CHANGE')}}" placeholder="30">
+                                                        <small>{{__('ip-adapter-change-gb-cf')}}</small>
                                                     </div>
                                                 </div>
 
@@ -209,7 +215,7 @@
                                                                                     </a>
                                                                                 </li>
                                                                                 <li class="list-inline-item align-bottom" data-bs-toggle="tooltip" aria-label="Delete" data-bs-original-title="{{__('user-table-delete')}}">
-                                                                                    <a href="#" class="avtar avtar-xs btn-link-danger btn-pc-default">
+                                                                                    <a href="{{ route('settings.ipadapter.delete', ['id' => $val->id]) }}" class="avtar avtar-xs btn-link-danger btn-pc-default">
                                                                                         <i class="ti ti-trash f-18"></i>
                                                                                     </a>
                                                                                 </li>

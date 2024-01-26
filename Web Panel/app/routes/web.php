@@ -87,6 +87,7 @@ Route::prefix("$panel")->group(function()
     Route::post('/settings/crontab/fixed',[SettingsController::class,'crontab_fixed'])->name('settings.crontab.fixed');
     Route::post('/settings/ipadapter/update',[SettingsController::class,'ipadapter_update'])->name('settings.ipadapter.update');
     Route::post('/settings/ipadapter/add',[SettingsController::class,'ipadapter_add'])->name('settings.ipadapter.add');
+    Route::get('/settings/ipadapter/delete/{id}',[SettingsController::class,'ip_delete'])->name('settings.ipadapter.delete');
     Route::get('/settings/ipadapter/active/{id}',[SettingsController::class,'ipadapter_active'])->name('settings.ipadapter.active');
     Route::get('/settings/ipadapter/access/{id}',[SettingsController::class,'ipadapter_access'])->name('settings.ipadapter.access');
     Route::get('/settings/ipadapter/filter/{id}',[SettingsController::class,'ipadapter_filter'])->name('settings.ipadapter.filter');
