@@ -122,6 +122,9 @@ wellcomeINSTALL() {
     if [ "$n" == "6" ]; then
       linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-9
     fi
+     if [ "$n" == "7" ]; then
+      linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-9-4
+    fi
   
   else
     linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-9-3
