@@ -757,6 +757,7 @@ ENDOFFILE
   DEFAULT_MAIL_PASSWORD=
   DEFAULT_MAIL_FROM_ADDRESS=
   DEFAULT_MAIL_FROM_NAME=
+  DEFAULT_GB_CHANGE=
 
   if [ -f /var/www/html/.env_copy ]; then
     while IFS= read -r line; do
@@ -806,7 +807,9 @@ ENDOFFILE
       elif [ "$key" = "MAIL_FROM_ADDRESS" ]; then
         MAIL_FROM_ADDRESS="$value" 
       elif [ "$key" = "MAIL_FROM_NAME" ]; then
-        MAIL_FROM_NAME="$value"   
+        MAIL_FROM_NAME="$value" 
+      elif [ "$key" = "GB_CHANGE" ]; then
+        GB_CHANGE="$value" 
       fi
     done </var/www/html/.env_copy
   fi
@@ -833,6 +836,7 @@ ENDOFFILE
   MAIL_PASSWORD="${MAIL_PASSWORD:-$DEFAULT_MAIL_PASSWORD}"
   MAIL_FROM_ADDRESS="${MAIL_FROM_ADDRESS:-$DEFAULT_MAIL_FROM_ADDRESS}"
   MAIL_FROM_NAME="${MAIL_FROM_NAME:-$DEFAULT_MAIL_FROM_NAME}"
+  GB_CHANGE="${GB_CHANGE:-$DEFAULT_GB_CHANGE}"
 
   sed -i "s/APP_LOCALE=.*/APP_LOCALE=$APP_LOCALE/g" /var/www/html/app/.env
   sed -i "s/APP_MODE=.*/APP_MODE=$APP_MODE/g" /var/www/html/app/.env
@@ -856,6 +860,7 @@ ENDOFFILE
   sed -i "s/MAIL_PASSWORD=.*/MAIL_PASSWORD=$MAIL_PASSWORD/g" /var/www/html/app/.env
   sed -i "s/MAIL_FROM_ADDRESS=.*/MAIL_FROM_ADDRESS=$MAIL_FROM_ADDRESS/g" /var/www/html/app/.env
   sed -i "s/MAIL_FROM_NAME=.*/MAIL_FROM_NAME=$MAIL_FROM_NAME/g" /var/www/html/app/.env
+  sed -i "s/GB_CHANGEE=.*/GB_CHANGE=$GB_CHANGE/g" /var/www/html/app/.env
   sudo systemctl stop apache2
   sudo systemctl disable apache2
   sudo apt-get remove apache2 -y
