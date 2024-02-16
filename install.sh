@@ -259,6 +259,12 @@ EOF
  [openssh]
  accept = $sshtls_port
  connect = 0.0.0.0:$port
+ sslVersion = TLSv1.2
+ options = NO_SSLv2
+ options = NO_SSLv3
+ options = SINGLE_DH_USE
+ options = SINGLE_ECDH_USE
+ ciphers = ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS
 EOF
 
     echo "=================  XPanel OpenSSL ======================"
