@@ -1,5 +1,14 @@
-#!/bin/bash
-
+export GREEN='\e[32m'
+export RED='\033[0;31m'
+export BGBLUE='\e[1;44m'
+export ORANGE='\033[0;33m'
+export BLUE='\033[0;34m'
+export PURPLE='\033[0;35m'
+export CYAN='\033[0;36m'
+export BG='\E[44;1;39m'
+export NC='\033[0;37m'
+export WHITE='\033[0;37m'
+export TRY="[${RED} * ${NC}]"
 # Function to display the menu
 adminuser=$(grep "DB_USERNAME=" /var/www/html/app/.env | awk -F "=" '{print $2}')
 adminpass=$(grep "DB_PASSWORD=" /var/www/html/app/.env | awk -F "=" '{print $2}')
@@ -42,31 +51,38 @@ RED=$(tput setaf 1)
 RESET=$(tput sgr0)
 function show_menu() {
     clear
-    echo "Detail XPanel"
-    echo "------------------"
-    echo "Username: $adminuser"
-    echo "Password: $def_pw"
-    echo "SSH PORT: $sshport"
-    echo "SSH PORT TLS: $ssh_tls_port"
-    echo "XPanel Link: \"http://$domain:$def_port/$def_cp/login\""
-    echo ""
-    echo "XPanel CLI Menu"
-    echo "------------------"
-    
-    echo "${BLUE}1. Change Username AND Password"
-    echo "${RED}2. Change Port SSH"
-    echo "${BLUE}3. Change Port SSH TLS"
-    echo "${RED}4. Update XPanel Nginx Web Server"
-    echo "${BLUE}5. Remove XPanel"
-    echo "${RED}6. Remove All Admin XPanel"
-    echo "${BLUE}7. Change Banner Text"
-    echo "${RED}8. Blocked Port 80 and 443 IRAN"
-    echo "${BLUE}9. UnBlock Port 80 and 443 IRAN"
-    echo "${RED}10. Install Dropbear"
-    echo "${BLUE}11. Install WordPress"
-    echo "${RED}12. Fix Call (UDPGW)"
-    echo "${BLUE}13. Update XPanel Apache Web Server"
-    echo "${RED}0. Exit${RESET}"
+	echo -e "${GREEN}██╗░░██╗██████╗░░█████╗░███╗░░██╗███████╗██╗░░░░░"
+	echo -e "${GREEN}╚██╗██╔╝██╔══██╗██╔══██╗████╗░██║██╔════╝██║░░░░░"
+	echo -e "${GREEN}░╚███╔╝░██████╔╝███████║██╔██╗██║█████╗░░██║░░░░░"
+	echo -e "${GREEN}░██╔██╗░██╔═══╝░██╔══██║██║╚████║██╔══╝░░██║░░░░░"
+	echo -e "${GREEN}██╔╝╚██╗██║░░░░░██║░░██║██║░╚███║███████╗███████╗"
+	echo -e "${GREEN}╚═╝░░╚═╝╚═╝░░░░░╚═╝░░╚═╝╚═╝░░╚══╝╚══════╝╚══════╝"
+	echo -e "$BLUE┌────────────────────────────────────────────────────────────────•${NC}"
+	echo -e "$BLUE│$NC ${ORANGE}•${NC} Version: ${BLUE}3.9.4${NC}"
+	echo -e "$BLUE│$NC ${ORANGE}•${NC} SSH PORT: $sshport"
+	echo -e "$BLUE│$NC ${ORANGE}•${NC} Username: ${BLUE}$adminuser${NC}"
+	echo -e "$BLUE│$NC ${ORANGE}•${NC} Password: ${BLUE}$def_pw${NC}"
+	echo -e "$BLUE│$NC ${ORANGE}•${NC} XPanel Link: \"http://$domain:$def_port/$def_cp/login\""
+	echo -e "$BLUE│$NC ${ORANGE}•${NC} UPTime: $(uptime -p | sed 's/up //')"
+	echo -e "$BLUE└────────────────────────────────────────────────────────────────•${NC}"
+	echo -e "$BLUE•────────────────────────────────────────────────────────────────┐$NC"
+	echo -e " ${BLUE}[1]${NC} ${ORANGE}•${NC} ${WHITE}Change Username AND Password${NC}"
+	echo -e " ${BLUE}[2]${NC} ${ORANGE}•${NC} ${WHITE}Change Port SSH${NC}"
+	echo -e " ${BLUE}[3]${NC} ${ORANGE}•${NC} ${WHITE}Change Port SSH TLS${NC}"
+	echo -e " ${BLUE}[4]${NC} ${ORANGE}•${NC} ${WHITE}Update XPanel Nginx Web Server${NC}"
+	echo -e " ${BLUE}[5]${NC} ${ORANGE}•${NC} ${WHITE}Remove XPanel${NC}"
+	echo -e " ${BLUE}[6]${NC} ${ORANGE}•${NC} ${WHITE}Remove All Admin XPanel${NC}"
+	echo -e " ${BLUE}[7]${NC} ${ORANGE}•${NC} ${WHITE}Blocked Port 80 and 443 IRAN${NC}"
+	echo -e " ${BLUE}[8]${NC} ${ORANGE}•${NC} ${WHITE}UnBlock Port 80 and 443 IRAN${NC}"
+	echo -e " ${BLUE}[9]${NC} ${ORANGE}•${NC} ${WHITE}Install Dropbear${NC}"
+	echo -e " ${BLUE}[10]${NC} ${ORANGE}•${NC} ${WHITE}Install WordPress${NC}"
+	echo -e " ${BLUE}[11]${NC} ${ORANGE}•${NC} ${WHITE}Fix Call (UDPGW)${NC}"
+	echo -e " ${BLUE}[12]${NC} ${ORANGE}•${NC} ${WHITE}Sing-box${NC}"
+	echo -e "$BLUE•────────────────────────────────────────────────────────────────┘${NC}"
+	echo -e "$BLUE┌─────────────────────────┐${NC}"
+	echo -e "$BLUE│$NC ${BLUE}[0]${NC} ${ORANGE}•${NC} ${RED}Exit${NC}$NC"
+	echo -e "$BLUE└─────────────────────────┘${NC}"
+	echo -e ""
 }
 
 # Function to select an option
@@ -137,31 +153,27 @@ connect = 0.0.0.0:$sshport
        mysql -e "USE XPanel_plus; TRUNCATE TABLE admins;"
        echo "Removed All Admin"
         ;;
+        
         7)
-        echo "Please enter a Text Banner:"
-        read banner
-cat << EOF > /root/banner.txt
-$banner
-EOF
-            ;;
-            8)
-            bash <(curl -Ls https://github.com/xpanel-cp/XPanel-SSH-User-Management/raw/master/block_iran.sh --ipv4)
-            ;;
-            9)
-             sudo iptables -F
-            ;;
-            10)
-            bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/Dropbear-ssh/main/install.sh)
-            ;;
-            11)
-            bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/wp-install.sh --ipv4)
-            ;;
-            12)
-            bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/fix-call.sh --ipv4)
-            ;;
-            13)
-            bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/apache.sh --ipv4)
-            ;;
+        bash <(curl -Ls https://github.com/xpanel-cp/XPanel-SSH-User-Management/raw/master/block_iran.sh --ipv4)
+        ;;
+        8)
+        sudo iptables -F
+        ;;
+        9)
+        bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/Dropbear-ssh/main/install.sh)
+        ;;
+        10)
+        bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/wp-install.sh --ipv4)
+        ;;
+        11)
+        bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/fix-call.sh --ipv4)
+        ;; 
+        12)
+        curl -sL -o /usr/bin/sbx https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/sbx.sh.x
+        chmod +x /usr/bin/sbx && sbx
+		
+        ;; 		
         0)
             echo "Exiting the menu."
             exit 0
