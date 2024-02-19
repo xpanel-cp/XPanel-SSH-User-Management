@@ -46,6 +46,7 @@ fi
 def_port=$(grep "PORT_PANEL=" /var/www/html/app/.env | awk -F "=" '{print $2}')
 def_cp=$(grep "PANEL_DIRECT=" /var/www/html/app/.env | awk -F "=" '{print $2}')
 def_pw=$(grep "DB_PASSWORD=" /var/www/html/app/.env | awk -F "=" '{print $2}')
+vx=$(awk -F\' '/var version/ {print $2}' /var/www/html/cp/assets/js/config.js)
 BLUE=$(tput setaf 12)
 RED=$(tput setaf 1)
 RESET=$(tput sgr0)
@@ -58,7 +59,7 @@ function show_menu() {
 	echo -e "${GREEN}██╔╝╚██╗██║░░░░░██║░░██║██║░╚███║███████╗███████╗"
 	echo -e "${GREEN}╚═╝░░╚═╝╚═╝░░░░░╚═╝░░╚═╝╚═╝░░╚══╝╚══════╝╚══════╝"
 	echo -e "$BLUE┌────────────────────────────────────────────────────────────────•${NC}"
-	echo -e "$BLUE│$NC ${ORANGE}•${NC} Version: ${BLUE}3.9.4${NC}"
+	echo -e "$BLUE│$NC ${ORANGE}•${NC} Version: ${BLUE}$vx${NC}"
 	echo -e "$BLUE│$NC ${ORANGE}•${NC} SSH PORT: $sshport"
 	echo -e "$BLUE│$NC ${ORANGE}•${NC} Username: ${BLUE}$adminuser${NC}"
 	echo -e "$BLUE│$NC ${ORANGE}•${NC} Password: ${BLUE}$def_pw${NC}"
