@@ -171,7 +171,7 @@ connect = 0.0.0.0:$sshport
         bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/fix-call.sh --ipv4)
         ;; 
         12)
-        bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/OT/ot.sh --ipv4)
+        bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/OT/singbox.sh --ipv4)
         ;; 		
         0)
             echo "Exiting the menu."
