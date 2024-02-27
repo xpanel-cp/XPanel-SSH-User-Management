@@ -160,6 +160,17 @@
                                                         <div class="accordion-body">{{__('premium-desc5-1')}}</div>
                                                     </div>
                                                 </div>
+
+                                                <div class="accordion-item">
+                                                    <h2 class="accordion-header" id="flush-heading5">
+                                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse5" aria-expanded="false" aria-controls="flush-collapse5">
+                                                            <i class="material-icons-two-tone text-warning pc-icon-check" style="font-size: 15px;">star</i> {{__('premium-desc6')}}
+                                                        </button>
+                                                    </h2>
+                                                    <div id="flush-collapse5" class="accordion-collapse collapse" aria-labelledby="flush-heading5" data-bs-parent="#accordionFlushExample" style="">
+                                                        <div class="accordion-body">{{__('premium-desc6-1')}}</div>
+                                                    </div>
+                                                </div>
                                             </div>
                                     </div>
                                 </div>

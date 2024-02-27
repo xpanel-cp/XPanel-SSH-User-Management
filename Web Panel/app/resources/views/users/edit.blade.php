@@ -27,7 +27,7 @@
                     <div class="card-body">
                         <div class="row">
                                 <form class="modal-content" action="{{route('user.update')}}" method="POST" enctype="multipart/form-data"
-                                      onsubmit="return confirm('Are you sure you want to perform this operation?');">
+                                      onsubmit="return confirm('{{__('allert-submit')}}');">
                                     @csrf
                                 <div class="">
                                     <div class="form-group row">

@@ -40,22 +40,34 @@
             </div>
 
             <ul class="pc-navbar">
-                <li class="pc-item pc-caption">
-                    <label>SSH Direct + TLS + Dropbear</label>
-                    <i class="ti ti-dashboard"></i>
-                </li>
                 <li class="pc-item">
                     <a href="{{route('dashboard')}}" class="pc-link">
                         <i data-feather="airplay"></i>
                         <span class="pc-mtext">{{__('menu-dashboard')}}</span>
                     </a>
                 </li>
-
-                <li class="pc-item">
-                    <a href="{{route('users')}}" class="pc-link">
-                        <i data-feather="users"></i>
+                <li class="pc-item pc-hasmenu">
+                    <a href="javascript:void(0);" class="pc-link">
+            <span class="pc-micon">
+              <i data-feather="users"></i>
+            </span>
                         <span class="pc-mtext">{{__('menu-users')}}</span>
+                        <span class="pc-arrow"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg></span>
                     </a>
+                    <ul class="pc-submenu" style="display: block; box-sizing: border-box;">
+                        <li class="pc-item">
+                            <a href="{{route('users')}}" class="pc-link">
+                                <span class="pc-micon"><i class="ti ti-shield-lock"></i></span>
+                                <span class="pc-mtext">SSH</span>
+                            </a>
+                        </li>
+                        <li class="pc-item">
+                            <a href="{{route('users.sb')}}" class="pc-link">
+                                <span class="pc-micon"><i class="ti ti-shield-lock"></i></span>
+                                <span class="pc-mtext">SING-BOX</span>
+                            </a>
+                        </li>
+                    </ul>
                 </li>
 
                 <li class="pc-item">

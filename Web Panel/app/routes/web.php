@@ -39,15 +39,28 @@ Route::prefix("$panel")->group(function()
     Route::get('/dashboard',[DahboardController::class,'index'])->name('dashboard');
     Route::get('/dashboard/usage',[DahboardController::class,'usage'])->name('usage');
     Route::get('/users',[UserController::class,'index'])->name('users');
+    Route::get('/singbox/users',[UserController::class,'sb_index'])->name('users.sb');
     Route::get('/users/sort/{status}',[UserController::class,'index_sort'])->name('users.sort');
     Route::get('/users/search',[UserController::class,'search'])->name('users.search');
+    Route::get('/singbox/users/search',[UserController::class,'search_sb'])->name('singbox.users.search');
     Route::get('/users/qr/{data}',[UserController::class,'generateQRCode'])->name('qrimg');
+    Route::post('/singbox/qr',[UserController::class,'singbox_generateQRCode'])->name('singbox.qrimg');
     Route::post('/users',[UserController::class,'newuser'])->name('new.user');
+    Route::post('/singbox/users',[UserController::class,'sb_newuser'])->name('sb.new.user');
     Route::post('/users/bulk',[UserController::class,'bulkuser'])->name('new.bulkuser');
     Route::get('/user/active/{username}',[UserController::class,'activeuser'])->name('user.active');
     Route::get('/user/deactive/{username}',[UserController::class,'deactiveuser'])->name('user.deactive');
     Route::get('/user/reset/{username}',[UserController::class,'reset_traffic'])->name('user.reset');
     Route::get('/user/delete/{username}',[UserController::class,'delete'])->name('user.delete');
+
+    Route::get('/singbox/user/active/{port}',[UserController::class,'activeuser_sb'])->name('singbox.user.active');
+    Route::get('/singbox/user/deactive/{port}',[UserController::class,'deactiveuser_sb'])->name('singbox.user.deactive');
+    Route::get('/singbox/user/reset/{port}',[UserController::class,'reset_traffic_sb'])->name('singbox.user.reset');
+    Route::get('/singbox/user/delete/{port}',[UserController::class,'delete_sb'])->name('singbox.user.delete');
+    Route::post('/singbox/user/renewal',[UserController::class,'renewal_sb'])->name('singbox.new.renewal');
+    Route::get('/singbox/user/edit/{port}',[UserController::class,'edit_sb'])->name('singbox.user.edit');
+    Route::post('/singbox/user/edit',[UserController::class,'update_sb'])->name('singbox.user.update');
+
     Route::get('/user/all/delete',[UserController::class,'user_all_delete'])->name('user.all.delete');
     Route::post('/user/action/bulk',[UserController::class,'delete_bulk'])->name('user.action.bulk');
     Route::post('/user/renewal',[UserController::class,'renewal'])->name('new.renewal');

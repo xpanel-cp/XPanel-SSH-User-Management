@@ -79,53 +79,12 @@ class SettingsController extends Controller
         $ipadapter = Ipadapter::all();
         $iplist = Adapterlist::all();
         $apis =Api::all();
-        if($name=='xguard') {
-            $xguard_check = Xguard::all()->count();
-            $xguard = Xguard::all();
-            if($xguard_check>0)
-            {$email=$xguard[0]->email;}
-            else
-            {
-                $email=null;
-            }
-
-            $server_ip = $_SERVER['SERVER_ADDR'];
-            $portssh = env('PORT_SSH');
-            $post = [
-                'email' => $email,
-                'ip' => $server_ip,
-                'port' => $portssh,
-            ];
-            $ch = curl_init('https://xguard.xpanel.pro/api/validate');
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-            $response = curl_exec($ch);
-            $response = json_decode($response, true);
-            curl_close($ch);
-            if(isset($response[0]['message']) and $response[0]['message']=='access')
-            {
-                DB::beginTransaction();
-                Xguard::where('email', $xguard[0]->email)->update([
-                    'port' => $response[0]['port_tunnel'],
-                    'expired' => $response[0]['end_license']
-                ]);
-                DB::commit();
-                Process::run("sed -i \"s/XGUARD=.*/XGUARD=active/g\" /var/www/html/app/.env");
-            }
-            else
-            {
-                Process::run("sed -i \"s/XGUARD=.*/XGUARD=deactive/g\" /var/www/html/app/.env");
-            }
-            return view('settings.xguard', compact('server_ip','xguard','portssh','response'));}
 
         if($name=='general') {
             $status=$setting[0]->multiuser;
             $tls_port=$setting[0]->tls_port;
             $traffic_base=env('TRAFFIC_BASE');
             return view('settings.general', compact('traffic_base','status','tls_port'));}
-
-
         if($name=='backup') {
             $token_bot=env('BOT_TOKEN');
             $id_admin=env('BOT_ID_ADMIN');
@@ -232,7 +191,6 @@ class SettingsController extends Controller
             }
             return view('settings.license', compact('license','response','domainWithoutPort'));
         }
-
         if($name=='mail') {
             return view('settings.mail');
         }
@@ -377,62 +335,6 @@ class SettingsController extends Controller
         return redirect()->intended(route('settings', ['name' => 'general']));
     }
 
-    public function xguard(Request $request)
-    {
-        $this->check();
-        $request->validate([
-            'email' => 'required|string',
-            'ip' => 'required|string',
-            'port' => 'required|string'
-        ]);
-
-        $check_xguard = Xguard::all()->count();
-        if($check_xguard<1)
-        {
-            DB::beginTransaction();
-            Xguard::create([
-                'email' => $request->email,
-                'domain' => '',
-                'port' => '',
-                'expired' => ''
-            ]);
-            DB::commit();
-        }
-        return view('xguard', [
-            'email' => $request->email,
-            'ip' => $request->ip,
-            'port' => $request->port,
-        ]);
-
-
-
-    }
-    public function xguard_domain(Request $request)
-    {
-        $this->check();
-        $request->validate([
-            'domain_cname' => 'required|string'
-        ]);
-
-        $xguard = Xguard::all();
-        DB::beginTransaction();
-        Xguard::where('email', $xguard[0]->email)->update([
-            'domain' => $request->domain_cname
-        ]);
-        DB::commit();
-        return redirect()->intended(route('settings', ['name' => 'xguard']));
-
-    }
-    public function delete_xguard(Request $request,$id)
-    {
-        if (!is_numeric($id)) {
-            abort(400, 'Not Valid Username');
-        }
-
-        Xguard::where('id', $id)->delete();
-
-        return redirect()->back()->with('success', 'Deleted');
-    }
     public function update_telegram(Request $request)
     {
         $this->check();

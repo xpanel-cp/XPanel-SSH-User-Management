@@ -242,6 +242,8 @@
     "premium-desc4-1": "An exclusive link is created for each user to view their subscription credit and usage volume. This feature will be added soon.",
     "premium-desc5": "Sending Subscription Information via Email",
     "premium-desc5-1": "Notification of subscription status to the user by sending an email.",
+    "premium-desc6": "SING-BOX",
+    "premium-desc6-1": "If you do not obtain a license, you can only create and manage 4 subscriptions. Panels with licenses will not have any limitations.",
     "premium-email": "License Email",
     "premium-domain": "License Domain",
     "premium-amount": "6-Month Subscription %s Dollars",
@@ -303,5 +305,9 @@
     "setting-crontab-desc": "The active cronjobs on your server are displayed below. Check if the address is different and use the Fix Cronjob option if necessary.",
     "setting-user-all-remove": "Remove All Users",
     "setting-user-all-fixed": "Fixing users after import",
-    "user-pop-bulkuser-submit": "Add Users"
+    "user-pop-bulkuser-submit": "Add Users",
+    "singbox-name": "Name",
+    "singbox-name-desc": "Enter a name for the subscription",
+    "singbox-protocol-desc": "Select the protocol type",
+    "singbox-protocol-copy": "Copy Link"
 }

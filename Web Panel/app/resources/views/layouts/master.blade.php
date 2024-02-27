@@ -22,10 +22,10 @@
             $obj = json_decode($json);
             $github='https://github.com/xpanel-cp/XPanel-SSH-User-Management/blob/master/README-EN.md#installation-guide';
         @endphp
-        @if($obj->last_version>394)
+        @if($obj->last_version>395)
 
             <div class="p-4 mb-2" style="position: fixed;z-index: 9999;left: 0;">
-                <div class="toast fade show" role="alert" aria-live="assertive" aria-atomic="true">
+                <div id="liveToast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
                     <div class="toast-header">
                         <img src="/assets/images/xlogo.png" class="img-fluid m-r-5" alt="XPanel" style="width: 17px">
                         <strong class="me-auto">XPanel</strong>
@@ -61,11 +61,6 @@
                     right: 5px; position: fixed; width: 40px; bottom: 50px;
                 }
             </style>
-        @endif
-        @if(env('XGUARD')=='active')
-            <a href="{{route('setting')}}/xguard"><img src="/assets/images/anti-green.png" class="xguard_loc"></a>
-        @else
-            <a href="{{route('setting')}}/xguard"><img src="/assets/images/anti-red.png" class="xguard_loc"></a>
         @endif
         </body>
 

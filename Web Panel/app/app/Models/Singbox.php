@@ -1,0 +1,75 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use App\Models\Settings;
+
+class Singbox extends Model
+{
+    use HasFactory;
+    protected $fillable = [
+        'port_sb',
+        'name',
+        'email',
+        'mobile',
+        'multiuser',
+        'start_date',
+        'end_date',
+        'date_one_connect',
+        'customer_user',
+        'protocol_sb',
+        'detail_sb',
+        'status',
+        'traffic',
+        'desc'
+    ];
+    public function xtraffic() {
+        return $this->belongsTo(Trafficsb::class, 'port_sb', 'port_sb');
+
+    }
+    public static function generateUniqueUUIDAndPort()
+    {
+        $setting = Settings::first();
+        if(empty($setting->tls_port) || $setting->tls_port==null)
+        {
+            $tls_port='444';
+        }
+        else
+        {
+            $tls_port=$setting->tls_port;
+        }
+
+        $defaultPorts = [22, 443, 80, 8880, 9990, env('DB_PORT'), env('PORT_SSH'), env('MAIL_PORT'), $tls_port, env('PORT_DROPBEAR'), env('PORT_PANEL'), env('REDIS_PORT')];
+
+        do {
+            $uuid = sprintf(
+                '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
+                rand(0, 0xffff),
+                rand(0, 0xffff),
+                rand(0, 0xffff),
+                rand(0, 0x0fff) | 0x4000,
+                rand(0, 0x3fff) | 0x8000,
+                rand(0, 0xffff),
+                rand(0, 0xffff),
+                rand(0, 0xffff)
+            );
+
+            $port = rand(1000, 65535);
+
+            $isDefaultPort = in_array($port, $defaultPorts);
+
+            $existsInDatabase = self::where('detail_sb->uuid', $uuid)
+                ->where('detail_sb->port', $port)
+                ->exists();
+
+        } while ($isDefaultPort || $existsInDatabase);
+
+        return [
+            'uuid' => $uuid,
+            'port' => $port,
+        ];
+    }
+
+}

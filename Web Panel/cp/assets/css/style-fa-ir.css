@@ -27856,6 +27856,47 @@ File: style.css
   display: flex;
   margin-bottom: -7.5%;
 }
+@media (max-width: 3192px)
+{
+  .table-btn
+  {
+    padding: 9px 9px 0px 9px;
+    margin-bottom: -3.5%;
+    display: flex;
+
+  }
+}
+
+@media (max-width: 2492px)
+{
+  .table-btn
+  {
+    padding: 9px 9px 0px 9px;
+    margin-bottom: -4.5%;
+    display: flex;
+
+  }
+}
+@media (max-width: 2092px)
+{
+  .table-btn
+  {
+    padding: 9px 9px 0px 9px;
+    margin-bottom: -5.5%;
+    display: flex;
+
+  }
+}
+@media (max-width: 1792px)
+{
+  .table-btn
+  {
+    padding: 9px 9px 0px 9px;
+    margin-bottom: -6.5%;
+    display: flex;
+
+  }
+}
 @media (max-width: 575.98px)
 {
   .table-btn
