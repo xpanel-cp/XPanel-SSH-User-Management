@@ -31,3 +31,5 @@ ENDOFFILE
 useradd -m videocall
 systemctl enable videocall
 systemctl start videocall
+sed -i "s/PORT_UDPGW=.*/PORT_UDPGW=$udpport/g" /var/www/html/app/.env
+

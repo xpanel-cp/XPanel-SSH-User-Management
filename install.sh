@@ -95,7 +95,7 @@ cp /var/www/html/example/index.php /var/www/
 }
 wellcomeINSTALL() {
   echo -e "${YELLOW}************ Select XPanel Version Nginx Web Server************"
-  echo -e "${GREEN}  1)XPanel v3.9.3"
+  echo -e "${GREEN}  1)XPanel v3.9.4"
   echo -e "${GREEN}  2)XPanel v3.9.1"
   echo -e "${GREEN}  3)XPanel v3.8.7"
   echo -e "${GREEN}  4)XPanel v3.8.6"
@@ -105,7 +105,7 @@ wellcomeINSTALL() {
   read n
   if [ "$n" != "" ]; then
     if [ "$n" == "1" ]; then
-      linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-9-3
+      linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-9-4
     fi
     if [ "$n" == "2" ]; then
       linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-9-1
@@ -122,9 +122,10 @@ wellcomeINSTALL() {
     if [ "$n" == "6" ]; then
       linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-7-9
     fi
+    
   
   else
-    linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-9-3
+    linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-9-4
   fi
 }
 userINPU() {
@@ -258,6 +259,12 @@ EOF
  [openssh]
  accept = $sshtls_port
  connect = 0.0.0.0:$port
+ sslVersion = TLSv1.2
+ options = NO_SSLv2
+ options = NO_SSLv3
+ options = SINGLE_DH_USE
+ options = SINGLE_ECDH_USE
+ ciphers = ECDH+AESGCM:DH+AESGCM:ECDH+AES256:DH+AES256:ECDH+AES128:DH+AES:ECDH+3DES:DH+3DES:RSA+AESGCM:RSA+AES:RSA+3DES:!aNULL:!MD5:!DSS
 EOF
 
     echo "=================  XPanel OpenSSL ======================"
@@ -756,6 +763,7 @@ ENDOFFILE
   DEFAULT_MAIL_PASSWORD=
   DEFAULT_MAIL_FROM_ADDRESS=
   DEFAULT_MAIL_FROM_NAME=
+  DEFAULT_GB_CHANGE=
 
   if [ -f /var/www/html/.env_copy ]; then
     while IFS= read -r line; do
@@ -805,7 +813,9 @@ ENDOFFILE
       elif [ "$key" = "MAIL_FROM_ADDRESS" ]; then
         MAIL_FROM_ADDRESS="$value" 
       elif [ "$key" = "MAIL_FROM_NAME" ]; then
-        MAIL_FROM_NAME="$value"   
+        MAIL_FROM_NAME="$value" 
+      elif [ "$key" = "GB_CHANGE" ]; then
+        GB_CHANGE="$value" 
       fi
     done </var/www/html/.env_copy
   fi
@@ -832,6 +842,7 @@ ENDOFFILE
   MAIL_PASSWORD="${MAIL_PASSWORD:-$DEFAULT_MAIL_PASSWORD}"
   MAIL_FROM_ADDRESS="${MAIL_FROM_ADDRESS:-$DEFAULT_MAIL_FROM_ADDRESS}"
   MAIL_FROM_NAME="${MAIL_FROM_NAME:-$DEFAULT_MAIL_FROM_NAME}"
+  GB_CHANGE="${GB_CHANGE:-$DEFAULT_GB_CHANGE}"
 
   sed -i "s/APP_LOCALE=.*/APP_LOCALE=$APP_LOCALE/g" /var/www/html/app/.env
   sed -i "s/APP_MODE=.*/APP_MODE=$APP_MODE/g" /var/www/html/app/.env
@@ -855,6 +866,7 @@ ENDOFFILE
   sed -i "s/MAIL_PASSWORD=.*/MAIL_PASSWORD=$MAIL_PASSWORD/g" /var/www/html/app/.env
   sed -i "s/MAIL_FROM_ADDRESS=.*/MAIL_FROM_ADDRESS=$MAIL_FROM_ADDRESS/g" /var/www/html/app/.env
   sed -i "s/MAIL_FROM_NAME=.*/MAIL_FROM_NAME=$MAIL_FROM_NAME/g" /var/www/html/app/.env
+  sed -i "s/GB_CHANGEE=.*/GB_CHANGE=$GB_CHANGE/g" /var/www/html/app/.env
   sudo systemctl stop apache2
   sudo systemctl disable apache2
   sudo apt-get remove apache2 -y
