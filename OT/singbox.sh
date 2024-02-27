@@ -13,6 +13,7 @@ if [[ $uname == x86_64 ]]; then
 	curl -sL -o /root/xpanel_singbox/xtraffic.sh.x https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/xtraffic.sh.x
 	sudo chown -R root:root /root/xpanel_singbox/xtraffic.sh.x
 	chmod +rx /root/xpanel_singbox/xtraffic.sh.x
+ clear
 fi
 
 if [[ $uname == aarch64 ]]; then
@@ -26,4 +27,5 @@ if [[ $uname == aarch64 ]]; then
 	curl -sL -o /root/xpanel_singbox/xtraffic.sh.x https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/OT/arch64_xtraffic.sh.x
 	sudo chown -R root:root /root/xpanel_singbox/xtraffic.sh.x
 	chmod +rx /root/xpanel_singbox/xtraffic.sh.x
+ clear
 fi
