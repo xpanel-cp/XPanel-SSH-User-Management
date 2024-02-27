@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('apis', function (Blueprint $table) {
-            $table->id();
-            $table->string('username');
-            $table->string('token');
-            $table->string('description')->nullable();
-            $table->string('allow_ip');
-            $table->string('status');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('apis')) {
+            Schema::create('apis', function (Blueprint $table) {
+                $table->id();
+                $table->string('username');
+                $table->string('token');
+                $table->string('description')->nullable();
+                $table->string('allow_ip');
+                $table->string('status');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

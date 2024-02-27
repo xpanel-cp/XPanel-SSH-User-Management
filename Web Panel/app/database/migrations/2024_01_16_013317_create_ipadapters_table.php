@@ -11,17 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ipadapters', function (Blueprint $table) {
-            $table->id();
-            $table->string('email_cf');
-            $table->longText('token_cf');
-            $table->string('sub_cf');
-            $table->string('status_chanched');
-            $table->string('status_active');
-            $table->string('log_change_hourly');
-            $table->string('log_change_traffic');
-            $table->timestamps();
-        });
+
+        if (!Schema::hasTable('ipadapters')) {
+            Schema::create('ipadapters', function (Blueprint $table) {
+                $table->id();
+                $table->string('email_cf');
+                $table->longText('token_cf');
+                $table->string('sub_cf');
+                $table->string('status_chanched');
+                $table->string('status_active');
+                $table->string('log_change_hourly');
+                $table->string('log_change_traffic');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

@@ -11,25 +11,27 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('singboxes', function (Blueprint $table) {
-            $table->id();
-            $table->string('port_sb');
-            $table->string('name');
-            $table->string('email')->nullable();
-            $table->string('mobile')->nullable();
-            $table->string('multiuser');
-            $table->string('start_date')->nullable();
-            $table->string('end_date')->nullable();
-            $table->string('date_one_connect')->nullable();
-            $table->string('customer_user');
-            $table->string('protocol_sb');
-            $table->longText('detail_sb');
-            $table->string('status');
-            $table->string('traffic');
-            $table->string('referral')->nullable();
-            $table->longText('desc')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('singboxes')) {
+            Schema::create('singboxes', function (Blueprint $table) {
+                $table->id();
+                $table->string('port_sb');
+                $table->string('name');
+                $table->string('email')->nullable();
+                $table->string('mobile')->nullable();
+                $table->string('multiuser');
+                $table->string('start_date')->nullable();
+                $table->string('end_date')->nullable();
+                $table->string('date_one_connect')->nullable();
+                $table->string('customer_user');
+                $table->string('protocol_sb');
+                $table->longText('detail_sb');
+                $table->string('status');
+                $table->string('traffic');
+                $table->string('referral')->nullable();
+                $table->longText('desc')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

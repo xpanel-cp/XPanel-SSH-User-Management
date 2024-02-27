@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('adapterlists', function (Blueprint $table) {
-            $table->id();
-            $table->string('ip');
-            $table->string('status_active');
-            $table->string('status_service');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('adapterlists')) {
+            Schema::create('adapterlists', function (Blueprint $table) {
+                $table->id();
+                $table->string('ip');
+                $table->string('status_active');
+                $table->string('status_service');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

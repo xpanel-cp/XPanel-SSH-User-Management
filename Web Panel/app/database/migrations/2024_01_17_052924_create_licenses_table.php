@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('licenses', function (Blueprint $table) {
-            $table->id();
-            $table->longText('email');
-            $table->longText('domain');
-            $table->string('end_license');
-            $table->string('status');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('licenses')) {
+            Schema::create('licenses', function (Blueprint $table) {
+                $table->id();
+                $table->longText('email');
+                $table->longText('domain');
+                $table->string('end_license');
+                $table->string('status');
+                $table->timestamps();
+            });
+        }
     }
 
     /**

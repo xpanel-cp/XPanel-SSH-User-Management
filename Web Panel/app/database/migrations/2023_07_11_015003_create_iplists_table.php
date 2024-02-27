@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('iplists', function (Blueprint $table) {
-            $table->id();
-            $table->string('ip_address');
-            $table->string('ip_status');
-            $table->string('ip_desc')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('iplists')) {
+            Schema::create('iplists', function (Blueprint $table) {
+                $table->id();
+                $table->string('ip_address');
+                $table->string('ip_status');
+                $table->string('ip_desc')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

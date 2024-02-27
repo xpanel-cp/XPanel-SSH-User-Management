@@ -11,18 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('settings', function (Blueprint $table) {
-            $table->id();
-            $table->string('ssh_port')->nullable();
-            $table->string('tls_port')->nullable();
-            $table->string('t_token')->nullable();
-            $table->string('t_id')->nullable();
-            $table->string('language')->nullable();
-            $table->string('multiuser')->nullable();
-            $table->string('ststus_multiuser')->nullable();
-            $table->string('home_url')->nullable();
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('settings')) {
+            Schema::create('settings', function (Blueprint $table) {
+                $table->id();
+                $table->string('ssh_port')->nullable();
+                $table->string('tls_port')->nullable();
+                $table->string('t_token')->nullable();
+                $table->string('t_id')->nullable();
+                $table->string('language')->nullable();
+                $table->string('multiuser')->nullable();
+                $table->string('ststus_multiuser')->nullable();
+                $table->string('home_url')->nullable();
+                $table->timestamps();
+            });
+        }
     }
 
     /**

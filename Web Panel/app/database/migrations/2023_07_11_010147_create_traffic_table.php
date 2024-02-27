@@ -11,14 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('traffic', function (Blueprint $table) {
-            $table->id();
-            $table->string('username');
-            $table->string('download');
-            $table->string('upload');
-            $table->string('total');
-            $table->timestamps();
-        });
+        if (!Schema::hasTable('traffic')) {
+            Schema::create('traffic', function (Blueprint $table) {
+                $table->id();
+                $table->string('username');
+                $table->string('download');
+                $table->string('upload');
+                $table->string('total');
+                $table->timestamps();
+            });
+        }
     }
 
     /**
