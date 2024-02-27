@@ -1,7 +1,7 @@
 #!/bin/bash
-
+sudo mkdir -p /root/xpanel_singbox
 uname=$(uname -i)
-mkdir -p /root/xpanel_singbox
+
 if [[ $uname == x86_64 ]]; then
   curl -sL -o /usr/bin/sbx https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/sbx.sh.x
   chmod +x /usr/bin/sbx && sbx
