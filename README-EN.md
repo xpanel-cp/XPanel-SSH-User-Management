@@ -59,7 +59,10 @@ Websocket SSL Payload<br>
 :green_circle: Fake address (Evade Censorship)<br>
 :green_circle: IP blacklist (Blacklisting adult websites and …)<br>
 :green_circle: API support<br>
-:green_circle: [Multi-server support](https://github.com/xpanel-cp/Xcs-Multi-Management-XPanel/blob/master/EN-README.md)<br>
+:green_circle: Multi-Server (Coming Soon) <br>
+:green_circle: IP Rotation <br>
+:green_circle: Sending subscription information to email <br>
+:green_circle: Addition of the SING-BOX kernel <br>
 
 
 ### Installation guide
