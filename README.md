@@ -59,7 +59,10 @@ Websocket SSL Payload<br>
 :green_circle: فیک آدرس (جلوگیری از فیلترینگ) <br>
 :green_circle: محدودیت IP(جلوگیری از ورود کاربران به برخی سایت ها)<br>
 :green_circle: اتصال API<br>
-:green_circle: [مولتی سرور](https://github.com/xpanel-cp/Xcs-Multi-Management-XPanel) <br>
+:green_circle: مولتی سرور(به زودی) <br>
+:green_circle: چرخش IP <br>
+:green_circle: ارسال اطلاعات اشتراک به ایمیل <br>
+:green_circle: اضافه شدن هسته SING-BOX <br>
 
 ## Telegram Channel:
 https://t.me/Xpanelssh
