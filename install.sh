@@ -223,6 +223,7 @@ startINSTALL() {
     sudo apt-get install php php-cli php-mbstring php-dom php-pdo php-mysql -y
     sudo apt-get install npm -y
     sudo apt install python -y
+    sudo apt install iftop -y
     sudo apt install apt-transport-https -y
     sudo apt-get install coreutils
     apt install curl -y
