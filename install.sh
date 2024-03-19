@@ -33,7 +33,7 @@ checkOS() {
   fi
   # Check if the distribution is supported
   if [[ " ${supported_distros[@]} " =~ " ${distro_name} " ]]; then
-    echo "Your Linux distribution is ${distro_name} ${distro_version}. It is supported."
+    echo "Your Linux distribution is ${distro_name} ${distro_version}"
     : #no-op command
   else
     # Print error message in red
@@ -41,12 +41,12 @@ checkOS() {
     exit 1
   fi
 
-  # php7.x is End of life https://www.php.net/supported-versions.php ubuntu bellow 20 is not supported by php8.1 in 2023
+  # This script only works on Ubuntu 20 and above
   if [ "$(uname)" == "Linux" ]; then
-    version_info=$(lsb_release -rs)
+    version_info=$(lsb_release -rs | cut -d '.' -f 1)
     # Check if it's Ubuntu and version is below 20
-    if [ "$(lsb_release -is)" == "Ubuntu" ] && [ "$(echo "$version_info < 20" | bc)" -eq 1 ]; then
-      echo "This Script is using php8.1 and only supported in ubuntu 20 and above"
+    if [ "$(lsb_release -is)" == "Ubuntu" ] && [ "$version_info" -lt 20 ]; then
+      echo "This script only works on Ubuntu 20 and above"
       exit
     fi
   fi
