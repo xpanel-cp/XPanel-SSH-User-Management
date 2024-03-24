@@ -149,7 +149,7 @@ userINPU() {
   clear
   adminusername=admin
   echo -e "\nPlease input Panel admin user."
-  printf "Default user name is \e[33m${adminusername}\e[0m, let it blank to use this user name: "
+  printf "Default user name is \e[33m${adminusername}\e[0m, leave it blank to use this user name: "
   read usernametmp
   if [[ -n "${usernametmp}" ]]; then
     adminusername=${usernametmp}
