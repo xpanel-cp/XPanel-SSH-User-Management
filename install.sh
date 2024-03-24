@@ -59,7 +59,11 @@ configSSH() {
   port=$(grep -oE 'Port [0-9]+' /etc/ssh/sshd_config | cut -d' ' -f2)
 }
 setCONFIG() {
-cp /var/www/html/example/index.php /var/www/
+
+source_file="/var/www/html/example/index.php"
+destination_directory="/var/www/"
+[ -f "$source_file" ] && cp "$source_file" "$destination_directory" && echo "File copied successfully."
+
   # Check if MySQL is installed
   if dpkg-query -W -f='${Status}' mariadb-server 2>/dev/null | grep -q "install ok installed"; then
     adminuser=$(mysql -N -e "use XPanel_plus; select username from admins where permission='admin';")
