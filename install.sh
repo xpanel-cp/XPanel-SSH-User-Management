@@ -234,7 +234,7 @@ startINSTALL() {
     sudo apt-get install nginx zip unzip net-tools mariadb-server -y
     sudo apt-get install php php-cli php-mbstring php-dom php-pdo php-mysql -y
     sudo apt-get install npm -y
-    sudo apt install python -y
+    sudo apt install python3 -y
     sudo apt install iftop -y
     sudo apt install apt-transport-https -y
     sudo apt-get install coreutils
