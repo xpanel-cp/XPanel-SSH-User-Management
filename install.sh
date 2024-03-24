@@ -220,7 +220,6 @@ startINSTALL() {
     sudo NEETRESTART_MODE=a apt-get update --yes
     sudo apt update -y
     sudo apt -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
-    sudo apt install php8.1-json -y
     apt-get install -y stunnel4 && apt-get install -y cmake && apt-get install -y screenfetch && apt-get install -y openssl
     sudo apt-get -y install software-properties-common
     sudo add-apt-repository ppa:ondrej/php -y
@@ -235,7 +234,7 @@ startINSTALL() {
     apt install git cmake -y
     apt install php8.1 php8.1-mysql php8.1-xml php8.1-curl cron -y
     sudo apt install php8.1-fpm
-    sudo apt install php8.1 php8.1-cli php8.1-common php8.1-json php8.1-opcache php8.1-mysql php8.1-mbstring php8.1-zip php8.1-intl php8.1-simplexml -y
+    sudo apt install php8.1 php8.1-cli php8.1-common php8.1-opcache php8.1-mysql php8.1-mbstring php8.1-zip php8.1-intl php8.1-simplexml -y
     wait
 
     phpv=$(php -v)
@@ -251,7 +250,7 @@ startINSTALL() {
       apt autoremove -y
       apt install php8.1 php8.1-mysql php8.1-xml php8.1-curl cron -y
       sudo apt install php8.1-fpm
-      sudo apt install php8.1 php8.1-cli php8.1-common php8.1-json php8.1-opcache php8.1-mysql php8.1-mbstring php8.1-zip php8.1-intl php8.1-simplexml -y
+      sudo apt install php8.1 php8.1-cli php8.1-common  php8.1-opcache php8.1-mysql php8.1-mbstring php8.1-zip php8.1-intl php8.1-simplexml -y
 
     fi
     curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
