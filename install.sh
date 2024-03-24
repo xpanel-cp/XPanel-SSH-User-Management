@@ -6,6 +6,9 @@ export DEBIAN_FRONTEND=noninteractive
 #Disable "Pending kernel upgrade" popup during install:
 sed -i "s/#\$nrconf{kernelhints} = -1;/\$nrconf{kernelhints} = -1;/g" /etc/needrestart/needrestart.conf
 
+#Disable "Daemons using outdated libraries" popup during install:
+sudo sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' /etc/needrestart/needrestart.conf
+
 RED="\e[31m"
 GREEN="\e[32m"
 YELLOW="\e[33m"
