@@ -1,5 +1,6 @@
 #!/bin/bash
-
+#By setting DEBIAN_FRONTEND to noninteractive, any prompts or interactive dialogs from the package manager will proceed with the installation without user intervention.
+export DEBIAN_FRONTEND=noninteractive
 RED="\e[31m"
 GREEN="\e[32m"
 YELLOW="\e[33m"
