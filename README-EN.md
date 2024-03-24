@@ -18,6 +18,10 @@
 	English
 	</a>
 	/
+	<a href="./README-RU.md">
+	Russian
+	</a>
+	/
 	<a href="./README.md">
 	فارسی
 	</a>
