@@ -37,8 +37,9 @@
 X-Panel is a lightweight web application for SSH accounts management. With the help of X-Panel, you can manage users and apply restrictions.	
 
 ## Protocol
-XPanel supports protocols based on SSH connections.<br>
-**SSH-DIRECT | SSH-TLS | SSH-DROPBEAR | SSH-DROPBEAR-TLS | SSH-WEBSOCKET | SSH-WEBSOCKET-TLS** <br><br>
+XPanel supports protocols.<br>
+:white_check_mark:  `SSH-DIRECT`  :white_check_mark:  `SSH-TLS` :white_check_mark:  `SSH-DROPBEAR`  :white_check_mark:  `SSH-DROPBEAR-TLS` :white_check_mark:  `SSH-WEBSOCKET` <br>  
+:white_check_mark:  `SSH-WEBSOCKET-TLS` :white_check_mark:  `VMess ws`  :white_check_mark:  `VLess Reality` :white_check_mark:  `Hysteria2`  :white_check_mark:  `Tuic`
 
 Ports 443, 80, and 8880 are reserved by default for the web server. <br>
 Websocket HTTP Payload<br>
@@ -58,7 +59,10 @@ Websocket SSL Payload<br>
 :green_circle: Fake address (Evade Censorship)<br>
 :green_circle: IP blacklist (Blacklisting adult websites and …)<br>
 :green_circle: API support<br>
-:green_circle: [Multi-server support](https://github.com/xpanel-cp/Xcs-Multi-Management-XPanel/blob/master/EN-README.md)<br>
+:green_circle: Multi-Server (Coming Soon) <br>
+:green_circle: IP Rotation <br>
+:green_circle: Sending subscription information to email <br>
+:green_circle: Addition of the SING-BOX kernel <br>
 
 
 ### Installation guide
@@ -76,13 +80,6 @@ To install the X-Panel simply input the following command in the terminal:<br>
 
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/install.sh --ipv4)
-```
-<br>
-
-**Apache Web Server**
-
-```
-bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/apache.sh --ipv4)
 ```
 
 To resolve audio and video call issues use this command:<br>

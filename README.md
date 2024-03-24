@@ -37,11 +37,13 @@
 ایکس پنل یک نرم افزار تحت وب جهت مدیریت اکانت SSH می باشد. با کمک پنل تحت وب ایکس پنل می توانید کاربران را مدیریت کرده و محدودیت اعمال کنید.
 
 ## پرتکل <br>
-پرتکل هایی که ایکس پنل پشتیبانی می کند برپایه اتصال SSH  هستند.<br>
-**SSH-DIRECT | SSH-TLS | SSH-DROPBEAR | SSH-DROPBEAR-TLS | SSH-WEBSOCKET | SSH-WEBSOCKET-TLS** <br><br>
+پرتکل هایی که ایکس پنل پشتیبانی می کند.<br>
+:white_check_mark:  `SSH-DIRECT`  :white_check_mark:  `SSH-TLS` :white_check_mark:  `SSH-DROPBEAR`  :white_check_mark:  `SSH-DROPBEAR-TLS` :white_check_mark:  `SSH-WEBSOCKET` <br>  
+:white_check_mark:  `SSH-WEBSOCKET-TLS` :white_check_mark:  `VMess ws`  :white_check_mark:  `VLess Reality` :white_check_mark:  `Hysteria2`  :white_check_mark:  `Tuic`
+
 پورت های 443 و 80 و 8880 بصورت پیش فرض برای وب سرور رزور شده است. <br>
 Websocket HTTP Payload<br>
-`GET /ws HTTP/1.1[crlf]Host: sni.domain.com[crlf]Upgrade: websocket[crlf][crlf]` <br>
+`GET /ws HTTP/1.1[crlf]Host: sni.domain.com[crlf]Upgrade: websocket[crlf][crlf]` 
 Websocket SSL Payload<br>
 `GET wss://sni.domain.com/ws HTTP/1.1[crlf]Host: sni.domain.com[crlf]Upgrade: websocket[crlf][crlf]` <br>
 
@@ -57,7 +59,10 @@ Websocket SSL Payload<br>
 :green_circle: فیک آدرس (جلوگیری از فیلترینگ) <br>
 :green_circle: محدودیت IP(جلوگیری از ورود کاربران به برخی سایت ها)<br>
 :green_circle: اتصال API<br>
-:green_circle: [مولتی سرور](https://github.com/xpanel-cp/Xcs-Multi-Management-XPanel) <br>
+:green_circle: مولتی سرور(به زودی) <br>
+:green_circle: چرخش IP <br>
+:green_circle: ارسال اطلاعات اشتراک به ایمیل <br>
+:green_circle: اضافه شدن هسته SING-BOX <br>
 
 ## Telegram Channel:
 https://t.me/Xpanelssh
@@ -90,13 +95,6 @@ bash /root/xpanel.sh OR bash xpanel.sh  OR xpanel
 
 ```
 bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/install.sh --ipv4)
-```
-<br>
-
-**Apache Web Server**
-
-```
-bash <(curl -Ls https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/apache.sh --ipv4)
 ```
 
 حل مشکل عدم ارتباط  تماس صوتی و تصویری در اپلیکشن
