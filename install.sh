@@ -407,7 +407,7 @@ EOF
     fi
     udpport=7300
     echo -e "\nPlease input UDPGW Port ."
-    printf "Default Port is \e[33m${udpport}\e[0m, let it blank to use this Port: "
+    printf "Default Port is \e[33m${udpport}\e[0m, leave it blank to use this Port: "
     read udpport
     sudo bash -c "$(curl -Ls https://raw.githubusercontent.com/xpanel-cp/Nethogs-Json-main/master/install.sh --ipv4)"
     git clone https://github.com/ambrop72/badvpn.git /root/badvpn
