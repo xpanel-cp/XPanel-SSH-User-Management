@@ -221,7 +221,7 @@ startINSTALL() {
     sudo apt update -y
     sudo apt upgrade -y
     sudo apt install php8.1-json -y
-    apt-get install -y stunnel4 && apt-get install -y cmake && apt-get install -y screenfetch && apt-get install -y openssl
+    apt-get install -y stunnel4 && apt-get install -y cmake && apt-get install -y screenfetch && apt-get install -y -qq openssl
     sudo apt-get -y install software-properties-common
     sudo add-apt-repository ppa:ondrej/php -y
     sudo apt-get install nginx zip unzip net-tools mariadb-server -y
