@@ -311,5 +311,6 @@
     "singbox-name": "Имя",
     "singbox-name-desc": "Введите имя для подписки",
     "singbox-protocol-desc": "Выберите тип протокола",
-    "singbox-protocol-copy": "Скопировать ссылку"
+    "singbox-protocol-copy": "Скопировать ссылку",
+    "alert-update": "Вышла новая версия XPanel. Вы можете обновиться."
 }

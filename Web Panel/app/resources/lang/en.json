@@ -309,5 +309,7 @@
     "singbox-name": "Name",
     "singbox-name-desc": "Enter a name for the subscription",
     "singbox-protocol-desc": "Select the protocol type",
-    "singbox-protocol-copy": "Copy Link"
+    "singbox-protocol-copy": "Copy Link",
+    "alert-update": "A new version of XPanel has been released. You can update."
+
 }
