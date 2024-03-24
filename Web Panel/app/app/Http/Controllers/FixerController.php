@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Fixer;
 use App\Models\Settings;
 use App\Models\Traffic;
+use App\Models\Trafficsb;
 use App\Models\Users;
+use App\Models\Singbox;
 use App\Models\LogConnection;
 use App\Models\Xguard;
 use App\Models\Ipadapter;
@@ -37,6 +39,7 @@ class FixerController extends Controller
             }
         }
         $users = Users::where('status', 'active')->get();
+        $users_sb = Singbox::where('status', 'active')->get();
         $activeUserCount = Users::where('status', 'active')->count();
         foreach ($users as $us) {
             if (!empty($us->end_date)) {
@@ -102,40 +105,19 @@ class FixerController extends Controller
             }
 
         }
-
-        $xguard_check = Xguard::all()->count();
-        $xguard = Xguard::all();
-        if($xguard_check>0)
-        {$email=$xguard[0]->email;}
-        else
+        foreach ($users_sb as $us)
         {
-            $email=null;
-        }
-        if($xguard_check>0) {
-            $server_ip = $_SERVER['SERVER_ADDR'];
-            $portssh = env('PORT_SSH');
-            $post = [
-                'email' => $email,
-                'ip' => $server_ip,
-                'port' => $portssh,
-            ];
-            $ch = curl_init('https://xguard.xpanel.pro/api/validate');
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POST, 1);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-            $response = curl_exec($ch);
-            $response = json_decode($response, true);
-            curl_close($ch);
-            if (isset($response[0]['message']) and $response[0]['message'] == 'access') {
-                DB::beginTransaction();
-                Xguard::where('email', $xguard[0]->email)->update([
-                    'port' => $response[0]['port_tunnel'],
-                    'expired' => $response[0]['end_license']
-                ]);
-                DB::commit();
-                Process::run("sed -i \"s/XGUARD=.*/XGUARD=active/g\" /var/www/html/app/.env");
-            } else {
-                Process::run("sed -i \"s/XGUARD=.*/XGUARD=deactive/g\" /var/www/html/app/.env");
+            if (!empty($us->end_date)) {
+                $expiredate = strtotime(date("Y-m-d", strtotime($us->end_date)));
+                if ($expiredate < strtotime(date("Y-m-d")) || $expiredate == strtotime(date("Y-m-d"))) {
+                    $validatedData = [
+                        'port'=>$us->port_sb
+                    ];
+
+                    ProController::deactive_singbox($validatedData);
+                    Singbox::where('id', $us->id)
+                        ->update(['status' => 'expired']);
+                }
             }
         }
     }
@@ -248,6 +230,32 @@ class FixerController extends Controller
             $this->synstraffics();
             $this->cronexp_traffic();
             $this->synstraffics_drop();
+        }
+        $this->trafiic_end_sb();
+    }
+    public function trafiic_end_sb()
+    {
+        $users_sb = Singbox::where('status', 'active')->get();
+        foreach ($users_sb as $us)
+        {
+            $traffic = Trafficsb::where('port_sb', $us->port_sb)->get();
+            foreach ($traffic as $usernamet) {
+                $total = $usernamet->total_sb;
+                if($total>0 and empty($us->start_date) and !empty($us->date_one_connect))
+                {
+                    $end_inp = now()->addDays($us->date_one_connect)->toDateString();
+                    $start_inp = now()->toDateString();
+                    Singbox::where('port_sb', $us->port_sb)->update(['start_date' => $start_inp, 'end_date' => $end_inp]);
+                }
+                if ($us->traffic < $total && !empty($us->traffic) && $us->traffic > 0) {
+                    $validatedData = [
+                        'port'=>$us->port_sb
+                    ];
+
+                    ProController::deactive_singbox($validatedData);
+                    Singbox::where('port_sb', $us->port_sb)->update(['status' => 'traffic']);
+                }
+            }
         }
     }
     public function cronexp_traffic()

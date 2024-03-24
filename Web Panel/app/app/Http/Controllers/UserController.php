@@ -133,12 +133,12 @@ class UserController extends Controller
         }
 
 
-            $xguard_status='deactive';
-            $websiteaddress = $_SERVER['HTTP_HOST'];
-            $sshaddress = parse_url($websiteaddress, PHP_URL_HOST);
-            $websiteaddress = parse_url($websiteaddress, PHP_URL_HOST);
+        $xguard_status='deactive';
+        $websiteaddress = $_SERVER['HTTP_HOST'];
+        $sshaddress = parse_url($websiteaddress, PHP_URL_HOST);
+        $websiteaddress = parse_url($websiteaddress, PHP_URL_HOST);
 
-            $port_ssh=env('PORT_SSH');
+        $port_ssh=env('PORT_SSH');
 
 
         $user = Auth::user();
@@ -164,7 +164,7 @@ class UserController extends Controller
         if($user->permission=='admin')
         {
             $users = Singbox::orderBy('id', 'desc')->paginate(25);
-            
+
         }
         else{
             $users = Singbox::where('customer_user', $user->username)->orderby('id', 'desc')->paginate(25);
@@ -175,12 +175,12 @@ class UserController extends Controller
     public function index()
     {
 
-            $xguard_status='deactive';
-            $websiteaddress = $_SERVER['HTTP_HOST'];
-            $sshaddress = parse_url($websiteaddress, PHP_URL_HOST);
-            $websiteaddress = parse_url($websiteaddress, PHP_URL_HOST);
+        $xguard_status='deactive';
+        $websiteaddress = $_SERVER['HTTP_HOST'];
+        $sshaddress = parse_url($websiteaddress, PHP_URL_HOST);
+        $websiteaddress = parse_url($websiteaddress, PHP_URL_HOST);
 
-            $port_ssh=env('PORT_SSH');
+        $port_ssh=env('PORT_SSH');
 
         $user = Auth::user();
         $password_auto = Str::random(8);
@@ -213,7 +213,18 @@ class UserController extends Controller
             'type_traffic'=>'required|string',
             'desc'=>'nullable|string'
         ]);
+        if(env('APP_LOCALE', 'en') == 'fa') {
+            if (!empty($request->expdate)) {
+                $end_date = $this->persianToenglishNumbers($request->expdate);
+                $end_date = Verta::parse($end_date)->datetime()->format('Y-m-d');
+            } else {
+                $end_date = '';
+            }
+        } else {
+            $end_date = $request->expdate;
+        }
 
+        $validatedData['expdate'] = $end_date;
         ProController::submit_singbox($validatedData);
         return redirect()->intended(route('users.sb'));
     }
@@ -1371,14 +1382,14 @@ class UserController extends Controller
             $check_user = Singbox::where('port_sb', $request->port)->count();
             if ($check_user > 0) {
                 Singbox::where('port_sb', $request->port)->update([
-                        'email' => $request->email,
-                        'mobile' => $request->mobile,
-                        'multiuser' => $request->multiuser,
-                        'traffic' => $traffic,
-                        'end_date' => $end_date,
-                        'status' => $request->activate,
-                        'desc' => $request->desc
-                    ]);
+                    'email' => $request->email,
+                    'mobile' => $request->mobile,
+                    'multiuser' => $request->multiuser,
+                    'traffic' => $traffic,
+                    'end_date' => $end_date,
+                    'status' => $request->activate,
+                    'desc' => $request->desc
+                ]);
                 if ($request->activate == "active") {
                     $user = Singbox::where('port_sb',$request->port)->first();
                     $jsonData = json_decode($user->detail_sb, true);
@@ -1544,8 +1555,42 @@ class UserController extends Controller
     }
     public function user_all_delete(Request $request)
     {
+        $users = Users::all();
+        foreach ($users as $user) {
+            $username=$user->username;
+            if (file_exists("/var/www/html/app/storage/banner/{$username}-detail")) {
+                $linesToRemove = ["Match User {$username}", "Banner /var/www/html/app/storage/banner/{$username}-detail"];
+                $filename = "/etc/ssh/sshd_config";
+                $fileContent = file($filename);
+                $newFileContent = [];
+                foreach ($fileContent as $line) {
+                    if (!in_array(trim($line), $linesToRemove) && trim($line) !== '') {
+                        $newFileContent[] = $line;
+                    }
+                }
+                file_put_contents($filename, implode('', $newFileContent));
+                Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$username}-detail");
+                Process::run("sudo service ssh restart");
+            }
+            Process::run("sudo killall -u {$username}");
+            Process::run("sudo pkill -u {$username}");
+            Process::run("sudo timeout 10 pkill -u {$username}");
+            Process::run("sudo timeout 10 killall -u {$username}");
+            Process::run("sudo userdel -r {$username}");
+        }
         DB::table('users')->truncate();
         DB::table('traffic')->truncate();
+
+        $users_sb = Singbox::all();
+        foreach ($users_sb as $user) {
+            $validatedData = [
+                'port'=>$user->port_sb
+            ];
+
+            ProController::delete_singbox($validatedData);
+        }
+        DB::table('singboxes')->truncate();
+        DB::table('trafficsbs')->truncate();
         return redirect()->intended(route('settings', ['name' => 'general']))->with('alert', __('allert-success'));
 
     }

@@ -20,6 +20,28 @@
 
             <!-- [ Main Content ] start -->
             <div class="row">
+                @if(env('APP_LOCALE') == 'fa')
+                    @php
+                        $json = file_get_contents('https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/version.json');
+                        $obj = json_decode($json);
+                        $github='https://github.com/xpanel-cp/XPanel-SSH-User-Management/blob/master/README.md#installation-guide';
+                    @endphp
+                @elseif(env('APP_LOCALE') == 'en')
+                    @php
+                        $json = file_get_contents('https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/version.json');
+                        $obj = json_decode($json);
+                        $github='https://github.com/xpanel-cp/XPanel-SSH-User-Management/blob/master/README-EN.md#installation-guide';
+                    @endphp
+                @elseif(env('APP_LOCALE') == 'ru')
+                    @php
+                        $json = file_get_contents('https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/version.json');
+                        $obj = json_decode($json);
+                        $github='https://github.com/xpanel-cp/XPanel-SSH-User-Management/blob/master/README-RU.md#installation-guide';
+                    @endphp
+                @endif
+                @if($obj->last_version>396)
+                    <div class="alert alert-success" role="alert" style="color: #2b2f32;">{{__('alert-update')}} <a href="{!! $github !!}" target="_blank">Github</a> </div>
+                @endif
                 <div class="col-6 col-md-3 col-xxl-2">
                     <div class="card">
                         <div class="card-body">
@@ -84,6 +106,7 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="col-md-6 col-xxl-4">
                     <div class="card">
                         <div class="card-body">

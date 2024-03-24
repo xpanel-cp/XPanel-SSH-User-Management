@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Users;
+use App\Models\Singbox;
 use App\Models\Admins;
 use App\Models\Api;
 use Illuminate\Http\Request;
 use Auth;
 use App\Models\Settings;
 use App\Models\Traffic;
+use App\Models\Trafficsb;
 use App\Models\Xguard;
 use App\Models\Ipadapter;
 use App\Models\Adapterlist;
@@ -447,8 +449,10 @@ class SettingsController extends Controller
         }
         Process::run("mysql -u '" . env('DB_USERNAME') . "' --password='" . env('DB_PASSWORD') . "' XPanel_plus < /var/www/html/app/storage/backup/" . $name);
         $users = Users::where('status', 'active')->get();
+        $users_sb = Singbox::where('status', 'active')->get();
         $batchSize = 10;
         $userBatches = array_chunk($users->toArray(), $batchSize);
+        $userBatches_sb = array_chunk($users_sb->toArray(), $batchSize);
 
         foreach ($userBatches as $userBatch) {
             foreach ($userBatch as $user) {
@@ -463,6 +467,38 @@ class SettingsController extends Controller
                         'download' => '0',
                         'upload' => '0',
                         'total' => '0'
+                    ]);
+                }
+            }
+        }
+        foreach ($userBatches_sb as $userBatch) {
+            foreach ($userBatch as $user) {
+                $port=$user['port_sb'];
+                $protocol=$user['protocol_sb'];
+                $detail_sb=$user['detail_sb'];
+                $name=$user['name'];
+                $check_user = Singbox::where('port_sb',$port)->count();
+                if ($check_user > 0) {
+                    $jsonData = json_decode($detail_sb, true);
+                    $sid=$jsonData['sid'];
+                    $uuid=$jsonData['uuid'];
+                    $validatedData = [
+                        'port'=>$port,
+                        'protocol'=>$protocol,
+                        'sid'=>$sid,
+                        'uuid'=>$uuid,
+                        'name'=>$name
+                    ];
+
+                    ProController::active_singbox($validatedData);
+                }
+                $check_traffic = Trafficsb::where('port_sb', $port)->count();
+                if ($check_traffic < 1) {
+                    Trafficsb::create([
+                        'port_sb' => $port,
+                        'sent_sb' => '0',
+                        'received_sb' => '0',
+                        'total_sb' => '0'
                     ]);
                 }
             }
