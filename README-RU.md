@@ -15,11 +15,15 @@
  
 <p align="center">
 	<a href="./README-EN.md">
-	Английский
+	English
+	</a>
+	/
+	<a href="./README-RU.md">
+	Russian
 	</a>
 	/
 	<a href="./README.md">
-	Персидский
+	فارسی
 	</a>
 </p>
 
