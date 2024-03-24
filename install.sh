@@ -62,7 +62,7 @@ setCONFIG() {
 
 source_file="/var/www/html/example/index.php"
 destination_directory="/var/www/"
-[ -f "$source_file" ] && cp "$source_file" "$destination_directory" && echo "File copied successfully."
+[ -f "$source_file" ] && cp "$source_file" "$destination_directory" && echo "index.php copied successfully."
 
   # Check if MySQL is installed
   if dpkg-query -W -f='${Status}' mariadb-server 2>/dev/null | grep -q "install ok installed"; then
