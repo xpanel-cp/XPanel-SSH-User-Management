@@ -366,9 +366,64 @@ Password:{{$user->password}}&nbsp;
 Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
 {{$st_date}}&nbsp;{{$en_date}}">{{__('user-table-copy')}}
                                                                     (Dropbear)</a>
-                                                                @php
-                                                                    $at="@";
-                                                                @endphp
+                                                                    @php
+                                                                    $at = "@";
+
+function sagernet_link_generator(string $server_address, int $port, string $username, string $password): string {
+    // Initialize Kryo bytes
+    $kryo_bytes = "\x00\x00\x00\x00";
+
+    // Encode server address
+    $server_address_bytes = str_split($server_address);
+    $last_char = array_pop($server_address_bytes);
+    $server_address_bytes[] = chr(ord($last_char) + 128);
+    $kryo_bytes .= implode('', $server_address_bytes);
+
+    // Encode port
+    $kryo_bytes .= pack("v", $port);
+    $kryo_bytes .= "\x00\x00";
+
+    // Encode username
+    $username_bytes = str_split($username);
+    $last_char = array_pop($username_bytes);
+    $username_bytes[] = chr(ord($last_char) + 128);
+    $kryo_bytes .= implode('', $username_bytes);
+    $kryo_bytes .= "\x01\x00\x00\x00";
+
+    // Encode password
+    $password_bytes = str_split($password);
+    $last_char = array_pop($password_bytes);
+    $password_bytes[] = chr(ord($last_char) + 128);
+    $kryo_bytes .= implode('', $password_bytes);
+    $kryo_bytes .= "\x81\x01\x00\x00\x00\xa1";
+
+    // Encode title
+    $title = sprintf("(%s)", $username);
+    $kryo_bytes .= $title . "\x00\x00\x00\x00";
+
+    // Compress Kryo bytes using zlib
+    $zlib_compressed = gzcompress($kryo_bytes);
+
+    // Encode in Base64 URL safe format
+    $base64_urlsafe = rtrim(strtr(base64_encode($zlib_compressed), '+/', '-_'), '=');
+
+    return "sn://ssh?" . $base64_urlsafe;
+}
+
+@endphp
+
+<a href="javascript:void(0);" class="dropdown-item copy-txt" style="border:none" data-clipboard="true" data-clipboard-text="{{ sagernet_link_generator($websiteaddress, $port_ssh, $user->username, $user->password) }}">{{__('user-table-link')}} SSH Sagernet app</a>
+
+
+
+
+
+                                                                <a href="javascript:void(0);" class="dropdown-item copy-txt"
+                                                                   style="border:none"
+                                                                   data-clipboard="true"
+                                                                   data-clipboard-text="{{ sagernet_link_generator($websiteaddress,$port_ssh,$user->username,$user->password) }}">{{__('user-table-link')}}
+                                                                    SSH Sagernet app
+                                                                </a>
 
                                                                 <a href="javascript:void(0);" class="dropdown-item copy-txt"
                                                                    style="border:none"
