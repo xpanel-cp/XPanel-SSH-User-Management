@@ -1,5 +1,14 @@
 #!/bin/bash
 
+#By setting DEBIAN_FRONTEND to noninteractive, any prompts or interactive dialogs from the package manager will proceed with the installation without user intervention.
+export DEBIAN_FRONTEND=noninteractive
+
+#Disable "Pending kernel upgrade" popup during install:
+sed -i "s/#\$nrconf{kernelhints} = -1;/\$nrconf{kernelhints} = -1;/g" /etc/needrestart/needrestart.conf
+
+#Disable "Daemons using outdated libraries" popup during install:
+sudo sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' /etc/needrestart/needrestart.conf
+
 RED="\e[31m"
 GREEN="\e[32m"
 YELLOW="\e[33m"
@@ -58,7 +67,11 @@ configSSH() {
   port=$(grep -oE 'Port [0-9]+' /etc/ssh/sshd_config | cut -d' ' -f2)
 }
 setCONFIG() {
-cp /var/www/html/example/index.php /var/www/
+
+source_file="/var/www/html/example/index.php"
+destination_directory="/var/www/"
+[ -f "$source_file" ] && cp "$source_file" "$destination_directory" && echo "index.php copied successfully."
+
   # Check if MySQL is installed
   if dpkg-query -W -f='${Status}' mariadb-server 2>/dev/null | grep -q "install ok installed"; then
     adminuser=$(mysql -N -e "use XPanel_plus; select username from admins where permission='admin';")
@@ -144,7 +157,7 @@ userINPU() {
   clear
   adminusername=admin
   echo -e "\nPlease input Panel admin user."
-  printf "Default user name is \e[33m${adminusername}\e[0m, let it blank to use this user name: "
+  printf "Default user name is \e[33m${adminusername}\e[0m, leave it blank to use this user name: "
   read usernametmp
   if [[ -n "${usernametmp}" ]]; then
     adminusername=${usernametmp}
@@ -214,15 +227,14 @@ startINSTALL() {
 
     sudo NEETRESTART_MODE=a apt-get update --yes
     sudo apt update -y
-    sudo apt upgrade -y
-    sudo apt install php8.1-json -y
+    sudo apt -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
     apt-get install -y stunnel4 && apt-get install -y cmake && apt-get install -y screenfetch && apt-get install -y openssl
     sudo apt-get -y install software-properties-common
     sudo add-apt-repository ppa:ondrej/php -y
     sudo apt-get install nginx zip unzip net-tools mariadb-server -y
     sudo apt-get install php php-cli php-mbstring php-dom php-pdo php-mysql -y
     sudo apt-get install npm -y
-    sudo apt install python -y
+    sudo apt install python3 -y
     sudo apt install iftop -y
     sudo apt install apt-transport-https -y
     sudo apt-get install coreutils
@@ -230,7 +242,7 @@ startINSTALL() {
     apt install git cmake -y
     apt install php8.1 php8.1-mysql php8.1-xml php8.1-curl cron -y
     sudo apt install php8.1-fpm
-    sudo apt install php8.1 php8.1-cli php8.1-common php8.1-json php8.1-opcache php8.1-mysql php8.1-mbstring php8.1-zip php8.1-intl php8.1-simplexml -y
+    sudo apt install php8.1 php8.1-cli php8.1-common php8.1-opcache php8.1-mysql php8.1-mbstring php8.1-zip php8.1-intl php8.1-simplexml -y
     wait
 
     phpv=$(php -v)
@@ -246,7 +258,7 @@ startINSTALL() {
       apt autoremove -y
       apt install php8.1 php8.1-mysql php8.1-xml php8.1-curl cron -y
       sudo apt install php8.1-fpm
-      sudo apt install php8.1 php8.1-cli php8.1-common php8.1-json php8.1-opcache php8.1-mysql php8.1-mbstring php8.1-zip php8.1-intl php8.1-simplexml -y
+      sudo apt install php8.1 php8.1-cli php8.1-common  php8.1-opcache php8.1-mysql php8.1-mbstring php8.1-zip php8.1-intl php8.1-simplexml -y
 
     fi
     curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
@@ -395,7 +407,7 @@ EOF
     fi
     udpport=7300
     echo -e "\nPlease input UDPGW Port ."
-    printf "Default Port is \e[33m${udpport}\e[0m, let it blank to use this Port: "
+    printf "Default Port is \e[33m${udpport}\e[0m, leave it blank to use this Port: "
     read udpport
     sudo bash -c "$(curl -Ls https://raw.githubusercontent.com/xpanel-cp/Nethogs-Json-main/master/install.sh --ipv4)"
     git clone https://github.com/ambrop72/badvpn.git /root/badvpn
