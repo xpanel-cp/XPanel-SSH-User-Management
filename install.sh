@@ -742,6 +742,10 @@ ENDOFFILE
   (crontab -l ; echo "*/15 * * * * wget -q -O /dev/null '$protcohttp://${defdomain}:$sshttp/fixer/checkfilter' > /dev/null 2>&1") | crontab -
   (crontab -l ; echo "0 0 * * * wget -q -O /dev/null '$protcohttp://${defdomain}:$sshttp/fixer/send/email/3day' > /dev/null 2>&1") | crontab -
   (crontab -l ; echo "0 0 * * * wget -q -O /dev/null '$protcohttp://${defdomain}:$sshttp/fixer/send/email/24h' > /dev/null 2>&1") | crontab -
+  crontab -l | sed '/dropbear\.sh/d' | crontab -
+  if [ -f "/var/www/html/dropbear.sh" ]; then
+    rm -rf "/var/www/html/dropbear.sh"
+  fi
   wait
   systemctl enable stunnel4 &
   wait
