@@ -749,9 +749,10 @@ ENDOFFILE
   wait
   sudo mkdir -p /xpanel
   wait
-	curl -sL -o /xpanel/xp_user_limit https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/xp_user_limit.sh
+  curl -sL -o /xpanel/xp_user_limit https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/xp_user_limit.sh
   sudo chown -R root:root /xpanel/xp_user_limit
-	chmod +rx /xpanel/xp_user_limit
+  chmod +rx /xpanel/xp_user_limit
+  echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/local/bin/xp_user_limit' | sudo EDITOR='tee -a' visudo
   wait
   curl -o /root/xpanel.sh https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/cli.sh
   sudo wget -4 -O /usr/local/bin/xpanel https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/cli.sh
