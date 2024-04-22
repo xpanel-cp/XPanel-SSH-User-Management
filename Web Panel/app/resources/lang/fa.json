@@ -311,6 +311,13 @@
     "singbox-name-desc": "نام برای اشتراک وارد کنید",
     "singbox-protocol-desc": "نوع پروتکل را انتخاب کنید",
     "singbox-protocol-copy": "کپی لینک",
-    "alert-update": "نسخه جدید ایکس پنل منتشر شده می توانید بروزرسانی کنید"
+    "alert-update": "نسخه جدید ایکس پنل منتشر شده می توانید بروزرسانی کنید",
+    "manager-count-account": "تعداد اشتراک مجاز",
+    "manager-detail": "فیلد اگر خالی بماند به معنای عدم محدودیت است",
+    "manager-edit": "ویرایش مدیر",
+    "manager-new-pass": "کلمه عبور جدید",
+    "manager-error-count": "شما با محدودیت تعداد اشتراک مواجه شدید",
+    "login-error-deactive": "حساب کاربری شما غیرفعال شده",
+    "login-error-password": "نام کاربری/کلمه عبور صحیح نمی باشد"
 
 }

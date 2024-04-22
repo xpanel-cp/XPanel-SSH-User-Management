@@ -310,6 +310,13 @@
     "singbox-name-desc": "Enter a name for the subscription",
     "singbox-protocol-desc": "Select the protocol type",
     "singbox-protocol-copy": "Copy Link",
-    "alert-update": "A new version of XPanel has been released. You can update."
+    "alert-update": "A new version of XPanel has been released. You can update.",
+    "manager-count-account": "Allowed Subscription Count",
+    "manager-detail": "Leave empty to indicate no limitation",
+    "manager-edit": "Edit Manager",
+    "manager-new-pass": "New Password",
+    "manager-error-count": "You have reached the subscription limit",
+    "login-error-deactive": "Your account has been deactivated",
+    "login-error-password": "Incorrect username/password"
 
 }

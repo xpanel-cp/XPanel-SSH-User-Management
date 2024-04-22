@@ -312,5 +312,13 @@
     "singbox-name-desc": "Введите имя для подписки",
     "singbox-protocol-desc": "Выберите тип протокола",
     "singbox-protocol-copy": "Скопировать ссылку",
-    "alert-update": "Вышла новая версия XPanel. Вы можете обновиться."
+    "alert-update": "Вышла новая версия XPanel. Вы можете обновиться.",
+    "manager-count-account": "Разрешенное количество подписок",
+    "manager-detail": "Оставьте пустым, чтобы указать отсутствие ограничения",
+    "manager-edit": "Редактировать менеджера",
+    "manager-new-pass": "Новый пароль",
+    "manager-error-count": "Вы достигли предела подписки",
+    "login-error-deactive": "Ваш аккаунт был деактивирован",
+    "login-error-password": "Неправильное имя пользователя/пароль"
+
 }
