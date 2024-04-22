@@ -9,9 +9,28 @@ export BG='\E[44;1;39m'
 export NC='\033[0;37m'
 export WHITE='\033[0;37m'
 export TRY="[${RED} * ${NC}]"
+
+# Check if the app directory exists
+if [ -d "/var/www/html/app" ]; then
+    # Check if the .env file exists within the app directory and extract values if it does
+    if [ -f "/var/www/html/app/.env" ]; then
+        adminuser=$(grep "DB_USERNAME=" /var/www/html/app/.env | awk -F "=" '{print $2}')
+        adminpass=$(grep "DB_PASSWORD=" /var/www/html/app/.env | awk -F "=" '{print $2}')
+        def_port=$(grep "PORT_PANEL=" /var/www/html/app/.env | awk -F "=" '{print $2}')
+        def_cp=$(grep "PANEL_DIRECT=" /var/www/html/app/.env | awk -F "=" '{print $2}')
+        def_pw=$(grep "DB_PASSWORD=" /var/www/html/app/.env | awk -F "=" '{print $2}')
+    fi
+fi
+
+# Check if the cp directory exists
+if [ -d "/var/www/html/cp" ]; then
+    # Check if the config.js file exists within the cp directory and extract value if it does
+    if [ -f "/var/www/html/cp/assets/js/config.js" ]; then
+        vx=$(awk -F\' '/var version/ {print $2}' /var/www/html/cp/assets/js/config.js)
+    fi
+fi
+
 # Function to display the menu
-adminuser=$(grep "DB_USERNAME=" /var/www/html/app/.env | awk -F "=" '{print $2}')
-adminpass=$(grep "DB_PASSWORD=" /var/www/html/app/.env | awk -F "=" '{print $2}')
 sshport=$(mysql -N -e "use XPanel_plus; select ssh_port from settings where id='1';")
 ssh_tls_port=$(mysql -N -e "use XPanel_plus; select tls_port from settings where id='1';")
 if [ -f "/var/www/xpanelport" ]; then
@@ -43,10 +62,6 @@ if [ "$ssh_tls_port" == "NULL" ]; then
 ssh_tls_port=444
 fi
 
-def_port=$(grep "PORT_PANEL=" /var/www/html/app/.env | awk -F "=" '{print $2}')
-def_cp=$(grep "PANEL_DIRECT=" /var/www/html/app/.env | awk -F "=" '{print $2}')
-def_pw=$(grep "DB_PASSWORD=" /var/www/html/app/.env | awk -F "=" '{print $2}')
-vx=$(awk -F\' '/var version/ {print $2}' /var/www/html/cp/assets/js/config.js)
 BLUE=$(tput setaf 12)
 RED=$(tput setaf 1)
 RESET=$(tput sgr0)
