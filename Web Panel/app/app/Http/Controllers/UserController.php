@@ -241,7 +241,7 @@ class UserController extends Controller
         {
             $count_admin = Admins::where('username',$user->username)->first();
             $check_user = Users::where('customer_user', $user->username)->count();
-            if($check_user>=$count_admin->count_account)
+            if(!empty($count_admin->count_account) and $check_user>=$count_admin->count_account)
             {
                 return redirect()->back()->with('alert', __('manager-error-count'));
                 exit();
@@ -387,7 +387,7 @@ class UserController extends Controller
             {
                 $count_admin = Admins::where('username',$user_s->username)->first();
                 $check_user = Users::where('customer_user', $user_s->username)->count();
-                if($check_user>=$count_admin->count_account)
+                if(!empty($count_admin->count_account) and $check_user>=$count_admin->count_account)
                 {
                     return redirect()->back()->with('alert', __('manager-error-count'));
                     exit();
