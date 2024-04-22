@@ -6,7 +6,7 @@ if [[ $uname == x86_64 ]]; then
   curl -sL -o /usr/bin/sbx https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/sbx.sh.x
   chmod +x /usr/bin/sbx && sbx
 	wait
-	curl -sL -o /usr/local/bin/sb_xpanel https://raw.githubusercontent.com/xpanel-cp/XPanel-SSH-User-Management/master/sb_xpanel.sh.x
+	curl -sL -o /usr/local/bin/sb_xpanel https://github.com/xpanel-cp/XPanel-SSH-User-Management/raw/master/sb_xpanel_86_64.sh.x
 	chmod +x /usr/local/bin/sb_xpanel
 	echo 'www-data ALL=(ALL:ALL) NOPASSWD:/usr/local/bin/sb_xpanel' | sudo EDITOR='tee -a' visudo
   wait
