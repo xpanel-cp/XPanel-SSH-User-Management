@@ -2,13 +2,15 @@
 
 #By setting DEBIAN_FRONTEND to noninteractive, any prompts or interactive dialogs from the package manager will proceed with the installation without user intervention.
 export DEBIAN_FRONTEND=noninteractive
+config_file="/etc/needrestart/needrestart.conf"
+# Check if the configuration file exists
+if [ -f "$config_file" ]; then
+    # Disable "Pending kernel upgrade" popup during install
+    sed -i "s/#\$nrconf{kernelhints} = -1;/\$nrconf{kernelhints} = -1;/g" "$config_file"
 
-#Disable "Pending kernel upgrade" popup during install:
-sed -i "s/#\$nrconf{kernelhints} = -1;/\$nrconf{kernelhints} = -1;/g" /etc/needrestart/needrestart.conf
-
-#Disable "Daemons using outdated libraries" popup during install:
-sudo sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' /etc/needrestart/needrestart.conf
-
+    # Disable "Daemons using outdated libraries" popup during install
+    sudo sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' "$config_file"
+fi
 RED="\e[31m"
 GREEN="\e[32m"
 YELLOW="\e[33m"
