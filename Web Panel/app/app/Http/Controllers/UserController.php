@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admins;
 use App\Models\Settings;
 use App\Models\Traffic;
 use App\Models\Users;
@@ -161,6 +162,11 @@ class UserController extends Controller
         $address = parse_url($websiteaddress, PHP_URL_HOST);
         $user = Auth::user();
         $password_auto = Str::random(8);
+        $detail_admin = Admins::where('username',$user->username)->first();
+        if($user->permission=='admin')
+        {
+            $users = Users::orderBy('id', 'desc')->paginate(25);
+        }
         if($user->permission=='admin')
         {
             $users = Singbox::orderBy('id', 'desc')->paginate(25);
@@ -170,7 +176,7 @@ class UserController extends Controller
             $users = Singbox::where('customer_user', $user->username)->orderby('id', 'desc')->paginate(25);
         }
         $settings = Settings::all();
-        return view('users.singbox', compact('users','address'));
+        return view('users.singbox', compact('users','address','detail_admin'));
     }
     public function index()
     {
@@ -181,8 +187,8 @@ class UserController extends Controller
         $websiteaddress = parse_url($websiteaddress, PHP_URL_HOST);
 
         $port_ssh=env('PORT_SSH');
-
         $user = Auth::user();
+        $detail_admin = Admins::where('username',$user->username)->first();
         $password_auto = Str::random(8);
         if($user->permission=='admin')
         {
@@ -192,7 +198,7 @@ class UserController extends Controller
             $users = Users::where('customer_user', $user->username)->orderby('id', 'desc')->paginate(25);
         }
         $settings = Settings::all();
-        return view('users.home', compact('users', 'settings','password_auto','websiteaddress','port_ssh','sshaddress','xguard_status'));
+        return view('users.home', compact('users', 'settings','password_auto','websiteaddress','port_ssh','sshaddress','xguard_status','detail_admin'));
     }
     public function create()
     {
@@ -231,6 +237,18 @@ class UserController extends Controller
     public function newuser(Request $request)
     {
         $user = Auth::user();
+        if($user->permission!='admin')
+        {
+            $count_admin = Admins::where('username',$user->username)->first();
+            $check_user = Users::where('customer_user', $user->username)->count();
+            if($check_user>=$count_admin->count_account)
+            {
+                return redirect()->back()->with('alert', __('manager-error-count'));
+                exit();
+
+            }
+        }
+
         $request->validate([
             'username'=>'required|string',
             'password'=>'required|string',
@@ -257,12 +275,14 @@ class UserController extends Controller
         }
         if (!empty($request->connection_start)) {
             $start_date = '';
-        } else {
+        }
+        else {
             $start_date = date("Y-m-d");
         }
         if ($request->type_traffic == "gb") {
             $traffic = $request->traffic * 1024;
-        } else {
+        }
+        else {
             $traffic = $request->traffic;
         }
         $check_user = Users::where('username',$request->username)->count();
@@ -308,10 +328,11 @@ class UserController extends Controller
             }
             Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$user->username}");
             Process::input($user->password."\n".$user->password."\n")->timeout(120)->run("sudo passwd {$user->username}");
-
+            Process::run("sudo xp_user_limit add {$user->username} {$request->multiuser}");
             DB::commit();
         }
-        if (!empty($request->email) && $request->email !== null && env('MAIL_STATUS')== 'on') {
+        if (!empty($request->email) && $request->email !== null && env('MAIL_STATUS')== 'on')
+        {
             $validatedData = $request->validate([
                 'username' => 'required|string',
                 'password' => 'required|string',
@@ -330,6 +351,8 @@ class UserController extends Controller
         {
             return redirect()->intended(route('users'));
         }
+
+
     }
 
     public function bulkuser(Request $request)
@@ -360,6 +383,17 @@ class UserController extends Controller
             }
         }
         foreach ($list_users as $user) {
+            if($user_s->permission!='admin')
+            {
+                $count_admin = Admins::where('username',$user_s->username)->first();
+                $check_user = Users::where('customer_user', $user_s->username)->count();
+                if($check_user>=$count_admin->count_account)
+                {
+                    return redirect()->back()->with('alert', __('manager-error-count'));
+                    exit();
+
+                }
+            }
             if(empty($request->password))
             {
                 if($request->pass_random=='number')
@@ -376,7 +410,7 @@ class UserController extends Controller
             {
                 $password=$request->password;
             }
-            $check_user = Users::where('username',$request->username)->count();
+            $check_user = Users::where('username',$user)->count();
             if ($check_user < 1) {
                 DB::beginTransaction();
                 $user = Users::create([
@@ -419,7 +453,7 @@ class UserController extends Controller
                 }
                 Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$user->username}");
                 Process::input($user->password."\n".$user->password."\n")->timeout(120)->run("sudo passwd {$user->username}");
-
+                Process::run("sudo xp_user_limit add {$user->username} {$request->multiuser}");
                 DB::commit();
 
             }
@@ -490,6 +524,7 @@ class UserController extends Controller
 
                 $user = Users::where('username',$username)->get();
                 $password=$user[0]->password;
+                $multiuser=$user[0]->multiuser;
                 if (env('STATUS_LOG', 'deactive') == 'active') {
                     $replacement = "Match User {$username}\nBanner /var/www/html/app/storage/banner/{$username}-detail\nMatch all";
                     $file = fopen("/etc/ssh/sshd_config", "r+");
@@ -508,6 +543,7 @@ class UserController extends Controller
                 }
                 Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$username}");
                 Process::input($password."\n".$password."\n")->timeout(120)->run("sudo passwd {$username}");
+                Process::run("sudo xp_user_limit add {$username} {$multiuser}");
             }
         }
         else{
@@ -516,7 +552,8 @@ class UserController extends Controller
                 Users::where('username', $username)->update(['status' => 'active']);
 
                 $user = Users::where('username',$username)->get();
-                $password=$user[0]->username;
+                $password=$user[0]->password;
+                $multiuser=$user[0]->multiuser;
                 if (env('STATUS_LOG', 'deactive') == 'active') {
                     $replacement = "Match User {$username}\nBanner /var/www/html/app/storage/banner/{$username}-detail\nMatch all";
                     $file = fopen("/etc/ssh/sshd_config", "r+");
@@ -535,6 +572,7 @@ class UserController extends Controller
                 }
                 Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$username}");
                 Process::input($password."\n".$password."\n")->timeout(120)->run("sudo passwd {$username}");
+                Process::run("sudo xp_user_limit add {$username} {$multiuser}");
             }
         }
 
@@ -575,6 +613,8 @@ class UserController extends Controller
         if (!is_string($username)) {
             abort(400, 'Not Valid Username');
         }
+        $user = Users::where('username',$username)->get();
+        $multiuser=$user[0]->multiuser;
         $user = Auth::user();
         $activeUserCount = Users::where('status', 'active')->count();
         if($user->permission=='admin') {
@@ -594,6 +634,7 @@ class UserController extends Controller
 
                     Process::run("sudo rm -rf /var/www/html/app/storage/banner/{$username}-detail");
                     Process::run("sudo service ssh restart");
+
                 }
                 Users::where('username', $username)->update(['status' => 'deactive']);
                 Process::run("sudo killall -u {$username}");
@@ -601,6 +642,7 @@ class UserController extends Controller
                 Process::run("sudo timeout 10 pkill -u {$username}");
                 Process::run("sudo timeout 10 killall -u {$username}");
                 Process::run("sudo userdel -r {$username}");
+                Process::run("sudo xp_user_limit del {$username} {$multiuser}");
             }
         }
         else{
@@ -626,6 +668,7 @@ class UserController extends Controller
                 Process::run("sudo timeout 10 pkill -u {$username}");
                 Process::run("sudo timeout 10 killall -u {$username}");
                 Process::run("sudo userdel -r {$username}");
+                Process::run("sudo xp_user_limit del {$username} {$multiuser}");
             }
         }
         return redirect()->back()->with('success', 'Deactivated');
@@ -731,6 +774,8 @@ class UserController extends Controller
         if (!is_string($username)) {
             abort(400, 'Not Valid Username');
         }
+        $user = Users::where('username',$username)->get();
+        $multiuser=$user[0]->multiuser;
         $user = Auth::user();
         $activeUserCount = Users::where('status', 'active')->count();
         if($user->permission=='admin')
@@ -761,12 +806,14 @@ class UserController extends Controller
                     if ($userdelProcess->successful()) {
                         Users::where('username', $username)->delete();
                         Traffic::where('username', $username)->delete();
+                        Process::run("sudo xp_user_limit del {$username} {$multiuser}");
                     }
                 }
                 else
                 {
                     Users::where('username', $username)->delete();
                     Traffic::where('username', $username)->delete();
+                    Process::run("sudo xp_user_limit del {$username} {$multiuser}");
                 }
             }
         }
@@ -797,12 +844,14 @@ class UserController extends Controller
                     if ($userdelProcess->successful()) {
                         Users::where('username', $username)->delete();
                         Traffic::where('username', $username)->delete();
+                        Process::run("sudo xp_user_limit del {$username} {$multiuser}");
                     }
                 }
                 else
                 {
                     Users::where('username', $username)->delete();
                     Traffic::where('username', $username)->delete();
+                    Process::run("sudo xp_user_limit del {$username} {$multiuser}");
                 }
             }
         }
@@ -813,8 +862,10 @@ class UserController extends Controller
         $user = Auth::user();
         if ($user->permission == 'admin') {
             foreach ($request->usernamed as $username) {
+
                 $check_user = Users::where('username',$username)->count();
                 $status_user = Users::where('username',$username)->get();
+                $multiuser=$status_user[0]->multiuser;
                 if ($check_user > 0) {
                     if($request->action=='delete') {
                         if (file_exists("/var/www/html/app/storage/banner/{$username}-detail")) {
@@ -839,10 +890,12 @@ class UserController extends Controller
                             if ($userdelProcess->successful()) {
                                 Users::where('username', $username)->delete();
                                 Traffic::where('username', $username)->delete();
+                                Process::run("sudo xp_user_limit del {$username} {$multiuser}");
                             }
                         } else {
                             Users::where('username', $username)->delete();
                             Traffic::where('username', $username)->delete();
+                            Process::run("sudo xp_user_limit del {$username} {$multiuser}");
                         }
                     }
                     if($request->action=='active') {
@@ -851,6 +904,7 @@ class UserController extends Controller
 
                         $user = Users::where('username',$username)->get();
                         $password=$user[0]->password;
+                        $multiuser=$user[0]->multiuser;
                         if (env('STATUS_LOG', 'deactive') == 'active') {
                             $replacement = "Match User {$username}\nBanner /var/www/html/app/storage/banner/{$username}-detail\nMatch all";
                             $file = fopen("/etc/ssh/sshd_config", "r+");
@@ -869,6 +923,7 @@ class UserController extends Controller
                         }
                         Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$username}");
                         Process::input($password."\n".$password."\n")->timeout(120)->run("sudo passwd {$username}");
+                        Process::run("sudo xp_user_limit add {$username} {$multiuser}");
                     }
                     if($request->action=='deactive') {
                         if (file_exists("/var/www/html/app/storage/banner/{$username}-detail")) {
@@ -892,6 +947,7 @@ class UserController extends Controller
                         Process::run("sudo timeout 10 pkill -u {$username}");
                         Process::run("sudo timeout 10 killall -u {$username}");
                         Process::run("sudo userdel -r {$username}");
+                        Process::run("sudo xp_user_limit del {$username} {$multiuser}");
                     }
                     if($request->action=='retraffic') {
                         Traffic::where('username', $username)->update(['download' => '0', 'upload' => '0', 'total' => '0']);
@@ -904,6 +960,7 @@ class UserController extends Controller
         } else {
             foreach ($request->usernamed as $username) {
                 $status_user = Users::where('username', $username)->get();
+                $multiuser=$status_user[0]->multiuser;
                 $check_user = Users::where('username', $username)->where('customer_user', $user->username)->count();
                 if ($check_user > 0) {
                     if($request->action=='delete') {
@@ -929,10 +986,12 @@ class UserController extends Controller
                             if ($userdelProcess->successful()) {
                                 Users::where('username', $username)->delete();
                                 Traffic::where('username', $username)->delete();
+                                Process::run("sudo xp_user_limit del {$username} {$multiuser}");
                             }
                         } else {
                             Users::where('username', $username)->delete();
                             Traffic::where('username', $username)->delete();
+                            Process::run("sudo xp_user_limit del {$username} {$multiuser}");
                         }
                     }
                     if($request->action=='active') {
@@ -941,6 +1000,7 @@ class UserController extends Controller
 
                         $user = Users::where('username',$username)->get();
                         $password=$user[0]->password;
+                        $multiuser=$user[0]->multiuser;
                         if (env('STATUS_LOG', 'deactive') == 'active') {
                             $replacement = "Match User {$username}\nBanner /var/www/html/app/storage/banner/{$username}-detail\nMatch all";
                             $file = fopen("/etc/ssh/sshd_config", "r+");
@@ -959,6 +1019,7 @@ class UserController extends Controller
                         }
                         Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$username}");
                         Process::input($password."\n".$password."\n")->timeout(120)->run("sudo passwd {$username}");
+                        Process::run("sudo xp_user_limit add {$username} {$multiuser}");
                     }
                     if($request->action=='deactive') {
                         if (file_exists("/var/www/html/app/storage/banner/{$username}-detail")) {
@@ -982,6 +1043,7 @@ class UserController extends Controller
                         Process::run("sudo timeout 10 pkill -u {$username}");
                         Process::run("sudo timeout 10 killall -u {$username}");
                         Process::run("sudo userdel -r {$username}");
+                        Process::run("sudo xp_user_limit del {$username} {$multiuser}");
                     }
                     if($request->action=='retraffic') {
                         Traffic::where('username', $username)->update(['download' => '0', 'upload' => '0', 'total' => '0']);
@@ -1008,6 +1070,7 @@ class UserController extends Controller
         if ($user->permission == 'admin') {
             foreach ($request->bulkrenew as $username) {
                 $check_user = Users::where('username', $username)->count();
+
                 if ($check_user > 0) {
                     if (env('STATUS_LOG', 'deactive') == 'active') {
                         $replacement = "Match User {$username}\nBanner /var/www/html/app/storage/banner/{$username}-detail\nMatch all";
@@ -1030,8 +1093,10 @@ class UserController extends Controller
                     $user = Users::where('username', $username)->get();
                     $username=$user[0]->username;
                     $password=$user[0]->password;
+                    $multiuser=$user[0]->multiuser;
                     Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$username}");
                     Process::input($password."\n".$password."\n")->timeout(120)->run("sudo passwd {$username}");
+                    Process::run("sudo xp_user_limit add {$username} {$multiuser}");
                     if ($request->re_date == 'yes') {
                         Users::where('username', $username)->update(['start_date' => date("Y-m-d")]);
                     }
@@ -1066,8 +1131,10 @@ class UserController extends Controller
                     $user = Users::where('username', $username)->get();
                     $username=$user[0]->username;
                     $password=$user[0]->password;
+                    $multiuser=$user[0]->multiuser;
                     Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$username}");
                     Process::input($password."\n".$password."\n")->timeout(120)->run("sudo passwd {$username}");
+                    Process::run("sudo xp_user_limit add {$username} {$multiuser}");
                     if ($request->re_date == 'yes') {
                         Users::where('username', $username)->update(['start_date' => date("Y-m-d")]);
 
@@ -1188,8 +1255,10 @@ class UserController extends Controller
                 $user = Users::where('username', $request->username_re)->get();
                 $username=$user[0]->username;
                 $password=$user[0]->password;
+                $multiuser=$user[0]->multiuser;
                 Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$username}");
                 Process::input($password."\n".$password."\n")->timeout(120)->run("sudo passwd {$username}");
+                Process::run("sudo xp_user_limit add {$username} {$multiuser}");
                 if ($request->re_date == 'yes') {
                     Users::where('username', $request->username_re)->update(['start_date' => date("Y-m-d")]);
                 }
@@ -1224,8 +1293,10 @@ class UserController extends Controller
                 $user = Users::where('username', $request->username_re)->get();
                 $username=$user[0]->username;
                 $password=$user[0]->password;
+                $multiuser=$user[0]->multiuser;
                 Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$username}");
                 Process::input($password."\n".$password."\n")->timeout(120)->run("sudo passwd {$username}");
+                Process::run("sudo xp_user_limit add {$username} {$multiuser}");
                 if ($request->re_date == 'yes') {
                     Users::where('username', $request->username_re)->update(['start_date' => date("Y-m-d")]);
 
@@ -1491,6 +1562,7 @@ class UserController extends Controller
             $end_date= $request->expdate;
         }
         $user = Auth::user();
+        $username = Users::where('username',$request->username)->get();
         if($user->permission=='admin') {
             $check_user = Users::where('username', $request->username)->count();
             if ($check_user > 0) {
@@ -1508,16 +1580,17 @@ class UserController extends Controller
                 if ($request->activate == "active") {
                     Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$request->username}");
                     Process::input($request->password."\n".$request->password."\n")->timeout(120)->run("sudo passwd {$request->username}");
+                    Process::run("sudo xp_user_limit add {$request->username} {$request->multiuser}");
                 } else {
                     Process::run("sudo killall -u {$request->username}");
                     Process::run("sudo pkill -u {$request->username}");
                     Process::run("sudo timeout 10 pkill -u {$request->username}");
                     Process::run("sudo timeout 10 killall -u {$request->username}");
                     Process::run("sudo userdel -r {$request->username}");
+                    Process::run("sudo xp_user_limit del {$request->username} {$request->multiuser}");
                 }
-                if ($user->password != $request->password) {
+                if ($username[0]->password != $request->password) {
                     Process::input($request->password."\n".$request->password."\n")->timeout(120)->run("sudo passwd {$request->username}");
-
                 }
             }
         }
@@ -1539,15 +1612,18 @@ class UserController extends Controller
                 if ($request->activate == "active") {
                     Process::run("sudo adduser --disabled-password --gecos '' --shell /usr/sbin/nologin {$request->username}");
                     Process::input($request->password."\n".$request->password."\n")->timeout(120)->run("sudo passwd {$request->username}");
+                    Process::run("sudo xp_user_limit add {$request->username} {$request->multiuser}");
                 } else {
                     Process::run("sudo killall -u {$request->username}");
                     Process::run("sudo pkill -u {$request->username}");
                     Process::run("sudo timeout 10 pkill -u {$request->username}");
                     Process::run("sudo timeout 10 killall -u {$request->username}");
                     Process::run("sudo userdel -r {$request->username}");
+                    Process::run("sudo xp_user_limit del {$request->username} {$request->multiuser}");
                 }
                 if ($user->password != $request->password) {
                     Process::input($request->password."\n".$request->password."\n")->timeout(120)->run("sudo passwd {$request->username}");
+                    Process::run("sudo xp_user_limit add {$request->username} {$request->multiuser}");
                 }
             }
         }
@@ -1558,6 +1634,8 @@ class UserController extends Controller
         $users = Users::all();
         foreach ($users as $user) {
             $username=$user->username;
+            $multiuser=$user->multiuser;
+
             if (file_exists("/var/www/html/app/storage/banner/{$username}-detail")) {
                 $linesToRemove = ["Match User {$username}", "Banner /var/www/html/app/storage/banner/{$username}-detail"];
                 $filename = "/etc/ssh/sshd_config";
@@ -1577,6 +1655,7 @@ class UserController extends Controller
             Process::run("sudo timeout 10 pkill -u {$username}");
             Process::run("sudo timeout 10 killall -u {$username}");
             Process::run("sudo userdel -r {$username}");
+            Process::run("sudo xp_user_limit del {$username} {$multiuser}");
         }
         DB::table('users')->truncate();
         DB::table('traffic')->truncate();
@@ -1603,6 +1682,7 @@ class UserController extends Controller
         foreach ($users as $user) {
             $username = $user->username;
             $password = $user->password;
+            $multiuser=$user->multiuser;
 
             $process1 = new Process(["sudo", "adduser", "--disabled-password", "--gecos", "''", "--shell", "/usr/sbin/nologin", $username]);
             $process1->start();
@@ -1613,6 +1693,7 @@ class UserController extends Controller
             $process2->setTimeout(120);
             $process2->start();
             $processes[] = $process2;
+            Process::run("sudo xp_user_limit add {$username} {$multiuser}");
         }
 
         foreach ($processes as $process) {

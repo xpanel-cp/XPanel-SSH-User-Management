@@ -18,6 +18,8 @@ return new class extends Migration
                 $table->string('password');
                 $table->string('permission');
                 $table->string('credit');
+                $table->string('end_date')->nullable();
+                $table->string('count_account')->nullable();
                 $table->string('status');
                 $table->timestamps();
             });

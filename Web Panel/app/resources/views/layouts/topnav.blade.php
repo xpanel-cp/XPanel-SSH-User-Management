@@ -7,6 +7,7 @@
                 <img src="/assets/images/xlogo.png" alt="Xpanel" style="width:50px"/>
                 <span class="badge bg-light-success rounded-pill ms-2 theme-version" style="font-size: 13px;"></span>
             </a>
+
         </div>
         <div class="navbar-content">
             <div class="card pc-user-card">
@@ -16,7 +17,7 @@
                             <img src="/assets/images/user/avatar-1.jpg" alt="user-image" class="user-avtar wid-45 rounded-circle" />
                         </div>
                         <div class="flex-grow-1 ms-3 me-2">
-                            <h6 class="mb-0">Admin</h6>
+                            <h6 class="mb-0">{!! ucfirst($username) !!}</h6>
                         </div>
                         <a class="btn btn-icon btn-link-secondary avtar" data-bs-toggle="collapse" href="#pc_sidebar_userlink">
                             <svg class="pc-icon">
@@ -24,6 +25,8 @@
                             </svg>
                         </a>
                     </div>
+                    <small>{{__('manager-count-account')}}: <b>@if(!empty($count_account)){{$count_account}} @else ♾️@endif</b> <br> {{__('user-pop-newuser-date-desc1')}}: <b>@if(!empty($end_date)){{$end_date}} @else ♾️@endif </b></small>
+
                     <div class="collapse pc-user-links" id="pc_sidebar_userlink">
                         <div class="pt-3">
                             <a href="{{route('setting')}}">
@@ -200,4 +203,5 @@
 
     </div>
 </header>
+
 <!-- [ Header ] end -->

@@ -2,7 +2,16 @@
 @section('title','XPanel - '.__('user-title'))
 @section('content')
     <!-- [ Main Content ] start -->
+    @if (!empty($detail_admin->end_date))
+        @if(env('APP_LOCALE', 'en')=='fa')
+            @php $end_date=Verta::instance($detail_admin->end_date)->format('Y/m/d');@endphp
+        @else
+            @php $end_date=$detail_admin->end_date;@endphp
+        @endif
 
+    @else
+        @php $end_date=''; @endphp
+    @endif
     <script src="/assets/js/clipboard.min.js"></script>
     <div class="pc-container">
         <div class="pc-content">
@@ -13,6 +22,8 @@
                         <div class="col-md-12">
                             <div class="page-header-title">
                                 <h2 class="mb-0">{{__('user-title')}}</h2>
+                                <small>{{__('manager-count-account')}}: <b style="font-size: medium;">@if(!empty($detail_admin->count_account)){{$detail_admin->count_account}} @else ♾️@endif</b> &nbsp;&nbsp; {{__('user-pop-newuser-date-desc1')}}: <b style="font-size: medium;">@if(!empty($end_date)){{$end_date}} @else ♾️@endif </b></small>
+
                             </div>
                         </div>
                     </div>
@@ -122,6 +133,46 @@
                                         @php
                                             $uid = 0;
                                             $at='@';
+                                            function sagernet_link_generator(string $server_address, int $port, string $username, string $password): string {
+    // Initialize Kryo bytes
+    $kryo_bytes = "\x00\x00\x00\x00";
+
+    // Encode server address
+    $server_address_bytes = str_split($server_address);
+    $last_char = array_pop($server_address_bytes);
+    $server_address_bytes[] = chr(ord($last_char) + 128);
+    $kryo_bytes .= implode('', $server_address_bytes);
+
+    // Encode port
+    $kryo_bytes .= pack("v", $port);
+    $kryo_bytes .= "\x00\x00";
+
+    // Encode username
+    $username_bytes = str_split($username);
+    $last_char = array_pop($username_bytes);
+    $username_bytes[] = chr(ord($last_char) + 128);
+    $kryo_bytes .= implode('', $username_bytes);
+    $kryo_bytes .= "\x01\x00\x00\x00";
+
+    // Encode password
+    $password_bytes = str_split($password);
+    $last_char = array_pop($password_bytes);
+    $password_bytes[] = chr(ord($last_char) + 128);
+    $kryo_bytes .= implode('', $password_bytes);
+    $kryo_bytes .= "\x81\x01\x00\x00\x00\xa1";
+
+    // Encode title
+    $title = sprintf("(%s)", $username);
+    $kryo_bytes .= $title . "\x00\x00\x00\x00";
+
+    // Compress Kryo bytes using zlib
+    $zlib_compressed = gzcompress($kryo_bytes);
+
+    // Encode in Base64 URL safe format
+    $base64_urlsafe = rtrim(strtr(base64_encode($zlib_compressed), '+/', '-_'), '=');
+
+    return "sn://ssh?" . $base64_urlsafe;
+}
                                         @endphp
                                         @foreach ($users as $user)
                                             @php
@@ -317,7 +368,7 @@
                                                                 data-bs-toggle="dropdown" aria-haspopup="true"
                                                                 aria-expanded="false"><i
                                                                     class="ti ti-adjustments f-18"></i></button>
-                                                            <div class="dropdown-menu">
+                                                            <div class="dropdown-menu" data-bs-auto-close="false">
                                                                 <a class="dropdown-item"
                                                                    href="{{ route('user.active', ['username' => $user->username]) }}">{{__('user-table-active')}}</a>
                                                                 <a class="dropdown-item"
@@ -336,7 +387,7 @@
                                                                 aria-expanded="false"><i class="ti ti-share f-18"></i>
                                                             </button>
 
-                                                            <div class="dropdown-menu">
+                                                            <div class="dropdown-menu" data-bs-auto-close="false">
                                                                 <a href="javascript:void(0);" class="dropdown-item copy-txt"
                                                                    style="border:none"
                                                                    data-clipboard="true"
@@ -366,64 +417,9 @@ Password:{{$user->password}}&nbsp;
 Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
 {{$st_date}}&nbsp;{{$en_date}}">{{__('user-table-copy')}}
                                                                     (Dropbear)</a>
-                                                                    @php
+                                                                @php
                                                                     $at = "@";
-
-function sagernet_link_generator(string $server_address, int $port, string $username, string $password): string {
-    // Initialize Kryo bytes
-    $kryo_bytes = "\x00\x00\x00\x00";
-
-    // Encode server address
-    $server_address_bytes = str_split($server_address);
-    $last_char = array_pop($server_address_bytes);
-    $server_address_bytes[] = chr(ord($last_char) + 128);
-    $kryo_bytes .= implode('', $server_address_bytes);
-
-    // Encode port
-    $kryo_bytes .= pack("v", $port);
-    $kryo_bytes .= "\x00\x00";
-
-    // Encode username
-    $username_bytes = str_split($username);
-    $last_char = array_pop($username_bytes);
-    $username_bytes[] = chr(ord($last_char) + 128);
-    $kryo_bytes .= implode('', $username_bytes);
-    $kryo_bytes .= "\x01\x00\x00\x00";
-
-    // Encode password
-    $password_bytes = str_split($password);
-    $last_char = array_pop($password_bytes);
-    $password_bytes[] = chr(ord($last_char) + 128);
-    $kryo_bytes .= implode('', $password_bytes);
-    $kryo_bytes .= "\x81\x01\x00\x00\x00\xa1";
-
-    // Encode title
-    $title = sprintf("(%s)", $username);
-    $kryo_bytes .= $title . "\x00\x00\x00\x00";
-
-    // Compress Kryo bytes using zlib
-    $zlib_compressed = gzcompress($kryo_bytes);
-
-    // Encode in Base64 URL safe format
-    $base64_urlsafe = rtrim(strtr(base64_encode($zlib_compressed), '+/', '-_'), '=');
-
-    return "sn://ssh?" . $base64_urlsafe;
-}
-
-@endphp
-
-<a href="javascript:void(0);" class="dropdown-item copy-txt" style="border:none" data-clipboard="true" data-clipboard-text="{{ sagernet_link_generator($websiteaddress, $port_ssh, $user->username, $user->password) }}">{{__('user-table-link')}} SSH Sagernet app</a>
-
-
-
-
-
-                                                                <a href="javascript:void(0);" class="dropdown-item copy-txt"
-                                                                   style="border:none"
-                                                                   data-clipboard="true"
-                                                                   data-clipboard-text="{{ sagernet_link_generator($websiteaddress,$port_ssh,$user->username,$user->password) }}">{{__('user-table-link')}}
-                                                                    SSH Sagernet app
-                                                                </a>
+                                                                @endphp
 
                                                                 <a href="javascript:void(0);" class="dropdown-item copy-txt"
                                                                    style="border:none"
@@ -443,7 +439,26 @@ function sagernet_link_generator(string $server_address, int $port, string $user
                                                                    data-clipboard-text="ssh://{{$user->username}}:{{$user->password}}{{$at}}{{$websiteaddress}}:{{env('PORT_DROPBEAR')}}/#{{$user->username}}">{{__('user-table-link')}}
                                                                     SSH Dropbear
                                                                 </a>
+                                                                <a href="javascript:void(0);" class="dropdown-item copy-txt"
+                                                                   style="border:none"
+                                                                   data-clipboard="true"
+                                                                   data-clipboard-text="{{ sagernet_link_generator($websiteaddress,$port_ssh,$user->username,$user->password) }}">{{__('user-table-link')}}
+                                                                    SSH Sagernet app
+                                                                </a>
 
+                                                                <a href="javascript:void(0);" class="dropdown-item copy-txt"
+                                                                   style="border:none"
+                                                                   data-clipboard="true"
+                                                                   data-clipboard-text="{{ sagernet_link_generator($websiteaddress,$tls_port,$user->username,$user->password) }}">{{__('user-table-link')}}
+                                                                    SSH TLS Sagernet app
+                                                                </a>
+
+                                                                <a href="javascript:void(0);" class="dropdown-item copy-txt"
+                                                                   style="border:none"
+                                                                   data-clipboard="true"
+                                                                   data-clipboard-text="{{ sagernet_link_generator($websiteaddress,env('PORT_DROPBEAR'),$user->username,$user->password) }}">{{__('user-table-link')}}
+                                                                    SSH Dropbear Sagernet app
+                                                                </a>
 
                                                             </div>
                                                         </li>
@@ -1212,33 +1227,38 @@ function sagernet_link_generator(string $server_address, int $port, string $user
             });
         });
 
-    </script>
 
+    </script>
     <script>
         var colorBlock = new ClipboardJS('.copy-txt');
 
         colorBlock.on('success', function (e) {
             var targetElement = e.trigger;
-            var iconBadge = document.createElement('span');
-            iconBadge.setAttribute('class', 'ic-badge badge bg-success float-end');
-            iconBadge.innerHTML = 'Copied';
-            targetElement.append(iconBadge);
+            var popoverContent = 'Copied'; // متن پاپ‌آپ
+            $(targetElement).popover({ // اعمال پاپ‌آپ با استفاده از کتابخانه Bootstrap Popover
+                trigger: 'manual',
+                content: popoverContent,
+                placement: 'top',
+            });
+            $(targetElement).popover('show'); // نمایش پاپ‌آپ
             setTimeout(function () {
-                targetElement.removeChild(iconBadge);
+                $(targetElement).popover('hide'); // مخفی کردن پاپ‌آپ بعد از 3 ثانیه
             }, 3000);
         });
 
         colorBlock.on('error', function (e) {
             var targetElement = e.trigger;
-            var iconBadge = document.createElement('span');
-            iconBadge.setAttribute('class', 'ic-badge badge bg-danger float-end');
-            iconBadge.innerHTML = 'Error';
-            targetElement.append(iconBadge);
+            var popoverContent = 'Error'; // متن پاپ‌آپ
+            $(targetElement).popover({ // اعمال پاپ‌آپ با استفاده از کتابخانه Bootstrap Popover
+                trigger: 'manual',
+                content: popoverContent,
+                placement: 'top-start',
+            });
+            $(targetElement).popover('show'); // نمایش پاپ‌آپ
             setTimeout(function () {
-                targetElement.removeChild(iconBadge);
+                $(targetElement).popover('hide'); // مخفی کردن پاپ‌آپ بعد از 3 ثانیه
             }, 3000);
         });
-
     </script>
     <script>
         $(document).on("click", ".qrs", function () {
@@ -1312,6 +1332,8 @@ function sagernet_link_generator(string $server_address, int $port, string $user
                     document.getElementById("renewbulk").disabled = true;
                 }
             }
+
+
         });
     </script>
 

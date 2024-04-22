@@ -38,51 +38,64 @@
                                     <tr>
                                         <th>#ID</th>
                                         <th>{{__('manager-username')}}</th>
+                                        <th>{{__('manager-count-account')}}</th>
+                                        <th>{{__('user-pop-newuser-date-desc1')}}</th>
                                         <th>{{__('manager-status')}}</th>
                                         <th class="text-center">{{__('manager-action')}}</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     @php
-                                    $uid=0;
+                                        $uid=0;
                                     @endphp
                                     @foreach ($admins as $admin)
-                                    @php
-                                    $uid++;
-                                    @endphp
-                                    @if ($admin->status == "active")
-                                        @php $status = "<span class='badge bg-light-success rounded-pill f-12'>".__('manager-active')."</span>";@endphp
-                                    @endif
-                                    @if ($admin->status == "deactive")
-                                       @php $status = "<span class='badge bg-light-danger rounded-pill f-12'>".__('manager-deactive')."</span>"; @endphp
-                                    @endif
+                                        @php
+                                            $uid++;
+                                        @endphp
+                                        @if ($admin->status == "active")
+                                            @php $status = "<span class='badge bg-light-success rounded-pill f-12'>".__('manager-active')."</span>";@endphp
+                                        @endif
+                                        @if ($admin->status == "deactive")
+                                            @php $status = "<span class='badge bg-light-danger rounded-pill f-12'>".__('manager-deactive')."</span>"; @endphp
+                                        @endif
+                                        @if (!empty($admin->end_date))
+                                            @if(env('APP_LOCALE', 'en')=='fa')
+                                                @php $st_date=Verta::instance($admin->end_date)->format('Y/m/d');@endphp
+                                            @else
+                                                @php $st_date=$admin->end_date;@endphp
+                                            @endif
 
-                                    <tr>
-                                        <td>{{$uid}}</td>
-                                        <td>{{$admin->username}}</td>
-                                        <td>{!! $status !!}</td>
+                                        @else
+                                            @php $st_date=''; @endphp
+                                        @endif
+                                        <tr>
+                                            <td>{{$uid}}</td>
+                                            <td>{{$admin->username}}</td>
+                                            <td>{{$admin->count_account}}</td>
+                                            <td>{{$st_date}}</td>
+                                            <td>{!! $status !!}</td>
 
-                                        <td class="text-center">
-                                            <ul class="list-inline me-auto mb-0">
-                                                <li class="list-inline-item align-bottom" >
-                                                    <button class="avtar avtar-xs btn-link-success btn-pc-default" style="border:none" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ti ti-adjustments f-18"></i></button>
-                                                    <div class="dropdown-menu">
-                                                        <a class="dropdown-item" href="{{ route('admin.active', ['username' => $admin->username]) }}">{{__('manager-active')}}</a>
-                                                        <a class="dropdown-item" href="{{ route('admin.deactive', ['username' => $admin->username]) }}">{{__('manager-deactive')}}</a>
-                                                        <a class="dropdown-item" href="{{ route('admin.delete', ['username' => $admin->username]) }}">{{__('manager-delete')}}</a>
-                                                    </div>
-                                                </li>
-                                                <li class="list-inline-item align-bottom" data-bs-toggle="tooltip"
-                                                    title="{{__('manager-tog-edit')}}">
-                                                    <a href="{{ route('admin.edit', ['username' => $admin->username]) }}"
-                                                       class="avtar avtar-xs btn-link-success btn-pc-default">
-                                                        <i class="ti ti-edit-circle f-18"></i>
-                                                    </a>
-                                                </li>
+                                            <td class="text-center">
+                                                <ul class="list-inline me-auto mb-0">
+                                                    <li class="list-inline-item align-bottom" >
+                                                        <button class="avtar avtar-xs btn-link-success btn-pc-default" style="border:none" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ti ti-adjustments f-18"></i></button>
+                                                        <div class="dropdown-menu">
+                                                            <a class="dropdown-item" href="{{ route('admin.active', ['username' => $admin->username]) }}">{{__('manager-active')}}</a>
+                                                            <a class="dropdown-item" href="{{ route('admin.deactive', ['username' => $admin->username]) }}">{{__('manager-deactive')}}</a>
+                                                            <a class="dropdown-item" href="{{ route('admin.delete', ['username' => $admin->username]) }}">{{__('manager-delete')}}</a>
+                                                        </div>
+                                                    </li>
+                                                    <li class="list-inline-item align-bottom" data-bs-toggle="tooltip"
+                                                        title="{{__('manager-tog-edit')}}">
+                                                        <a href="{{ route('admin.edit', ['username' => $admin->username]) }}"
+                                                           class="avtar avtar-xs btn-link-success btn-pc-default">
+                                                            <i class="ti ti-edit-circle f-18"></i>
+                                                        </a>
+                                                    </li>
 
-                                            </ul>
-                                        </td>
-                                    </tr>
+                                                </ul>
+                                            </td>
+                                        </tr>
                                     @endforeach
                                     </tbody>
                                 </table>
@@ -128,6 +141,38 @@
                                                        placeholder="{{__('manager-pop-password')}}" required>
                                             </div>
                                             <small class="form-text text-muted">{{__('manager-pop-password-desc')}}</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            @csrf
+                                            <input type="number" name="count_account" class="form-control"
+                                                   placeholder="{{__('manager-count-account')}}" onkeyup="this.value = this.value.replace(/[^\d]+/g, '')">
+                                            <small class="form-text text-muted">{{__('manager-count-account')}}</small>
+                                            <br><small style="color: red">{{__('manager-detail')}}</small>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="row">
+                                        <div class="col-lg-12">
+                                            <div class="input-group">
+                                                <span class="input-group-text"><i
+                                                        class="ti ti-calendar-time"></i></span>
+                                                @if(env('APP_LOCALE', 'en')=='fa')
+                                                    <input type="text" name="end_date" class="form-control example1"
+                                                           autocomplete="off"/>
+                                                @else
+                                                    <input type="date" class="form-control" name="end_date" id="date"
+                                                           data-gtm-form-interact-field-id="0">
+                                                @endif
+                                            </div>
+                                            <small class="form-text text-muted">{{__('user-pop-newuser-date-desc1')}}</small>
+                                            <br><small style="color: red">{{__('manager-detail')}}</small>
                                         </div>
                                     </div>
                                 </div>

@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Http\Request;
 use Auth;
+use Illuminate\Support\Facades\Schema;
 use Route;
 use App\Models\Admins;
 
@@ -37,6 +39,25 @@ class LoginController extends Controller
                 'status' => 'active'
             ]);
         }
+
+        $tableName = 'admins';
+        $newColumnName = 'end_date';
+        if (!Schema::hasColumn($tableName, $newColumnName)) {
+            Schema::table($tableName, function (Blueprint $table) use ($newColumnName) {
+                $table->string($newColumnName)->after('credit')->nullable();
+            });
+
+            sleep(1);
+        }
+        $tableName = 'admins';
+        $newColumnName = 'count_account';
+        if (!Schema::hasColumn($tableName, $newColumnName)) {
+            Schema::table($tableName, function (Blueprint $table) use ($newColumnName) {
+                $table->string($newColumnName)->after('end_date')->nullable();
+            });
+
+            sleep(1);
+        }
         return view('auth.login');
     }
 
@@ -52,6 +73,17 @@ class LoginController extends Controller
         if (Auth::guard('admins')->attempt(['username' => $request->username, 'password' => $request->password,'status'=>'active'])) {
             // if successful, then redirect to their intended location
             return redirect()->intended(route('dashboard'));
+        }
+        else
+        {
+            $pssword=Hash::make($request->password);
+            $count_admin = Admins::where('username',$request->username)->first();
+            if($count_admin->status!='active') {
+                return redirect()->back()->with('alert', __('login-error-deactive'));
+            }
+            if($count_admin->password!=$pssword) {
+                return redirect()->back()->with('alert', __('login-error-password'));
+            }
         }
         // if unsuccessful, then redirect back to the login with the form data
         return redirect()->back()->withInput($request->only('username', 'remember'));

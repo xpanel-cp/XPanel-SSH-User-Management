@@ -38,7 +38,16 @@
     </div>
 </div>
 <!-- [ Pre-loader ] End -->
-
+@if(!empty(session('alert')))
+    <div class="p-4 mb-2" style="position: fixed;z-index: 9999;left: 0;">
+        <div class="toast fade show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">{{ session('alert') }} </div>
+        </div>
+    </div>
+@endif
 <div class="auth-main">
     <div class="auth-wrapper v1">
         <div class="auth-form">

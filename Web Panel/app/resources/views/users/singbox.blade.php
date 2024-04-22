@@ -2,7 +2,16 @@
 @section('title','XPanel - '.__('user-title').'SingBox')
 @section('content')
     <!-- [ Main Content ] start -->
+    @if (!empty($detail_admin->end_date))
+        @if(env('APP_LOCALE', 'en')=='fa')
+            @php $end_date=Verta::instance($detail_admin->end_date)->format('Y/m/d');@endphp
+        @else
+            @php $end_date=$detail_admin->end_date;@endphp
+        @endif
 
+    @else
+        @php $end_date=''; @endphp
+    @endif
     <script src="/assets/js/clipboard.min.js"></script>
     <div class="pc-container">
         <div class="pc-content">
@@ -13,6 +22,8 @@
                         <div class="col-md-12">
                             <div class="page-header-title">
                                 <h2 class="mb-0">{{__('user-title')}} SingBox</h2>
+                                <small>{{__('manager-count-account')}}: <b style="font-size: medium;">@if(!empty($detail_admin->count_account)){{$detail_admin->count_account}} @else ♾️@endif </b> &nbsp;&nbsp; {{__('user-pop-newuser-date-desc1')}}: <b style="font-size: medium;">@if(!empty($end_date)){{$end_date}} @else ♾️@endif </b></small>
+
                             </div>
                         </div>
                     </div>
@@ -59,6 +70,8 @@
                                         <option value="vless-reality"{{ request('protocol') == 'vless-reality' ? ' selected' : '' }}>VLess Reality</option>
                                         <option value="hysteria2"{{ request('protocol') == 'hysteria2' ? ' selected' : '' }}>Hysteria2</option>
                                         <option value="tuic"{{ request('protocol') == 'tuic' ? ' selected' : '' }}>Tuic</option>
+                                        <option value="shadowsocks"{{ request('protocol') == 'shadowsocks' ? ' selected' : '' }}>Shadowsocks</option>
+
                                     </select>
                                 </div>
                                 <div class="col-12">
@@ -219,27 +232,32 @@
                                             @endif
 
                                             @if($user->protocol_sb=='vmess-ws')
-                                            @php
-                                            $val_vm='{"add":"'.$address.'","aid":"0","host":"www.bing.com","id":"'.$jsonData['uuid'].'","net":"ws","path":"'.$jsonData['uuid'].'-vm","port":"'.$jsonData['port'].'","ps":"'.$user->name.'","tls":"","type":"none","v":"2"}';
-                                            $prt='vmess://'.base64_encode($val_vm);
-                                            @endphp
+                                                @php
+                                                    $val_vm='{"add":"'.$address.'","aid":"0","host":"www.bing.com","id":"'.$jsonData['uuid'].'","net":"ws","path":"'.$jsonData['uuid'].'-vm","port":"'.$jsonData['port'].'","ps":"'.$user->name.'","tls":"","type":"none","v":"2"}';
+                                                    $prt='vmess://'.base64_encode($val_vm);
+                                                @endphp
                                             @endif
                                             @if($user->protocol_sb=='vless-reality')
-                                            @php
-                                             $prt="vless://".$jsonData['uuid']."@$address:".$jsonData['port']."?encryption=none&flow=xtls-rprx-vision&security=reality&sni=www.yahoo.com&fp=chrome&pbk=$pbk&sid=$sid&type=tcp&headerType=none#$user->name"
-                                            @endphp
+                                                @php
+                                                    $prt="vless://".$jsonData['uuid']."@$address:".$jsonData['port']."?encryption=none&flow=xtls-rprx-vision&security=reality&sni=www.yahoo.com&fp=chrome&pbk=$pbk&sid=$sid&type=tcp&headerType=none#$user->name"
+                                                @endphp
                                             @endif
                                             @if($user->protocol_sb=='hysteria2')
-                                            @php
-                                                $prt="hysteria2://".$jsonData['uuid']."@$address:".$jsonData['port']."?insecure=1&mport=".$jsonData['port']."&sni=www.bing.com#$user->name";
-                                            @endphp
+                                                @php
+                                                    $prt="hysteria2://".$jsonData['uuid']."@$address:".$jsonData['port']."?insecure=1&mport=".$jsonData['port']."&sni=www.bing.com#$user->name";
+                                                @endphp
                                             @endif
                                             @if($user->protocol_sb=='tuic')
                                                 @php
                                                     $prt="tuic://".$jsonData['uuid'].":".$jsonData['uuid']."@$address:".$jsonData['port']."?congestion_control=bbr&udp_relay_mode=native&alpn=h3&sni=www.bing.com&allow_insecure=1#$user->name";
                                                 @endphp
                                             @endif
-
+                                            @if($user->protocol_sb=='shadowsocks')
+                                                @php
+                                                    $encode=base64_encode("2022-blake3-aes-256-gcm:".$jsonData['uuid']);
+                                                        $prt="ss://".$encode."@$address:".$jsonData['port']."?type=tcp#$user->name";
+                                                @endphp
+                                            @endif
                                             <tr>
                                                 <td><input name="usernamed[]" id="checkItem" type="checkbox"
                                                            class="checkItem form-check-input"
@@ -256,6 +274,7 @@
                                                                             @if($user->protocol_sb=='vless-reality')VLess Reality @endif
                                                                             @if($user->protocol_sb=='hysteria2')Hysteria2 @endif
                                                                             @if($user->protocol_sb=='tuic')Tuic @endif
+                                                                            @if($user->protocol_sb=='shadowsocks')Shadowsocks @endif
                                                                         </small></p>
                                                                 </div>
                                                             </div>
@@ -281,17 +300,17 @@
                                                             @if(env('APP_LOCALE', 'en')=='fa')
                                                                 {{__('user-table-date-start')}}: @if(!empty($startdate))
                                                                     <span
-                                                                            style="display: inline-block;">{{Verta::instance($startdate)->format('Y-m-d')}}</span>@endif
+                                                                        style="display: inline-block;">{{Verta::instance($startdate)->format('Y-m-d')}}</span>@endif
                                                                 <br>
                                                                 {{__('user-table-date-end')}}: @if(!empty($finishdate))
                                                                     <span
-                                                                            style="display: inline-block;">{{Verta::instance($finishdate)->format('Y-m-d')}}</span>@endif
+                                                                        style="display: inline-block;">{{Verta::instance($finishdate)->format('Y-m-d')}}</span>@endif
                                                             @else
                                                                 {{__('user-table-date-start')}}: <span
-                                                                        style="display: inline-block;">{{$startdate}}</span>
+                                                                    style="display: inline-block;">{{$startdate}}</span>
                                                                 <br>
                                                                 {{__('user-table-date-end')}}: <span
-                                                                        style="display: inline-block;">{{$finishdate}}</span>
+                                                                    style="display: inline-block;">{{$finishdate}}</span>
                                                             @endif
                                                         </small>
                                                     @endif
@@ -303,11 +322,11 @@
                                                     <ul class="list-inline me-auto mb-0">
                                                         <li class="list-inline-item align-bottom">
                                                             <button
-                                                                    class="avtar avtar-xs btn-link-success btn-pc-default"
-                                                                    style="border:none" type="button"
-                                                                    data-bs-toggle="dropdown" aria-haspopup="true"
-                                                                    aria-expanded="false"><i
-                                                                        class="ti ti-adjustments f-18"></i></button>
+                                                                class="avtar avtar-xs btn-link-success btn-pc-default"
+                                                                style="border:none" type="button"
+                                                                data-bs-toggle="dropdown" aria-haspopup="true"
+                                                                aria-expanded="false"><i
+                                                                    class="ti ti-adjustments f-18"></i></button>
                                                             <div class="dropdown-menu">
                                                                 <a class="dropdown-item"
                                                                    href="{{ route('singbox.user.active', ['port' => $user->port_sb]) }}">{{__('user-table-active')}}</a>
@@ -589,7 +608,7 @@
                                                    onkeyup="if (/[^|a-z0-9]+/g.test(this.value)) this.value = this.value.replace(/[^-a-z0-9_]+/g,'')"
                                                    required>
                                             <small
-                                                    class="form-text text-muted">{{__('singbox-name-desc')}}</small>
+                                                class="form-text text-muted">{{__('singbox-name-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -601,6 +620,7 @@
                                                 <option value="vless-reality">VLess Reality</option>
                                                 <option value="hysteria2" selected>Hysteria2</option>
                                                 <option value="tuic">Tuic</option>
+                                                <option value="shadowsocks">Shadowsocks</option>
                                             </select>
                                             <small class="form-text text-muted">{{__('singbox-protocol-desc')}}</small>
                                         </div>
@@ -614,7 +634,7 @@
                                             <input type="text" name="email" class="form-control"
                                                    placeholder="{{__('user-pop-newuser-email')}}">
                                             <small
-                                                    class="form-text text-muted">{{__('user-pop-newuser-email-desc')}}</small>
+                                                class="form-text text-muted">{{__('user-pop-newuser-email-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -626,7 +646,7 @@
                                                        placeholder="{{__('user-pop-newuser-phone')}}">
                                             </div>
                                             <small
-                                                    class="form-text text-muted">{{__('user-pop-newuser-phone-desc')}}</small>
+                                                class="form-text text-muted">{{__('user-pop-newuser-phone-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -639,7 +659,7 @@
                                             <input type="text" name="multiuser" class="form-control" value="1"
                                                    placeholder="{{__('user-pop-newuser-connect')}}" required>
                                             <small
-                                                    class="form-text text-muted">{{__('user-pop-newuser-connect-desc')}}</small>
+                                                class="form-text text-muted">{{__('user-pop-newuser-connect-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -651,9 +671,9 @@
                                                        placeholder="30">
                                             </div>
                                             <small
-                                                    class="form-text text-muted">{{__('user-pop-newuser-connect-start-desc1')}}</small>
+                                                class="form-text text-muted">{{__('user-pop-newuser-connect-start-desc1')}}</small>
                                             <small
-                                                    style="color:red">{{__('user-pop-newuser-connect-start-desc2')}}</small>
+                                                style="color:red">{{__('user-pop-newuser-connect-start-desc2')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -678,7 +698,7 @@
                                                        for="customCheckinl32">GB</label>
                                             </div>
                                             <small
-                                                    class="form-text text-muted">{{__('user-pop-newuser-traffic-desc')}}</small>
+                                                class="form-text text-muted">{{__('user-pop-newuser-traffic-desc')}}</small>
                                         </div>
                                     </div>
                                 </div>
@@ -687,7 +707,7 @@
                                         <div class="col-lg-12">
                                             <div class="input-group">
                                                 <span class="input-group-text"><i
-                                                            class="ti ti-calendar-time"></i></span>
+                                                        class="ti ti-calendar-time"></i></span>
                                                 @if(env('APP_LOCALE', 'en')=='fa')
                                                     <input type="text" name="expdate" class="form-control example1"
                                                            autocomplete="off"/>
@@ -697,7 +717,7 @@
                                                 @endif
                                             </div>
                                             <small
-                                                    class="form-text text-muted">{{__('user-pop-newuser-date-desc1')}}</small>
+                                                class="form-text text-muted">{{__('user-pop-newuser-date-desc1')}}</small>
                                             <small style="color:red">{{__('user-pop-newuser-date-desc2')}}</small>
                                         </div>
                                     </div>

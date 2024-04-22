@@ -19,6 +19,8 @@ class Admins extends Authenticatable
         'password',
         'permission',
         'credit',
+        'end_date',
+        'count_account',
         'status'
     ];
     protected $hidden = [
