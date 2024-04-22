@@ -42,7 +42,7 @@ XPanel - это веб-приложение для управления учет
 ## Протокол <br>
 Протоколы, поддерживаемые XPanel.<br>
 :white_check_mark:  `SSH-DIRECT`  :white_check_mark:  `SSH-TLS` :white_check_mark:  `SSH-DROPBEAR`  :white_check_mark:  `SSH-DROPBEAR-TLS` :white_check_mark:  `SSH-WEBSOCKET` <br>  
-:white_check_mark:  `SSH-WEBSOCKET-TLS` :white_check_mark:  `VMess ws`  :white_check_mark:  `VLess Reality` :white_check_mark:  `Hysteria2`  :white_check_mark:  `Tuic`
+:white_check_mark:  `SSH-WEBSOCKET-TLS` :white_check_mark:  `VMess ws`  :white_check_mark:  `VLess Reality` :white_check_mark:  `Hysteria2`  :white_check_mark:  `Tuic`  :white_check_mark:  `Shadowsocks`
 
 Порты 443, 80 и 8880 резервируются по умолчанию для веб-сервера. <br>
 Websocket HTTP Payload<br>
