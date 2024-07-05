@@ -127,20 +127,20 @@
                                             @endphp
 
                                             @if ($user->xtraffic)
-                                                @if (1000 <= round($user->xtraffic->sent_sb))
-                                                    @php $sent = round($user->xtraffic->sent_sb).' GB'; @endphp
+                                                @if (1024 <= round($user->xtraffic->sent_sb))
+                                                    @php $sent = round($user->xtraffic->sent_sb / 1024,3).' GB'; @endphp
                                                 @else
                                                     @php $sent = round($user->xtraffic->sent_sb).' MB'; @endphp
                                                 @endif
 
-                                                @if (1000 <= round($user->xtraffic->received_sb))
-                                                    @php $received = round($user->xtraffic->received_sb).' GB'; @endphp
+                                                @if (1024 <= round($user->xtraffic->received_sb))
+                                                    @php $received = round($user->xtraffic->received_sb / 1024,3).' GB'; @endphp
                                                 @else
                                                     @php $received = round($user->xtraffic->received_sb).' MB'; @endphp
                                                 @endif
 
-                                                @if (1000 <= round($user->xtraffic->total_sb))
-                                                    @php $total = round($user->xtraffic->total_sb).' GB'; @endphp
+                                                @if (1024 <= round($user->xtraffic->total_sb))
+                                                    @php $total = round($user->xtraffic->total_sb / 1024,3).' GB'; @endphp
                                                 @else
                                                     @php $total = round($user->xtraffic->total_sb).' MB'; @endphp
                                                 @endif
@@ -230,26 +230,34 @@
                                             @else
                                                 @php $pbk='none'; @endphp
                                             @endif
-
+                                            @if(!empty($user->sni))
+                                                @php
+                                                    $sni=$user->sni;
+                                                @endphp
+                                            @else
+                                                @php
+                                                    $sni='www.bing.com';
+                                                @endphp
+                                            @endif
                                             @if($user->protocol_sb=='vmess-ws')
                                                 @php
-                                                    $val_vm='{"add":"'.$address.'","aid":"0","host":"www.bing.com","id":"'.$jsonData['uuid'].'","net":"ws","path":"'.$jsonData['uuid'].'-vm","port":"'.$jsonData['port'].'","ps":"'.$user->name.'","tls":"","type":"none","v":"2"}';
+                                                    $val_vm='{"add":"'.$address.'","aid":"0","host":"'.$sni.'","id":"'.$jsonData['uuid'].'","net":"ws","path":"'.$jsonData['uuid'].'-vm","port":"'.$jsonData['port'].'","ps":"'.$user->name.'","tls":"","type":"none","v":"2"}';
                                                     $prt='vmess://'.base64_encode($val_vm);
                                                 @endphp
                                             @endif
                                             @if($user->protocol_sb=='vless-reality')
                                                 @php
-                                                    $prt="vless://".$jsonData['uuid']."@$address:".$jsonData['port']."?encryption=none&flow=xtls-rprx-vision&security=reality&sni=www.yahoo.com&fp=chrome&pbk=$pbk&sid=$sid&type=tcp&headerType=none#$user->name"
+                                                    $prt="vless://".$jsonData['uuid']."@$address:".$jsonData['port']."?encryption=none&flow=xtls-rprx-vision&security=reality&sni=$sni&fp=chrome&pbk=$pbk&sid=$sid&type=tcp&headerType=none#$user->name"
                                                 @endphp
                                             @endif
                                             @if($user->protocol_sb=='hysteria2')
                                                 @php
-                                                    $prt="hysteria2://".$jsonData['uuid']."@$address:".$jsonData['port']."?insecure=1&mport=".$jsonData['port']."&sni=www.bing.com#$user->name";
+                                                    $prt="hysteria2://".$jsonData['uuid']."@$address:".$jsonData['port']."?insecure=1&mport=".$jsonData['port']."&sni=$sni#$user->name";
                                                 @endphp
                                             @endif
                                             @if($user->protocol_sb=='tuic')
                                                 @php
-                                                    $prt="tuic://".$jsonData['uuid'].":".$jsonData['uuid']."@$address:".$jsonData['port']."?congestion_control=bbr&udp_relay_mode=native&alpn=h3&sni=www.bing.com&allow_insecure=1#$user->name";
+                                                    $prt="tuic://".$jsonData['uuid'].":".$jsonData['uuid']."@$address:".$jsonData['port']."?congestion_control=bbr&udp_relay_mode=native&alpn=h3&sni=$sni&allow_insecure=1#$user->name";
                                                 @endphp
                                             @endif
                                             @if($user->protocol_sb=='shadowsocks')
@@ -350,7 +358,7 @@
                                                             data-bs-toggle="tooltip"
                                                             title="{{__('user-table-tog-renewal')}}">
                                                             <a href="javascript:void(0);"
-                                                               data-user="{{$user->port_sb}}" data-bs-toggle="modal"
+                                                               data-user="{{$user->port_sb}}" data-name="{{$user->name}}" data-bs-toggle="modal"
                                                                data-bs-target="#renewal-modal"
                                                                class="re_user avtar avtar-xs btn-link-success btn-pc-default">
                                                                 <i class="ti ti-calendar-plus f-18"></i>
@@ -505,7 +513,7 @@
             <form class="modal-content" action="{{route('singbox.new.renewal')}}" method="POST" enctype="multipart/form-data"
                   onsubmit="return confirm('{{__('allert-submit')}}');">
                 <div class="modal-header">
-                    <h5 class="mb-0">{{__('user-pop-renewal-title')}}</h5>
+                    <h5 class="mb-0">{{__('user-pop-renewal-title')}} [<span id="selected_username"></span>]</h5>
                     <a href="javascript:void(0);" class="avtar avtar-s btn-link-danger btn-pc-default"
                        data-bs-dismiss="modal">
                         <i class="ti ti-x f-20"></i>
@@ -655,11 +663,17 @@
                             <div class="form-group row">
                                 <div class="col-lg-6">
                                     <div class="row">
-                                        <div class="col-lg-12">
+                                        <div class="col-lg-6">
                                             <input type="text" name="multiuser" class="form-control" value="1"
                                                    placeholder="{{__('user-pop-newuser-connect')}}" required>
                                             <small
                                                 class="form-text text-muted">{{__('user-pop-newuser-connect-desc')}}</small>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <input type="text" name="sni" class="form-control" value="www.bing.com"
+                                                   placeholder="SNI" required>
+                                            <small
+                                                class="form-text text-muted">SNI</small>
                                         </div>
                                     </div>
                                 </div>
@@ -842,8 +856,9 @@
     <script type="text/javascript">
         $(document).on("click", ".re_user", function () {
             var username = $(this).data('user');
+            var name = $(this).data('name');
             $('input[name=username_re]').val(username);
-
+            $('#selected_username').text(name);
         });
     </script>
 

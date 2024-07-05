@@ -799,7 +799,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
             <form class="modal-content" action="{{route('new.renewal')}}" method="POST" enctype="multipart/form-data"
                   onsubmit="return confirm('{{__('allert-submit')}}');">
                 <div class="modal-header">
-                    <h5 class="mb-0">{{__('user-pop-renewal-title')}}</h5>
+                    <h5 class="mb-0">{{__('user-pop-renewal-title')}} [<span id="selected_username"></span>]</h5>
                     <a href="javascript:void(0);" class="avtar avtar-s btn-link-danger btn-pc-default"
                        data-bs-dismiss="modal">
                         <i class="ti ti-x f-20"></i>
@@ -814,7 +814,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
                                         @csrf
                                         <input type="text" name="day_date" class="form-control" placeholder="30">
                                         <input type="hidden" name="username_re" id="input_user" value=""
-                                               class="input_user form-control" placeholder="30">
+                                               class="input_user form-control" placeholder="Username">
                                     </div>
                                 </div>
                             </div>
@@ -1294,6 +1294,7 @@ Port UDPGW:{{env('PORT_UDPGW')}}&nbsp;
         $(document).on("click", ".re_user", function () {
             var username = $(this).data('user');
             $('input[name=username_re]').val(username);
+            $('#selected_username').text(username);
 
         });
     </script>

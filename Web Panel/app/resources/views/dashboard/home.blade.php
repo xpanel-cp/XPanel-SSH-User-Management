@@ -39,7 +39,7 @@
                         $github='https://github.com/xpanel-cp/XPanel-SSH-User-Management/blob/master/README-RU.md#installation-guide';
                     @endphp
                 @endif
-                @if($obj->last_version>397)
+                @if($obj->last_version>398)
                     <div class="alert alert-success" role="alert" style="color: #2b2f32;">{{__('alert-update')}} <a href="{!! $github !!}" target="_blank">Github</a> </div>
                 @endif
                 <div class="col-6 col-md-3 col-xxl-2">

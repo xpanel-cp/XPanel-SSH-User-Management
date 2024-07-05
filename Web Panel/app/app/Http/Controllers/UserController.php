@@ -217,7 +217,8 @@ class UserController extends Controller
             'traffic'=>'required|numeric',
             'expdate'=>'nullable|string',
             'type_traffic'=>'required|string',
-            'desc'=>'nullable|string'
+            'desc'=>'nullable|string',
+            'sni'=>'nullable|string'
         ]);
         if(env('APP_LOCALE', 'en') == 'fa') {
             if (!empty($request->expdate)) {
@@ -476,12 +477,14 @@ class UserController extends Controller
                 $uuid=$jsonData['uuid'];
                 $protocol=$user->protocol_sb;
                 $name=$user->name;
+                $multiuser=$user->multiuser;
                 $validatedData = [
                     'port'=>$port,
                     'protocol'=>$protocol,
                     'sid'=>$sid,
                     'uuid'=>$uuid,
-                    'name'=>$name
+                    'name'=>$name,
+                    'multiuser'=>$multiuser
                 ];
 
                 ProController::active_singbox($validatedData);
@@ -1169,13 +1172,15 @@ class UserController extends Controller
                 $uuid=$jsonData['uuid'];
                 $protocol=$user->protocol_sb;
                 $name=$user->name;
+                $multiuser=$user->multiuser;
                 $validatedData = [
                     'port'=>$request->username_re,
                     'protocol'=>$protocol,
                     'sid'=>$sid,
                     'uuid'=>$uuid,
                     'name'=>$name,
-                    'newdate'=>$newdate
+                    'newdate'=>$newdate,
+                    'multiuser'=>$multiuser
                 ];
                 ProController::renewal_singbox($validatedData);
 
@@ -1429,7 +1434,8 @@ class UserController extends Controller
             'expdate'=>'nullable|string',
             'type_traffic'=>'required|string',
             'activate'=>'required|string',
-            'desc'=>'nullable|string'
+            'desc'=>'nullable|string',
+            'sni'=>'nullable|string'
         ]);
         if ($request->type_traffic == "gb") {
             $traffic = $request->traffic * 1024;
@@ -1459,7 +1465,8 @@ class UserController extends Controller
                     'traffic' => $traffic,
                     'end_date' => $end_date,
                     'status' => $request->activate,
-                    'desc' => $request->desc
+                    'desc' => $request->desc,
+                    'sni' => $request->sni
                 ]);
                 if ($request->activate == "active") {
                     $user = Singbox::where('port_sb',$request->port)->first();
@@ -1468,12 +1475,14 @@ class UserController extends Controller
                     $uuid=$jsonData['uuid'];
                     $protocol=$user->protocol_sb;
                     $name=$user->name;
+                    $multiuser=$user->multiuser;
                     $validatedData = [
                         'port'=>$request->port,
                         'protocol'=>$protocol,
                         'sid'=>$sid,
                         'uuid'=>$uuid,
-                        'name'=>$name
+                        'name'=>$name,
+                        'multiuser'=>$multiuser
                     ];
 
                     ProController::active_singbox($validatedData);
@@ -1500,7 +1509,8 @@ class UserController extends Controller
                         'traffic' => $traffic,
                         'end_date' => $end_date,
                         'status' => $request->activate,
-                        'desc' => $request->desc
+                        'desc' => $request->desc,
+                        'sni' => $request->sni
                     ]);
                 if ($request->activate == "active") {
                     $user = Singbox::where('port_sb',$request->port)->first();

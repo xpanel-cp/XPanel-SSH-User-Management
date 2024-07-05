@@ -23,7 +23,8 @@ class Singbox extends Model
         'detail_sb',
         'status',
         'traffic',
-        'desc'
+        'desc',
+        'sni'
     ];
     public function xtraffic() {
         return $this->belongsTo(Trafficsb::class, 'port_sb', 'port_sb');

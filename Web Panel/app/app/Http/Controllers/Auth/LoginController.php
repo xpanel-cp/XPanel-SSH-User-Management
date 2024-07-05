@@ -58,6 +58,15 @@ class LoginController extends Controller
 
             sleep(1);
         }
+        $tableName = 'singboxes';
+        $newColumnName = 'sni';
+        if (!Schema::hasColumn($tableName, $newColumnName)) {
+            Schema::table($tableName, function (Blueprint $table) use ($newColumnName) {
+                $table->string($newColumnName)->after('desc')->nullable();
+            });
+
+            sleep(1);
+        }
         return view('auth.login');
     }
 

@@ -89,11 +89,18 @@
                                         <div class="form-group row">
                                             <div class="col-lg-6">
                                                 <div class="row">
-                                                    <div class="col-lg-12">
-                                                        <input type="text" name="multiuser" class="form-control" value="1"
+                                                    <div class="col-lg-6">
+                                                        <input type="text" name="multiuser" class="form-control"
                                                                placeholder="{{__('user-pop-newuser-connect')}}" value="{{$show->multiuser}}" required>
                                                         <small
                                                             class="form-text text-muted">{{__('user-pop-newuser-connect-desc')}}</small>
+                                                    </div>
+
+                                                    <div class="col-lg-6">
+                                                        <input type="text" name="sni" class="form-control" value="{{ $show->sni ?? 'www.bing.com' }}"
+                                                               placeholder="SNI" required>
+                                                        <small
+                                                            class="form-text text-muted">SNI</small>
                                                     </div>
                                                 </div>
                                             </div>

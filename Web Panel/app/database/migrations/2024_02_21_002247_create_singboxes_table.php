@@ -29,6 +29,7 @@ return new class extends Migration
                 $table->string('traffic');
                 $table->string('referral')->nullable();
                 $table->longText('desc')->nullable();
+                $table->longText('sni')->nullable();
                 $table->timestamps();
             });
         }
