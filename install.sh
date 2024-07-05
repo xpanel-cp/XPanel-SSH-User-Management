@@ -2,13 +2,15 @@
 
 #By setting DEBIAN_FRONTEND to noninteractive, any prompts or interactive dialogs from the package manager will proceed with the installation without user intervention.
 export DEBIAN_FRONTEND=noninteractive
+config_file="/etc/needrestart/needrestart.conf"
+# Check if the configuration file exists
+if [ -f "$config_file" ]; then
+    # Disable "Pending kernel upgrade" popup during install
+    sed -i "s/#\$nrconf{kernelhints} = -1;/\$nrconf{kernelhints} = -1;/g" "$config_file"
 
-#Disable "Pending kernel upgrade" popup during install:
-sed -i "s/#\$nrconf{kernelhints} = -1;/\$nrconf{kernelhints} = -1;/g" /etc/needrestart/needrestart.conf
-
-#Disable "Daemons using outdated libraries" popup during install:
-sudo sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' /etc/needrestart/needrestart.conf
-
+    # Disable "Daemons using outdated libraries" popup during install
+    sudo sed -i 's/#$nrconf{restart} = '"'"'i'"'"';/$nrconf{restart} = '"'"'a'"'"';/g' "$config_file"
+fi
 RED="\e[31m"
 GREEN="\e[32m"
 YELLOW="\e[33m"
@@ -230,6 +232,7 @@ startINSTALL() {
 
     sudo NEETRESTART_MODE=a apt-get update --yes
     sudo apt update -y
+    sudo apt upgrade -y
     sudo apt -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
     apt-get install -y stunnel4 && apt-get install -y cmake && apt-get install -y screenfetch && apt-get install -y openssl
     sudo apt-get -y install software-properties-common
@@ -237,6 +240,7 @@ startINSTALL() {
     sudo apt-get install nginx zip unzip net-tools mariadb-server -y
     sudo apt-get install php php-cli php-mbstring php-dom php-pdo php-mysql -y
     sudo apt-get install npm -y
+    sudo apt install python -y
     sudo apt install python3 -y
     sudo apt install iftop -y
     sudo apt install apt-transport-https -y
