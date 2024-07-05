@@ -110,7 +110,7 @@ destination_directory="/var/www/"
 }
 wellcomeINSTALL() {
   echo -e "${YELLOW}************ Select XPanel Version Nginx Web Server************"
-  echo -e "${GREEN}  1)XPanel v3.9.7"
+  echo -e "${GREEN}  1)XPanel v3.9.8"
   echo -e "${GREEN}  2)XPanel v3.9.7"
   echo -e "${GREEN}  3)XPanel v3.9.6"
   echo -e "${GREEN}  4)XPanel v3.9.4"
