@@ -110,7 +110,7 @@ destination_directory="/var/www/"
 }
 wellcomeINSTALL() {
   echo -e "${YELLOW}************ Select XPanel Version Nginx Web Server************"
-  echo -e "${GREEN}  1)XPanel v3.9.8"
+  echo -e "${GREEN}  1)XPanel v3.9.9"
   echo -e "${GREEN}  2)XPanel v3.9.7"
   echo -e "${GREEN}  3)XPanel v3.9.6"
   echo -e "${GREEN}  4)XPanel v3.9.4"
@@ -123,7 +123,7 @@ wellcomeINSTALL() {
   read n
   if [ "$n" != "" ]; then
     if [ "$n" == "1" ]; then
-      linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-9-8
+      linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-9-9
     fi
     if [ "$n" == "2" ]; then
       linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-9-7
@@ -151,7 +151,7 @@ wellcomeINSTALL() {
     fi
     
   else
-    linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-9-8
+    linkd=https://api.github.com/repos/xpanel-cp/XPanel-SSH-User-Management/releases/tags/v3-9-9
   fi
 }
 userINPU() {
