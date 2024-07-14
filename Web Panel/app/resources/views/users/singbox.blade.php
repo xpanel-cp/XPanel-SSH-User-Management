@@ -297,7 +297,7 @@
                                                     <span class="badge bg-light-success rounded-pill f-12"><i class="ti ti-cloud-download"></i> {{$sent}}</span>
                                                 </td>
 
-                                                <td><span class="badge bg-light-secondary f-12" style="width: -webkit-fill-available;">Unlimit</span></td>
+                                                <td><span class="badge bg-light-secondary f-12" style="width: -webkit-fill-available;">{{$user->multiuser}}</span></td>
                                                 <td>{{$user->mobile}}<br>
                                                     <small>{{$user->email}}</small></td>
                                                 <td>
@@ -446,7 +446,7 @@
                                                                         <div class="col-sm-12">
                                                                             <div class="form-group">
                                                                                 <div class="bg-body rounded fs-6 p-2 border text-body">
-                                                                                    {{__('user-table-limit-user')}}: Unlimit
+                                                                                    {{__('user-table-limit-user')}}: {{$user->multiuser}}
                                                                                 </div>
                                                                             </div>
                                                                         </div>

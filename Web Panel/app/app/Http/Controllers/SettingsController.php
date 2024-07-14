@@ -77,6 +77,7 @@ class SettingsController extends Controller
         if (!is_string($name)) {
             abort(400, 'Not Valid Username');
         }
+
         $setting = Settings::all();
         $ipadapter = Ipadapter::all();
         $iplist = Adapterlist::all();
